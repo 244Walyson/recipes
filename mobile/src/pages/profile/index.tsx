@@ -6,22 +6,45 @@ import {
   TouchableOpacity,
   StatusBar,
   Image,
-  ScrollView,
   FlatList,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import RecipeCard from "@/src/components/recipe-card"; // Certifique-se de que o caminho está correto
+import InversePrimaryButtonSlim from "@/src/components/shared/inverse-primary-button-slim";
+import { router } from "expo-router";
+import HeaderSecondary from "@/src/components/shared/header-secondary";
 
 const Profile = () => {
   const [isFocused, setIsFocused] = useState("grid");
+  const [following, setFollowing] = useState(false);
+
+  const logout = () => {
+    router.push("/login");
+  };
+
+  const isProfileOwner = () => {
+    return false;
+  };
+
+  const getBtnText = () => {
+    if (isProfileOwner()) {
+      return "Editar";
+    }
+    return following ? "Seguindo" : "Seguir";
+  };
+
+  const handleBtnPress = () => {
+    if (!isProfileOwner()) {
+      setFollowing((prevState) => !prevState);
+    } else {
+      console.log("Editar perfil");
+    }
+  };
 
   const handleFocusChange = (buttonName: string) => {
     setIsFocused(buttonName);
   };
 
-  // Mock de dados para as receitas
   const recipes = [
     require("../../assets/pancake.png"),
     require("../../assets/pancake.png"),
@@ -39,17 +62,16 @@ const Profile = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerWrapper}>
+      <View>
         <StatusBar translucent backgroundColor="transparent" />
-        <View style={styles.navigationWrapper}>
-          <TouchableOpacity onPress={() => console.log("Voltar")}>
-            <Ionicons name="arrow-back" size={30} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Perfil</Text>
-          <TouchableOpacity onPress={() => console.log("Like")}>
-            <MaterialIcons name="logout" size={30} color="#000" />
-          </TouchableOpacity>
-        </View>
+        <HeaderSecondary
+          ioniconLeftName="arrow-left"
+          ioniconRightName="logout"
+          title="Perfil"
+          colorEmphasis="#000"
+          onPressLeft={() => {}}
+          onPressRight={logout}
+        />
       </View>
       <View style={styles.middleContainer}>
         <View style={styles.profileInfo}>
@@ -59,13 +81,11 @@ const Profile = () => {
           />
           <Text style={styles.textInfo}>Nome</Text>
           <Text style={styles.textInfoLight}>@Username</Text>
-          <View style={styles.headerWrapper}>
-            <TouchableOpacity style={styles.btn}>
-              <Text>Seguir</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn}>
-              <Text>Edit</Text>
-            </TouchableOpacity>
+          <View style={styles.btnWrapper}>
+            <InversePrimaryButtonSlim
+              text={getBtnText()}
+              onPress={handleBtnPress}
+            />
           </View>
         </View>
         <View style={styles.profileNavigation}>
@@ -109,17 +129,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    marginBottom: 70,
   },
-  headerWrapper: {
+  btnWrapper: {
     flexDirection: "row",
-  },
-  navigationWrapper: {
+    justifyContent: "space-around",
     width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    gap: 20,
     paddingHorizontal: 20,
-    paddingTop: 40,
+    marginTop: 20,
   },
   headerTitle: {
     fontSize: 20,
@@ -143,15 +161,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     height: 400,
-  },
-  btn: {
-    backgroundColor: "#f6b100",
-    padding: 5,
-    minWidth: 120,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 8,
-    margin: 20,
   },
   imageAvatar: {
     width: 120,

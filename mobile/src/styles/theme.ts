@@ -11,7 +11,9 @@ export const lightTheme = {
   accent: colors.quaternary, // Cor de ênfase (ícones, bordas)
   inputBackground: colors.septenary, // Cor de fundo do TextInput
   tertiary: colors.septenary,
+  quaternary: colors.octonary,
   secondaryText: colors.tertiary,
+  opacityBg: colors.opacityBg,
 };
 
 export const darkTheme = {
@@ -23,6 +25,8 @@ export const darkTheme = {
   secondary: colors.secondary, // Cor de destaque secundária
   accent: colors.sextiary, // Cor de ênfase (ícones, bordas)
   tertiary: colors.septenary,
+  quaternary: colors.octonary,
   inputBackground: colors.quinary, // Cor de fundo do TextInput no tema escuro
   secondaryText: colors.tertiary,
+  opacityBg: colors.opacityBgDark,
 };

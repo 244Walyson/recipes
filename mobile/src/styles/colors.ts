@@ -8,8 +8,11 @@ export default {
   quinary: "#734103",
   sextiary: "#F2B84B",
   septenary: "#ccc",
-  octonary: "#9C6017", // Marrom escuro
+  octonary: "#3a3a3a",
   nonary: "#D4A139", // Dourado suave
   denary: "#F1C27D", // Dourado claro
   undernary: "#BC7A12", // Marrom terroso
+
+  opacityBg: "rgba(255, 255, 255, 0.4)",
+  opacityBgDark: "rgba(0, 0, 0, 0.4)",
 };

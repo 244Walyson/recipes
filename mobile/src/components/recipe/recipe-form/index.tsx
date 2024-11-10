@@ -1,20 +1,15 @@
 import React, { useState } from "react";
-import {
-  ScrollView,
-  TextInput,
-  View,
-  TouchableOpacity,
-  Text,
-} from "react-native";
+import { ScrollView, View, TouchableOpacity, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomPicker from "../../custom-picker";
 import IngredintsCard from "../../ingredients-card";
-import InversePrimaryButton from "../../shared/inverse-primary-button";
 import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import FormInput from "../input";
 import RecipeInstructions from "../recipe-instructions";
+import CustomInput from "../../shared/input";
+import InversePrimaryButtonSlim from "../../shared/inverse-primary-button-slim";
 
 type Ingredient = {
   name: string;
@@ -132,34 +127,35 @@ const RecipeForm = () => {
 
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
-      <FormInput
-        inputType="text"
-        label="Titulo da receita"
-        placeholder="Pão sovado"
-        onchange={() => {}}
+      <CustomInput
+        label="Nome da Receita"
+        placeholder="Exemplo: Bolo de Cenoura"
+        keyboardType="default"
+        onChangeText={(text) => setTitle(text)}
       />
 
-      <FormInput
-        inputType="text"
-        label="Titula da receita"
-        placeholder="Exemplo: Sobremesa, Lanche, etc."
-        onchange={() => {}}
+      <CustomInput
+        label="Tipo"
+        placeholder="Exemplo: Sobremesa, Jantar..."
+        keyboardType="default"
+        onChangeText={(text) => setTitle(text)}
       />
 
-      <FormInput
-        inputType="text"
+      <CustomInput
         label="Ingredientes"
         placeholder="Ingrediente"
-        onchange={() => {}}
+        keyboardType="default"
+        onChangeText={(text) => setTitle(text)}
       />
 
       <View style={styles(theme).inputWrapper}>
-        <FormInput
-          inputType="nummeric"
-          placeholder="Quantidade"
-          onchange={() => {}}
-        />
-
+        <View style={styles(theme).input}>
+          <CustomInput
+            placeholder="quantidade"
+            keyboardType="numeric"
+            onChangeText={(text) => setTitle(text)}
+          />
+        </View>
         <View style={styles(theme).selectWrapper}>
           <CustomPicker
             values={["ml", "litros", "xícaras"]}
@@ -168,7 +164,7 @@ const RecipeForm = () => {
         </View>
       </View>
 
-      <InversePrimaryButton
+      <InversePrimaryButtonSlim
         text="Adicionar Ingrediente"
         onPress={addIngredient}
       />
@@ -196,23 +192,27 @@ const RecipeForm = () => {
           <Text style={styles(theme).textLight}> • Adicione o açucar...</Text>
         </View>
         <View style={styles(theme).inputWrapper}>
-          <FormInput
-            inputType="text"
-            placeholder={step + ". Preparo da calda"}
-            onchange={() => {}}
-          />
+          <View style={styles(theme).input}>
+            <CustomInput
+              placeholder={step + ". Preparar a massa"}
+              keyboardType="default"
+              onChangeText={(text) => setTitle(text)}
+            />
+          </View>
           <TouchableOpacity style={styles(theme).addWrapper} onPress={addStep}>
-            <Ionicons name="checkmark" size={30} color="#BF926B" />
+            <Ionicons name="checkmark" size={30} color={theme.background} />
           </TouchableOpacity>
         </View>
         <View style={styles(theme).inputWrapper}>
-          <FormInput
-            inputType="text"
-            placeholder={"• em uma tijela..."}
-            onchange={() => {}}
-          />
+          <View style={styles(theme).input}>
+            <CustomInput
+              placeholder={"• Em uma tijela adicione..."}
+              keyboardType="default"
+              onChangeText={(text) => setTitle(text)}
+            />
+          </View>
           <TouchableOpacity style={styles(theme).addWrapper} onPress={addTopic}>
-            <Ionicons name="add" size={30} color="#BF926B" />
+            <Ionicons name="add" size={30} color={theme.background} />
           </TouchableOpacity>
         </View>
 

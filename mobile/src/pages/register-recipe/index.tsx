@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, ScrollView, StatusBar, ImageBackground } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
@@ -19,8 +19,9 @@ const RegisterRecipe = () => {
           <View style={styles(theme).overlay} />
           <HeaderSecondary
             title="Nova receita"
-            ioniconLeftName="arrow-back"
-            ioniconRightName="checkmark-outline"
+            ioniconLeftName="arrow-left"
+            ioniconRightName="check"
+            colorEmphasis="#fff"
           />
         </ImageBackground>
       </View>

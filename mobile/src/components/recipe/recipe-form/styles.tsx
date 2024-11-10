@@ -18,14 +18,6 @@ export const styles = (theme: any) =>
       color: theme.text,
       marginBottom: 8,
     },
-    input: {
-      flex: 1,
-      backgroundColor: theme.inputBackground,
-      padding: 10,
-      borderRadius: 8,
-      marginBottom: 15,
-      fontSize: 16,
-    },
     saveButton: {
       backgroundColor: theme.buttonBackground,
       padding: 15,
@@ -54,33 +46,41 @@ export const styles = (theme: any) =>
     inputWrapper: {
       width: "100%",
       flexDirection: "row",
-      justifyContent: "space-between",
       gap: 10,
-      height: 60,
+      paddingVertical: 10,
+      flex: 1,
+      justifyContent: "space-between", // Garante que os itens ocupem o espaço corretamente
     },
     selectWrapper: {
       width: 130,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: theme.inputBackground,
+      backgroundColor: theme.opacitybg,
       borderRadius: 8,
+      borderWidth: 1,
+      borderColor: theme.quaternary,
       height: 45,
       padding: 10,
       marginBottom: 15,
     },
+    input: {
+      flex: 1,
+    },
+
     textStrong: {
       fontSize: 18,
-      color: theme.text,
+      color: theme.tertiary,
+      fontWeight: "bold",
       paddingHorizontal: 10,
     },
     textLight: {
       fontSize: 16,
-      color: theme.text,
+      color: theme.tertiary,
       paddingHorizontal: 15,
     },
     addWrapper: {
-      backgroundColor: theme.inputBackground,
+      backgroundColor: theme.secondary,
       borderRadius: 8,
       width: 60,
       height: 45,

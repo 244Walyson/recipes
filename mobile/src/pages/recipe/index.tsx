@@ -1,11 +1,8 @@
-import AvatarCard from "@/src/components/shared/avatar";
 import React from "react";
 import {
   View,
   Text,
-  StyleSheet,
   ImageBackground,
-  TouchableOpacity,
   StatusBar,
   ScrollView,
 } from "react-native";
@@ -76,10 +73,11 @@ const Recipe = () => {
       >
         <HeaderSecondary
           title="Receita"
-          ioniconLeftName="arrow-back"
-          ioniconRightName="heart-outline"
+          ioniconLeftName="arrow-left"
+          ioniconRightName="cards-heart-outline"
           onPressLeft={() => {}}
           onPressRight={() => {}}
+          colorEmphasis="#fff"
         />
       </ImageBackground>
       <View style={styles(theme).recipeContainer}>

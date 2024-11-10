@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import MatierialComunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 type HeaderIputProps = {
   title: string;
@@ -8,6 +8,7 @@ type HeaderIputProps = {
   ioniconRightName: string;
   onPressLeft?: () => void;
   onPressRight?: () => void;
+  colorEmphasis?: string;
 };
 
 const HeaderSecondary = ({
@@ -16,15 +17,26 @@ const HeaderSecondary = ({
   ioniconRightName,
   onPressLeft,
   onPressRight,
+  colorEmphasis,
 }: HeaderIputProps) => {
   return (
     <View style={styles.header}>
       <TouchableOpacity onPress={onPressLeft}>
-        <Ionicons name={ioniconLeftName} size={30} color={"#fff"} />
+        <MatierialComunityIcons
+          name={ioniconLeftName}
+          size={30}
+          color={colorEmphasis}
+        />
       </TouchableOpacity>
-      <Text style={styles.headerTitle}>{title}</Text>
+      <Text style={[styles.headerTitle, { color: colorEmphasis }]}>
+        {title}
+      </Text>
       <TouchableOpacity onPress={onPressRight}>
-        <Ionicons name={ioniconRightName} size={30} color={"#fff"} />
+        <MatierialComunityIcons
+          name={ioniconRightName}
+          size={30}
+          color={colorEmphasis}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -42,7 +54,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#fff",
   },
 });
 

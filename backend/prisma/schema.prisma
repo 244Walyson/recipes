@@ -4,11 +4,87 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  name               String             @unique
+  email              String             @unique
+  password           String
+  imgUrl             String?
+  createdAt          DateTime           @default(now())
+  isActive           Boolean            @default(true)
+  recipes            Recipe[]
+  ratings            Rating[]
+  refreshTokens      RefreshToken[]
+  passwordRecoveries PasswordRecovery[]
+}
+
+model Recipe {
+  id                String             @id @default(uuid())
+  name              String
+  ingredientsText   String
+  preparationMethod String
+  preparationTime   Int
+  imgUrl            String?
+  difficultyLevel   String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deleted           Boolean            @default(false)
+  user              User               @relation(fields: [userId], references: [id])
+  userId            String
+  ratings           Rating[]
+  recipeIngredients RecipeIngredient[]
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  comment   String
+  createdAt DateTime @default(now())
+  deleted   Boolean  @default(false)
+  rating    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  recipeId  String
+}
+
+model Ingredient {
+  id                String             @id @default(uuid())
+  name              String             @unique
+  recipeIngredients RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  id           String     @id @default(uuid())
+  quantity     Float
+  unit         String
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  recipeId     String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+}
+
+model RefreshToken {
+  id        String  @id @default(uuid())
+  token     String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  isRevoked Boolean @default(false)
+}
+
+model PasswordRecovery {
+  id        String  @id @default(uuid())
+  token     String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  isRevoked Boolean @default(false)
 }

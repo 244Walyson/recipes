@@ -2,7 +2,7 @@ import CategoryCard from "@/src/components/category-card";
 import TrendinCard from "@/src/components/trending-card";
 import React from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
-import Header from "@/src/components/header";
+import Header from "@/src/components/shared/header-primary";
 
 const Home = () => {
   return (

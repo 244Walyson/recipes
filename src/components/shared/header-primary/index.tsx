@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Constants from "expo-constants";
+import SearchBar from "../search-bar";
 const statusBarHeight = Constants.statusBarHeight;
 
 const Header = () => {
@@ -19,15 +20,7 @@ const Header = () => {
         </View>
         <Text style={styles.recipetext}>receitas</Text>
       </View>
-      <View style={styles.inputWrapper}>
-        <Ionicons name="search" size={20} style={styles.searchIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Pesquisar"
-          keyboardType="email-address"
-          placeholderTextColor="#F6B100"
-        />
-      </View>
+      <SearchBar placeholder="pesquisar..." />
     </View>
   );
 };
@@ -59,25 +52,6 @@ const styles = StyleSheet.create({
   trendingText: {
     fontSize: 24,
     fontWeight: "bold",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderColor: "#F6B100",
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-  },
-  input: {
-    width: "90%",
-    height: 45,
-    fontSize: 18,
-    color: "#000",
-  },
-  searchIcon: {
-    color: "#F6B100",
-    marginRight: 10,
   },
 });
 

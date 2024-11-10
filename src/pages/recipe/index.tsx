@@ -1,4 +1,4 @@
-import AvatarCard from "@/src/components/avatar-card";
+import AvatarCard from "@/src/components/avatar";
 import React from "react";
 import {
   View,
@@ -9,11 +9,64 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import HeaderSecondary from "@/src/components/shared/header-secondary";
+import { useTheme } from "@/src/context/theme-context";
+import InversePrimaryButton from "@/src/components/shared/inverse-primary-button";
+import PrimaryButton from "@/src/components/shared/primary-button";
+import AuthorCard from "@/src/components/recipe/author-card";
+import { styles } from "./styles";
+import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
 import IngredintsCard from "@/src/components/ingredients-card";
-import RecipeInstructions from "@/src/components/recipe-instructions-container";
+
+type InstructionStep = {
+  step: number;
+  title: string;
+  description: string;
+};
+
+const instructions: InstructionStep[] = [
+  {
+    step: 1,
+    title: "Prepare the spice paste",
+    description:
+      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
+  },
+  {
+    step: 2,
+    title: "Cook the chicken",
+    description:
+      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
+  },
+  {
+    step: 3,
+    title: "Prepare the spice paste",
+    description:
+      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
+  },
+  {
+    step: 4,
+    title: "Cook the chicken",
+    description:
+      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
+  },
+  {
+    step: 5,
+    title: "Prepare the spice paste",
+    description:
+      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.\n• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
+  },
+  {
+    step: 6,
+    title: "Cook the chicken",
+    description:
+      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender. \n• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
+  },
+];
 
 const Recipe = () => {
+  const [focusedBtn, setFocusedBtn] = React.useState("ingredients");
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
@@ -21,101 +74,60 @@ const Recipe = () => {
         source={require("../../assets/food.png")}
         style={styles.image}
       >
-        <View style={styles.navigationWrapper}>
-          <TouchableOpacity onPress={() => console.log("Voltar")}>
-            <Ionicons name="arrow-back" size={30} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log("Like")}>
-            <Ionicons name="heart-outline" size={30} color="#fff" />
-          </TouchableOpacity>
-        </View>
+        <HeaderSecondary
+          title="Receita"
+          ioniconLeftName="arrow-back"
+          ioniconRightName="heart-outline"
+          onPressLeft={() => {}}
+          onPressRight={() => {}}
+        />
       </ImageBackground>
       <View style={styles.recipeContainer}>
-        <Text style={styles.textTitle}>Hamburguer do chefe</Text>
-        <Text style={styles.textType}>Sobremesa</Text>
-
-        <View style={styles.authorWrapper}>
-          <AvatarCard />
+        <View style={styles.leftAlign}>
+          <Text style={styles.textTitle}>Hamburguer do chefe</Text>
+          <View style={styles.textWrapper}>
+            <Text style={styles.textType}>Sobremesa</Text>
+            <Text style={styles.textType}>1h 20min</Text>
+          </View>
         </View>
 
-        <View style={styles.navigationWrapper}>
-          <TouchableOpacity style={styles.btn} onPress={() => {}}>
-            <Text style={styles.btnText}>Ingredintes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.btn} onPress={() => {}}>
-            <Text style={styles.btnText}>Modo de Preparo</Text>
-          </TouchableOpacity>
+        <AuthorCard />
+
+        <View style={styles.btnWrapper}>
+          {focusedBtn === "ingredients" ? (
+            <>
+              <PrimaryButton
+                text="ingredientes"
+                onPress={() => setFocusedBtn("ingredients")}
+              />
+              <InversePrimaryButton
+                text="Modo de preparo"
+                onPress={() => setFocusedBtn("modo de preparo")}
+              />
+            </>
+          ) : (
+            <>
+              <InversePrimaryButton
+                text="ingredientes"
+                onPress={() => setFocusedBtn("ingredients")}
+              />
+              <PrimaryButton
+                text="Modo de preparo"
+                onPress={() => setFocusedBtn("modo de preparo")}
+              />
+            </>
+          )}
         </View>
         <ScrollView style={styles.instructionsContainer}>
-          <RecipeInstructions />
+          {focusedBtn != "ingredients" ? (
+            <RecipeInstructions data={instructions} />
+          ) : (
+            <IngredintsCard name="fruta" unity="ml" quantity={100} />
+          )}
         </ScrollView>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  recipeContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: -30,
-  },
-  navigationWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 40,
-  },
-  image: {
-    width: "100%",
-    height: 400,
-    resizeMode: "cover",
-  },
-  btn: {
-    backgroundColor: "#BF926B",
-    minWidth: 200,
-    height: 50,
-    alignItems: "center",
-    borderRadius: 8,
-    justifyContent: "center",
-    padding: 10,
-  },
-  btnText: {
-    color: "#fff",
-    fontSize: 20,
-  },
-  textTitle: {
-    fontSize: 34,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  textType: {
-    fontSize: 24,
-    color: "#ccc",
-    textAlign: "center",
-  },
-  authorWrapper: {
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
-  instructionsContainer: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    width: "100%",
-    height: "100%",
-  },
-});
 
 export default Recipe;

@@ -1,7 +1,7 @@
 import SvgVegetablesIcon from "@/src/assets/icons/vegetables_icon";
 import SvgPlateIcon from "@/src/assets/icons/vegetables_icon";
 import CategoryItem from "@/src/components/category-item";
-import Header from "@/src/components/header";
+import Header from "@/src/components/shared/header-primary";
 import CustomModal from "@/src/components/modal";
 import SearchCard from "@/src/components/search-card";
 import React, { useState } from "react";

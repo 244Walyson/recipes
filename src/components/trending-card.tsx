@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AvatarCard from "./avatar-card";
+import AvatarCard from "./avatar";
 
 const TrendinCard = () => {
   return (

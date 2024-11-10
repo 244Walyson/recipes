@@ -1,12 +1,9 @@
+import Search from "@/src/pages/search";
 import React from "react";
 import { View, Text } from "react-native";
 
 const SearchTab = () => {
-  return (
-    <View>
-      <Text>Search</Text>
-    </View>
-  );
+  return <Search />;
 };
 
 export default SearchTab;

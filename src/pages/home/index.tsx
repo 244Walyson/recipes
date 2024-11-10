@@ -1,36 +1,13 @@
 import CategoryCard from "@/src/components/category-card";
 import TrendinCard from "@/src/components/trending-card";
 import React from "react";
-import { View, StyleSheet, Text, TextInput, ScrollView } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Constants from "expo-constants";
-
-const statusBarHeight = Constants.statusBarHeight;
+import { View, StyleSheet, Text, ScrollView } from "react-native";
+import Header from "@/src/components/header";
 
 const Home = () => {
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.textWrapper}>
-          <View style={styles.headerWrapper}>
-            <Text style={styles.headerText}>Encontre</Text>
-            <Text style={[styles.headerText, styles.textColored]}>
-              {" "}
-              as melhores
-            </Text>
-          </View>
-        </View>
-        <Text style={styles.recipetext}>receitas</Text>
-      </View>
-      <View style={styles.inputWrapper}>
-        <Ionicons name="search" size={20} style={styles.searchIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Pesquisar"
-          keyboardType="email-address"
-          placeholderTextColor="#F6B100"
-        />
-      </View>
+      <Header />
       <View style={styles.trendingContainer}>
         <View style={styles.textTrendWrapper}>
           <Text style={styles.trendingText}>Em alta</Text>
@@ -78,11 +55,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 10,
     marginBottom: 70,
-  },
-  headerContainer: {
-    paddingHorizontal: 20,
-    justifyContent: "center",
-    marginTop: statusBarHeight,
   },
   headerWrapper: {
     flexDirection: "row",

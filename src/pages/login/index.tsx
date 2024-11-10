@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import SvgTopWaves from "@/src/assets/waves/wave_top";
 import SvgBottomWaves from "@/src/assets/waves/wave_botton";
-import SvgGoggleIcon from "@/src/assets/social-media-icons/google_icon";
-import SvgGithubIcon from "@/src/assets/social-media-icons/github_icon";
+import SvgGoggleIcon from "@/src/assets/icons/google_icon";
+import SvgGithubIcon from "@/src/assets/icons/github_icon";
 
 const Login = () => {
   const [email, setEmail] = useState("");

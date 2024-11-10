@@ -10,9 +10,7 @@ import {
   ScrollView,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import RecipeInstructions from "@/src/components/recipe-instructions-container";
 import IngredintsCard from "@/src/components/ingredients-card";
-import IngredientsList from "@/src/components/recipes/ingredient-list";
 
 const Recipe = () => {
   return (

@@ -3,10 +3,13 @@ import TrendinCard from "@/src/components/trending-card";
 import React from "react";
 import { View, StyleSheet, Text, TextInput, ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Constants from "expo-constants";
+
+const statusBarHeight = Constants.statusBarHeight;
 
 const Home = () => {
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.textWrapper}>
           <View style={styles.headerWrapper}>
@@ -65,7 +68,7 @@ const Home = () => {
       <View style={styles.trendingContainerWrapper}>
         <CategoryCard />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -74,10 +77,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
+    marginBottom: 70,
   },
   headerContainer: {
     paddingHorizontal: 20,
     justifyContent: "center",
+    marginTop: statusBarHeight,
   },
   headerWrapper: {
     flexDirection: "row",

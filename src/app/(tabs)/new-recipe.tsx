@@ -1,12 +1,8 @@
+import RegisterRecipe from "@/src/pages/register-recipe";
 import React from "react";
-import { View, Text } from "react-native";
 
 const NewRecipeTab = () => {
-  return (
-    <View>
-      <Text>New Recipe</Text>
-    </View>
-  );
+  return <RegisterRecipe />;
 };
 
 export default NewRecipeTab;

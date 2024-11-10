@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import IngredintsCard from "@/src/components/ingredients-card";
+import RecipeInstructions from "@/src/components/recipe-instructions-container";
 
 const Recipe = () => {
   return (
@@ -46,14 +47,7 @@ const Recipe = () => {
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.instructionsContainer}>
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
-          <IngredintsCard />
+          <RecipeInstructions />
         </ScrollView>
       </View>
     </View>

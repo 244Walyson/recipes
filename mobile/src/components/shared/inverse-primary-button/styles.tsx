@@ -4,7 +4,6 @@ export const styles = (theme: any) =>
   StyleSheet.create({
     btn: {
       backgroundColor: theme.background,
-      minWidth: 200,
       height: 50,
       borderWidth: 1,
       borderColor: theme.primary,
@@ -12,6 +11,7 @@ export const styles = (theme: any) =>
       borderRadius: 8,
       justifyContent: "center",
       padding: 10,
+      flex: 1,
     },
     btnText: {
       color: theme.primary,

@@ -1,11 +1,17 @@
+// Header.js
 import React from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import { View, Text, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 import SearchBar from "../search-bar";
+
 const statusBarHeight = Constants.statusBarHeight;
 
-const Header = () => {
+type CustomheaderProps = {
+  onChange?: (text: string) => void;
+  onFocus?: () => void;
+};
+
+const Header = ({ onChange, onFocus }: CustomheaderProps) => {
   return (
     <View>
       <View style={styles.container}>
@@ -20,7 +26,11 @@ const Header = () => {
         </View>
         <Text style={styles.recipetext}>receitas</Text>
       </View>
-      <SearchBar placeholder="pesquisar..." />
+      <SearchBar
+        placeholder="pesquisar..."
+        onChangeText={onChange}
+        onFocus={onFocus}
+      />
     </View>
   );
 };
@@ -48,10 +58,6 @@ const styles = StyleSheet.create({
   },
   textColored: {
     color: "#F6B100",
-  },
-  trendingText: {
-    fontSize: 24,
-    fontWeight: "bold",
   },
 });
 

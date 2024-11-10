@@ -1,9 +1,8 @@
 import SvgVegetablesIcon from "@/src/assets/icons/vegetables_icon";
-import SvgPlateIcon from "@/src/assets/icons/vegetables_icon";
-import CategoryItem from "@/src/components/category-item";
+import CustomModal from "@/src/components/shared/modal";
+import SearchCard from "@/src/components/search/search-card";
 import Header from "@/src/components/shared/header-primary";
-import CustomModal from "@/src/components/modal";
-import SearchCard from "@/src/components/search-card";
+import { useTheme } from "@/src/context/theme-context";
 import React, { useState } from "react";
 import {
   View,
@@ -14,57 +13,247 @@ import {
 } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
+import { styles } from "./styles";
+
+type ModalItems = {
+  title: string;
+  data: ModalDataItems[];
+};
+
+type ModalDataItems = {
+  id: number;
+  name: string;
+};
+
+const categories = [
+  {
+    name: "Salada",
+  },
+  {
+    name: "Pizza",
+  },
+  {
+    name: "Sushi",
+  },
+  {
+    name: "Sobremesas",
+  },
+  {
+    name: "Bebidas",
+  },
+  {
+    name: "Massas",
+  },
+  {
+    name: "Carnes",
+  },
+  {
+    name: "Lanches",
+  },
+  {
+    name: "Vegetariano",
+  },
+  {
+    name: "Vegano",
+  },
+  {
+    name: "Doces",
+  },
+  {
+    name: "Salgados",
+  },
+  {
+    name: "Bolos",
+  },
+  {
+    name: "Sopas",
+  },
+  {
+    name: "Caldos",
+  },
+  {
+    name: "Molhos",
+  },
+  {
+    name: "Cremes",
+  },
+  {
+    name: "Geleias",
+  },
+  {
+    name: "Compotas",
+  },
+  {
+    name: "Pães",
+  },
+  {
+    name: "Biscoitos",
+  },
+  {
+    name: "Tortas",
+  },
+  {
+    name: "Pudins",
+  },
+];
+
+const vegetablesData = {
+  title: "Selecione seus ingredientes favoritos",
+  data: [
+    {
+      id: 1,
+      name: "Cenoura",
+    },
+    {
+      id: 2,
+      name: "Beterraba",
+    },
+    {
+      id: 3,
+      name: "Batata",
+    },
+    {
+      id: 4,
+      name: "Tomate",
+    },
+    {
+      id: 5,
+      name: "Cebola",
+    },
+    {
+      id: 6,
+      name: "Alho",
+    },
+    {
+      id: 7,
+      name: "Pimentão",
+    },
+    {
+      id: 8,
+      name: "Abobrinha",
+    },
+    {
+      id: 9,
+      name: "Berinjela",
+    },
+    {
+      id: 10,
+      name: "Pepino",
+    },
+  ],
+};
+
+const trendingData = {
+  title: "O que você prefere?",
+  data: [
+    {
+      id: 1,
+      name: "Mais populares",
+    },
+    {
+      id: 2,
+      name: "Mais recentes",
+    },
+    {
+      id: 3,
+      name: "Mais curtidos",
+    },
+    {
+      id: 4,
+      name: "Mais comentados",
+    },
+  ],
+};
+
+const timeData = {
+  title: "Quanto tempo você tem?",
+  data: [
+    {
+      id: 1,
+      name: "Até 30 min",
+    },
+    {
+      id: 2,
+      name: "Até 1h",
+    },
+    {
+      id: 3,
+      name: "Até 2h",
+    },
+    {
+      id: 4,
+      name: "Mais de 2h",
+    },
+  ],
+};
 
 const Search = () => {
+  const { theme } = useTheme();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState<ModalDataItems[]>([]);
+  const [modelTitle, setModalTitle] = useState<string>("");
+  const [btnApplyModal, setBtnApplyModal] = useState(false);
+  const [focused, setFocused] = useState("");
 
-  // Função para abrir o modal
-  const openModal = () => {
+  const openModal = (data: ModalItems) => {
+    setModalData(data.data);
+    setModalTitle(data.title);
+    if (data.title === "Selecione seus ingredientes favoritos") {
+      setBtnApplyModal(true);
+      setModalVisible(true);
+      return;
+    }
+    setBtnApplyModal(false);
     setModalVisible(true);
   };
 
-  // Função para fechar o modal
   const closeModal = () => {
     setModalVisible(false);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles(theme).container}>
       <Header />
-      <View style={styles.filterWrapper}>
-        <View style={styles.textWrapper}>
-          <Text style={styles.filtersText}>Filtros</Text>
+      <View style={styles(theme).filterWrapper}>
+        <View style={styles(theme).textWrapper}>
+          <Text style={styles(theme).filtersText}>Filtros</Text>
           <AntDesign name="filter" size={24} color="#ccc" />
         </View>
-        <View style={styles.iconWrapper}>
-          <TouchableOpacity onPress={openModal}>
+        <View style={styles(theme).iconWrapper}>
+          <TouchableOpacity onPress={() => openModal(vegetablesData)}>
             <SvgVegetablesIcon width={25} height={25} opacity={0.3} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={openModal}>
+          <TouchableOpacity onPress={() => openModal(trendingData)}>
             <Feather name="trending-up" size={25} color="#ccc" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={openModal}>
+          <TouchableOpacity onPress={() => openModal(timeData)}>
             <AntDesign name="clockcircleo" size={25} color="#ccc" />
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.textWrapper}></View>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filtersContainer}
+        contentContainerStyle={styles(theme).filtersContainer}
       >
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
-        <CategoryItem />
+        {categories.map((category, index) => (
+          <Text
+            key={index}
+            style={[
+              styles(theme).categoryText,
+              focused === category.name ? { color: theme.foreground } : {},
+            ]}
+            onPress={() =>
+              focused === category.name
+                ? setFocused("")
+                : setFocused(category.name)
+            }
+          >
+            {category.name}
+          </Text>
+        ))}
       </ScrollView>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles(theme).cardsContainer}>
         <SearchCard />
         <SearchCard />
         <SearchCard />
@@ -78,45 +267,13 @@ const Search = () => {
       <CustomModal
         visible={isModalVisible}
         onClose={closeModal}
-        attributes={["facil", "medio", "dificil"]}
-        title="dificuldade"
+        data={modalData}
+        title={modelTitle}
+        btnApplyText="Aplicar"
+        btnApplyAction={() => console.log("Apply")}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    padding: 10,
-  },
-  filterWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  textWrapper: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  filtersContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-  },
-  filtersText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#ccc",
-  },
-  iconWrapper: {
-    flexDirection: "row",
-    gap: 20,
-  },
-});
 
 export default Search;

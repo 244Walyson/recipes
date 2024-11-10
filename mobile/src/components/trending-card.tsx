@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import AvatarCard from "./avatar";
+import AvatarCard from "./shared/avatar";
 
 const TrendinCard = () => {
   return (
@@ -13,7 +13,6 @@ const TrendinCard = () => {
       </View>
       <View style={styles.textDescWrapper}>
         <Text style={[styles.textTitle]}>Hamburguer do chefe</Text>
-        <AvatarCard />
       </View>
     </View>
   );
@@ -21,8 +20,8 @@ const TrendinCard = () => {
 
 const styles = StyleSheet.create({
   trendingContainer: {
-    width: 290,
-    height: 250,
+    width: 235,
+    height: 200,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -39,7 +38,9 @@ const styles = StyleSheet.create({
     color: "#ccc",
   },
   textTitle: {
-    fontSize: 24,
+    fontSize: 20,
+    marginHorizontal: 10,
+    marginVertical: 5,
   },
   textDescWrapper: {
     width: "100%",
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   image: {
     borderRadius: 20,
     width: "100%",
-    height: "80%",
+    height: "100%",
     marginBottom: 10,
   },
 });

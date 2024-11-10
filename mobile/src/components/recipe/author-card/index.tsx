@@ -1,5 +1,5 @@
 import React from "react";
-import Avatar from "../../avatar";
+import Avatar from "../../shared/avatar";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import { View, Text } from "react-native";

@@ -1,4 +1,4 @@
-import AvatarCard from "@/src/components/avatar";
+import AvatarCard from "@/src/components/shared/avatar";
 import React from "react";
 import {
   View,
@@ -68,11 +68,11 @@ const Recipe = () => {
   const { theme } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={styles(theme).container}>
       <StatusBar translucent backgroundColor="transparent" />
       <ImageBackground
         source={require("../../assets/food.png")}
-        style={styles.image}
+        style={styles(theme).image}
       >
         <HeaderSecondary
           title="Receita"
@@ -82,18 +82,18 @@ const Recipe = () => {
           onPressRight={() => {}}
         />
       </ImageBackground>
-      <View style={styles.recipeContainer}>
-        <View style={styles.leftAlign}>
-          <Text style={styles.textTitle}>Hamburguer do chefe</Text>
-          <View style={styles.textWrapper}>
-            <Text style={styles.textType}>Sobremesa</Text>
-            <Text style={styles.textType}>1h 20min</Text>
+      <View style={styles(theme).recipeContainer}>
+        <View style={styles(theme).leftAlign}>
+          <Text style={styles(theme).textTitle}>Hamburguer do chefe</Text>
+          <View style={styles(theme).textWrapper}>
+            <Text style={styles(theme).textType}>Sobremesa</Text>
+            <Text style={styles(theme).textType}>1h 20min</Text>
           </View>
         </View>
 
         <AuthorCard />
 
-        <View style={styles.btnWrapper}>
+        <View style={styles(theme).btnWrapper}>
           {focusedBtn === "ingredients" ? (
             <>
               <PrimaryButton
@@ -118,7 +118,7 @@ const Recipe = () => {
             </>
           )}
         </View>
-        <ScrollView style={styles.instructionsContainer}>
+        <ScrollView style={styles(theme).instructionsContainer}>
           {focusedBtn != "ingredients" ? (
             <RecipeInstructions data={instructions} />
           ) : (

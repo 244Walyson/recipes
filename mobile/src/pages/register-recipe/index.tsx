@@ -1,22 +1,8 @@
-import IngredintsCard from "@/src/components/ingredients-card";
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-  ImageBackground,
-} from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import CustomPicker from "@/src/components/custom-picker";
+import { View, ScrollView, StatusBar, ImageBackground } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
-import PrimaryButton from "@/src/components/shared/primary-button";
-import InversePrimaryButton from "@/src/components/shared/inverse-primary-button";
 import RecipeForm from "@/src/components/recipe/recipe-form";
 
 const RegisterRecipe = () => {

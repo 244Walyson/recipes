@@ -20,6 +20,7 @@ model User {
   email              String             @unique
   password           String
   imgUrl             String?
+  username           String             @unique
   createdAt          DateTime           @default(now())
   isActive           Boolean            @default(true)
   recipes            Recipe[]

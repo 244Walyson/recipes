@@ -1,70 +1,77 @@
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+-- Table for Users
+CREATE TABLE "User" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     imgUrl VARCHAR(255),
-    createdAt TIMESTAMP DEFAULT NOW(),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     isActive BOOLEAN DEFAULT TRUE
 );
 
-CREATE TABLE recipes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+-- Table for Recipes
+CREATE TABLE "Recipe" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     name VARCHAR(255) NOT NULL,
-    ingredients TEXT NOT NULL,
+    ingredientsText TEXT NOT NULL,
     preparationMethod TEXT NOT NULL,
     preparationTime INT NOT NULL,
     imgUrl VARCHAR(255),
     difficultyLevel VARCHAR(50),
-    createdAt TIMESTAMP DEFAULT NOW(),
-    updatedAt TIMESTAMP DEFAULT NOW(),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE,
-    userId INT NOT NULL,
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users (id)
+    userId UUID NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES "User" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE ratings (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+-- Table for Ratings
+CREATE TABLE "Rating" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     comment TEXT NOT NULL,
-    createdAt TIMESTAMP DEFAULT NOW(),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted BOOLEAN DEFAULT FALSE,
-    rating INT NOT NULL,
-    userId INT NOT NULL,
-    recipeId INT NOT NULL,
-    deleted BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users (id),
-    CONSTRAINT fk_recipe FOREIGN KEY (recipeId) REFERENCES recipes (id)
+    rating INT NOT NULL CHECK (
+        rating >= 1
+        AND rating <= 5
+    ),
+    userId UUID NOT NULL,
+    recipeId UUID NOT NULL,
+    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES "User" (id) ON DELETE CASCADE,
+    CONSTRAINT fk_recipe FOREIGN KEY (recipeId) REFERENCES "Recipe" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE ingredients (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    name VARCHAR(100) NOT NULL,
+-- Table for Ingredients
+CREATE TABLE "Ingredient" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE recipe_ingredients (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
-    quantity DECIMAL(10, 2) NOT NULL,
+-- Table for RecipeIngredients (many-to-many relationship)
+CREATE TABLE "RecipeIngredient" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    quantity NUMERIC(10, 2) NOT NULL,
     unit VARCHAR(50) NOT NULL,
-    recipeId INT NOT NULL,
-    ingredientId INT NOT NULL,
-    CONSTRAINT fk_recipe FOREIGN KEY (recipeId) REFERENCES recipes (id),
-    CONSTRAINT fk_ingredient FOREIGN KEY (ingredientId) REFERENCES ingredients (id)
-
-
+    recipeId UUID NOT NULL,
+    ingredientId UUID NOT NULL,
+    CONSTRAINT fk_recipe FOREIGN KEY (recipeId) REFERENCES "Recipe" (id) ON DELETE CASCADE,
+    CONSTRAINT fk_ingredient FOREIGN KEY (ingredientId) REFERENCES "Ingredient" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE refresh_tokens (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+-- Table for RefreshTokens
+CREATE TABLE "RefreshToken" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     token TEXT NOT NULL,
-    userId INT NOT NULL,
+    userId UUID NOT NULL,
     isRevoked BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users (id)
+    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES "User" (id) ON DELETE CASCADE
 );
 
-CREATE TABLE password_recovery (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
+-- Table for PasswordRecovery
+CREATE TABLE "PasswordRecovery" (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     token TEXT NOT NULL,
-    userId INT NOT NULL,
+    userId UUID NOT NULL,
     isRevoked BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES users (id)
+    CONSTRAINT fk_user FOREIGN KEY (userId) REFERENCES "User" (id) ON DELETE CASCADE
 );

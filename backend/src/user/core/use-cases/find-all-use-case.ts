@@ -13,10 +13,11 @@ export class FindAllUseCase {
 
   async execute({ name, page, limit }: FindAllParams): Promise<IUserPaginated> {
     const offset = (page - 1) * limit;
+    const pageSize = parseInt(limit as any, 10);
     const { users, total } = await this.userRepository.findAll({
       name,
       offset,
-      limit,
+      limit: pageSize,
     });
     const data = UserMapper.toProjectionList(users);
     return {

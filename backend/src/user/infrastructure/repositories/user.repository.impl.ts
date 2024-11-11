@@ -34,20 +34,24 @@ export class UserRepository implements IUserRepository {
   async findAll(
     params: IFindAllParams,
   ): Promise<{ total: number; users: User[] }> {
-    const where = params.name
-      ? { name: { contains: params.name, mode: 'insensitive' } }
-      : {};
     const [users, total] = await Promise.all([
       this.prismaService.user.findMany({
-        where,
+        where: {
+          name: {
+            contains: params.name ? params.name.toLowerCase() : '',
+          },
+        },
         skip: params.offset,
         take: params.limit,
       }),
       this.prismaService.user.count({
-        where,
+        where: {
+          name: {
+            contains: params.name ? params.name.toLowerCase() : '',
+          },
+        },
       }),
     ]);
-
     return { total, users };
   }
 }

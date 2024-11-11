@@ -11,8 +11,9 @@ export class CreateRecoverPasswordTokenUseCase {
     private readonly emailService: IEmailService,
   ) {}
 
-  async execute(email: string): Promise<void> {
-    const user = await this.findByEmailUseCase.execute(email);
+  async execute({ email }): Promise<void> {
+    console.log(email);
+    const user = await this.findByEmailUseCase.execute(email.email);
 
     const token = this.generateToken();
     const recoveryToken = RecoverPasswordMapper.toEntity({

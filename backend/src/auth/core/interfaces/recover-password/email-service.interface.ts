@@ -1,4 +1,4 @@
-interface ImailData {
+export interface ImailData {
   to: string;
   subject: string;
   body: string;

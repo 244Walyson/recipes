@@ -33,7 +33,7 @@ export class AuthController {
 
   @Post('recover-password/token/:email')
   async recoverPasswordToken(@Param() email: string) {
-    return this.createRecoverPasswordTokenUseCase.execute(email);
+    return this.createRecoverPasswordTokenUseCase.execute({ email });
   }
 
   @Post('recover-password')

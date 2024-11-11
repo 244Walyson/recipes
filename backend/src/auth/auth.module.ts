@@ -8,11 +8,18 @@ import { CreateRefreshTokenUseCase } from './core/use-cases/create-refresh-toke.
 import { PasswordEncoder } from 'src/user/infrastructure/utils/password-encoder.impl';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './core/contants/jwt-contants';
-import { JwtServiceImpl } from './infrastructure/utils/jwt-service';
+import { JwtServiceImpl } from './infrastructure/utils/jwt.service';
 import { RefreshTokenUseCase } from './core/use-cases/refresh-token.use-case';
 import { RefreshTokenRepository } from './infrastructure/repositories/refresh-token-repository.impl';
 import { AuthController } from './infrastructure/controllers/auth.controller';
 import { UserModule } from 'src/user/user.module';
+import { CreateRecoverPasswordTokenUseCase } from './core/use-cases/create-recover-password-token.use-case';
+import { IRecoveryPasswordRepository } from './core/interfaces/repositories/recovery-password.repository';
+import { IEmailService } from './core/interfaces/recover-password/email-service.interface';
+import { UpdatePasswordUseCase } from './core/use-cases/update-password.use-case';
+import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case';
+import { NodeMailerService } from './infrastructure/utils/nodemailer.service';
+import { RecoveryPasswordRepository } from './infrastructure/repositories/recovery-password.repository.impl';
 
 @Module({
   imports: [
@@ -37,6 +44,14 @@ import { UserModule } from 'src/user/user.module';
     {
       provide: 'IJwtService',
       useClass: JwtServiceImpl,
+    },
+    {
+      provide: 'IRecoveryPasswordRepository',
+      useClass: RecoveryPasswordRepository,
+    },
+    {
+      provide: 'IEmailService',
+      useClass: NodeMailerService,
     },
     {
       provide: CreateAccessTokenUseCase,
@@ -79,6 +94,41 @@ import { UserModule } from 'src/user/user.module';
         );
       },
       inject: ['IRefreshTokenRepository', CreateAccessTokenUseCase],
+    },
+    {
+      provide: UpdatePasswordUseCase,
+      useFactory: (
+        recoverPasswordRepository: IRecoveryPasswordRepository,
+        findByEmailUseCase: FindUserByEmailUserUseCase,
+        passwordEncoder: PasswordEncoder,
+        updateUserUseCase: UpdateUserUseCase,
+      ) => {
+        return new UpdatePasswordUseCase(
+          recoverPasswordRepository,
+          findByEmailUseCase,
+          passwordEncoder,
+          updateUserUseCase,
+        );
+      },
+    },
+    {
+      provide: CreateRecoverPasswordTokenUseCase,
+      useFactory: (
+        recoveryPasswordRepository: IRecoveryPasswordRepository,
+        findByEmailUseCase: FindUserByEmailUserUseCase,
+        emailService: IEmailService,
+      ) => {
+        return new CreateRecoverPasswordTokenUseCase(
+          recoveryPasswordRepository,
+          findByEmailUseCase,
+          emailService,
+        );
+      },
+      inject: [
+        'IRecoveryPasswordRepository',
+        FindUserByEmailUserUseCase,
+        'IEmailService',
+      ],
     },
   ],
 })

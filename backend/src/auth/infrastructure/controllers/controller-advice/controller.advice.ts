@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ExceptionHandler } from './exception.handler';
-import { DomainExceptionHandler } from './handlers/domain.exception.handler';
-import { DuplicateresourceExcetionHandler } from './handlers/duplicate-resource.exception.handler';
 import { InvalidFieldValueExceptionHandler } from './handlers/invalid-field-value.exception.handler';
 import { ResourceNotFoundExceptionHandler } from './handlers/resource-not-found.exception.handler';
 
@@ -16,7 +14,6 @@ export class ControllerAdvice {
   }
 
   private registryHandlers(): void {
-    this.handlers.set('DomainException', new DomainExceptionHandler());
     this.handlers.set(
       'InvalidFieldValueException',
       new InvalidFieldValueExceptionHandler(),
@@ -24,10 +21,6 @@ export class ControllerAdvice {
     this.handlers.set(
       'ResourceNotFoundException',
       new ResourceNotFoundExceptionHandler(),
-    );
-    this.handlers.set(
-      'DuplicateResourceException',
-      new DuplicateresourceExcetionHandler(),
     );
   }
 

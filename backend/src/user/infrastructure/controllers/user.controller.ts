@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case';
-import { ControllerAdvice } from './controller-advice/controller.advice';
 import { UserRequestDto } from '../dto/user-request.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
 import { FindUserByIdlUserUseCase } from 'src/user/core/use-cases/find-user-by-id.use-case';
@@ -14,7 +13,6 @@ export class UserController {
     private readonly findUserByIdlUserUseCase: FindUserByIdlUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly findAllUseCase: FindAllUseCase,
-    private readonly controllerAdvice: ControllerAdvice,
   ) {}
 
   @Post()

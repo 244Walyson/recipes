@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcryptjs';
-import { IPasswordEncoder } from 'src/user/core/interfaces/password-encoder.interface';
+import { IPasswordEncoder } from 'src/user/core/interfaces/utils/password-encoder.interface';
 
 export class PasswordEncoder implements IPasswordEncoder {
   public async encode(password: string): Promise<string> {

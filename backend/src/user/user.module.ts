@@ -4,12 +4,13 @@ import { CreateUserUseCase } from './core/use-cases/create-user.use-case';
 import { UserRepository } from './infrastructure/repositories/user.repository.impl';
 import { ControllerAdvice } from './infrastructure/controllers/controller-advice/controller.advice';
 import { PrismaService } from 'src/utils/prisma.service';
-import { IUserRepository } from './core/interfaces/user-repository.interface';
+import { IUserRepository } from './core/interfaces/repositories/user-repository.interface';
 import { PasswordEncoder } from './infrastructure/utils/password-encoder.impl';
-import { IPasswordEncoder } from './core/interfaces/password-encoder.interface';
+import { IPasswordEncoder } from './core/interfaces/utils/password-encoder.interface';
 import { FindUserByEmailUserUseCase } from './core/use-cases/find-user-by-email.use-case';
 import { FindUserByIdlUserUseCase } from './core/use-cases/find-user-by-id.use-case';
 import { UpdateUserUseCase } from './core/use-cases/update-user.use-case';
+import { FindAllUseCase } from './core/use-cases/find-all-use-case';
 
 @Module({
   controllers: [UserController],
@@ -52,6 +53,13 @@ import { UpdateUserUseCase } from './core/use-cases/update-user.use-case';
       provide: UpdateUserUseCase,
       useFactory: (userRepository: IUserRepository) => {
         return new UpdateUserUseCase(userRepository);
+      },
+      inject: ['IUserRepository'],
+    },
+    {
+      provide: FindAllUseCase,
+      useFactory: (userRepository: IUserRepository) => {
+        return new FindAllUseCase(userRepository);
       },
       inject: ['IUserRepository'],
     },

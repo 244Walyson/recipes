@@ -1,4 +1,4 @@
-import { IUserRequest } from 'src/user/core/interfaces/user-request.interface';
+import { IUserRequest } from 'src/user/core/interfaces/user/user-request.interface';
 
 export class UserRequestDto implements IUserRequest {
   name: string;

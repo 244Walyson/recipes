@@ -1,5 +1,8 @@
 import { User } from 'src/user/core/entities/user.entity';
-import { IUserRepository } from 'src/user/core/interfaces/user-repository.interface';
+import {
+  IFindAllParams,
+  IUserRepository,
+} from 'src/user/core/interfaces/repositories/user-repository.interface';
 import { PrismaService } from '../../../utils/prisma.service';
 import { Injectable } from '@nestjs/common';
 
@@ -27,7 +30,24 @@ export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User> {
     return await this.prismaService.user.findUnique({ where: { email } });
   }
-  async findAll(): Promise<User[]> {
-    return await this.prismaService.user.findMany();
+
+  async findAll(
+    params: IFindAllParams,
+  ): Promise<{ total: number; users: User[] }> {
+    const where = params.name
+      ? { name: { contains: params.name, mode: 'insensitive' } }
+      : {};
+    const [users, total] = await Promise.all([
+      this.prismaService.user.findMany({
+        where,
+        skip: params.offset,
+        take: params.limit,
+      }),
+      this.prismaService.user.count({
+        where,
+      }),
+    ]);
+
+    return { total, users };
   }
 }

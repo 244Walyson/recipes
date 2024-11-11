@@ -5,6 +5,9 @@ export class User {
   username: string;
   password: string;
   imgUrl: string;
+  numberOfRecipes: number;
+  numberOfFollowers: number;
+  numberOfFollowings: number;
   createdAt: Date;
   isActive: boolean = true;
 

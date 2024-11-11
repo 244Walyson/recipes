@@ -1,4 +1,4 @@
-import { IUserResponse } from 'src/user/core/interfaces/user-response.interface';
+import { IUserResponse } from 'src/user/core/interfaces/user/user-response.interface';
 
 export class UserResponseDto implements IUserResponse {
   id: string;

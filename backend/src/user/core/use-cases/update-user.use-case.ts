@@ -1,7 +1,7 @@
 import { DomainException } from '../exceptions/domain.exception';
-import { IUserRepository } from '../interfaces/user-repository.interface';
-import { IUserRequest } from '../interfaces/user-request.interface';
-import { IUserResponse } from '../interfaces/user-response.interface';
+import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
+import { IUserRequest } from '../interfaces/user/user-request.interface';
+import { IUserResponse } from '../interfaces/user/user-response.interface';
 import { UserMapper } from '../mappers/user.mapper';
 
 export class UpdateUserUseCase {

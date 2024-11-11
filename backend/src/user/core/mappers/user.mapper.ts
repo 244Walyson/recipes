@@ -1,7 +1,8 @@
 // src/core/mappers/user.mapper.ts
-import { IUserRequest } from '../interfaces/user-request.interface';
+import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { User } from '../entities/user.entity';
-import { IUserResponse } from '../interfaces/user-response.interface';
+import { IUserResponse } from '../interfaces/user/user-response.interface';
+import { IUserProjection } from '../interfaces/user/user-projection.interface';
 
 export class UserMapper {
   static toEntity(dto: IUserRequest): User {
@@ -23,5 +24,21 @@ export class UserMapper {
       username: user.username,
       imgUrl: user.imgUrl,
     };
+  }
+
+  static toProjection(user: User): IUserProjection {
+    return {
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      imgUrl: user.imgUrl,
+      numberOfFollowers: user.numberOfFollowers,
+      numberOfFollowings: user.numberOfFollowings,
+      numberOfRecipes: user.numberOfRecipes,
+    };
+  }
+
+  static toProjectionList(users: User[]): IUserProjection[] {
+    return users.map((user) => this.toProjection(user));
   }
 }

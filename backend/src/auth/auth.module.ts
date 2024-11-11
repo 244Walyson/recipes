@@ -1,11 +1,11 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PrismaService } from 'src/utils/prisma.service';
 import { CreateAccessTokenUseCase } from './core/use-cases/create-access-token-use-case';
 import { FindUserByEmailUserUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
 import { IJwtService } from './core/interfaces/jwt/jwt.service.interface';
-import { IPasswordEncoder } from 'src/user/core/interfaces/utils/password-encoder.interface';
+import { IPasswordEncoder } from 'src/auth/core/interfaces/utils/password-encoder.interface';
 import { CreateRefreshTokenUseCase } from './core/use-cases/create-refresh-toke.use-case';
-import { PasswordEncoder } from 'src/user/infrastructure/utils/password-encoder.impl';
+import { PasswordEncoder } from 'src/auth/infrastructure/utils/password-encoder.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './core/contants/jwt-contants';
 import { JwtServiceImpl } from './infrastructure/utils/jwt.service';
@@ -23,7 +23,7 @@ import { RecoveryPasswordRepository } from './infrastructure/repositories/recove
 
 @Module({
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
@@ -137,5 +137,6 @@ import { RecoveryPasswordRepository } from './infrastructure/repositories/recove
       ],
     },
   ],
+  exports: ['IPasswordEncoder'],
 })
 export class AuthModule {}

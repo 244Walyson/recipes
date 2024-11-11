@@ -1,4 +1,4 @@
-import { IPasswordEncoder } from '../interfaces/utils/password-encoder.interface';
+import { IPasswordEncoder } from '../../../auth/core/interfaces/utils/password-encoder.interface';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';

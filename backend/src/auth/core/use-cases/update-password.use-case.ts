@@ -1,6 +1,6 @@
 import { FindUserByEmailUserUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
 import { IRecoverPasswordRequest } from '../interfaces/recover-password/recover-password-request.interface';
-import { PasswordEncoder } from 'src/user/infrastructure/utils/password-encoder.impl';
+import { PasswordEncoder } from 'src/auth/infrastructure/utils/password-encoder.service';
 import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case';
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
 import { ResourceNotFoundException } from 'src/user/core/exceptions/resource-not-found.exception';

@@ -5,6 +5,11 @@ import { UserRepository } from './infrastructure/repositories/user.repository.im
 import { ControllerAdvice } from './infrastructure/controllers/controller-advice/controller.advice';
 import { PrismaService } from 'src/utils/prisma.service';
 import { IUserRepository } from './core/interfaces/user-repository.interface';
+import { PasswordEncoder } from './infrastructure/utils/password-encoder.impl';
+import { IPasswordEncoder } from './core/interfaces/password-encoder.interface';
+import { FindUserByEmailUserUseCase } from './core/use-cases/find-user-by-email.use-case';
+import { FindUserByIdlUserUseCase } from './core/use-cases/find-user-by-id.use-case';
+import { UpdateUserUseCase } from './core/use-cases/update-user.use-case';
 
 @Module({
   controllers: [UserController],
@@ -16,9 +21,37 @@ import { IUserRepository } from './core/interfaces/user-repository.interface';
       useClass: UserRepository,
     },
     {
+      provide: 'IPasswordEncoder',
+      useClass: PasswordEncoder,
+    },
+    {
       provide: CreateUserUseCase,
+      useFactory: (
+        userRepository: IUserRepository,
+        passwordEncoder: IPasswordEncoder,
+      ) => {
+        return new CreateUserUseCase(userRepository, passwordEncoder);
+      },
+      inject: ['IUserRepository', 'IPasswordEncoder'],
+    },
+    {
+      provide: FindUserByEmailUserUseCase,
       useFactory: (userRepository: IUserRepository) => {
-        return new CreateUserUseCase(userRepository);
+        return new FindUserByEmailUserUseCase(userRepository);
+      },
+      inject: ['IUserRepository'],
+    },
+    {
+      provide: FindUserByIdlUserUseCase,
+      useFactory: (userRepository: IUserRepository) => {
+        return new FindUserByIdlUserUseCase(userRepository);
+      },
+      inject: ['IUserRepository'],
+    },
+    {
+      provide: UpdateUserUseCase,
+      useFactory: (userRepository: IUserRepository) => {
+        return new UpdateUserUseCase(userRepository);
       },
       inject: ['IUserRepository'],
     },

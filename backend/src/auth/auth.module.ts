@@ -110,6 +110,12 @@ import { RecoveryPasswordRepository } from './infrastructure/repositories/recove
           updateUserUseCase,
         );
       },
+      inject: [
+        'IRecoveryPasswordRepository',
+        FindUserByEmailUserUseCase,
+        'IPasswordEncoder',
+        UpdateUserUseCase,
+      ],
     },
     {
       provide: CreateRecoverPasswordTokenUseCase,

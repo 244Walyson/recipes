@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { CreateAccessTokenUseCase } from 'src/auth/core/use-cases/create-access-token-use-case';
 import { RefreshTokenUseCase } from 'src/auth/core/use-cases/refresh-token.use-case';
 import { CredentiaslRequestDto } from '../dtos/creadentials-request.dto';
@@ -37,6 +37,7 @@ export class AuthController {
   }
 
   @Post('recover-password')
+  @HttpCode(200)
   async updatePassword(@Body() dto: RecovrePassordRequestDto) {
     return await this.updatePasswordUseCase.execute(dto);
   }

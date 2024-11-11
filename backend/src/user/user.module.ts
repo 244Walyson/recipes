@@ -64,6 +64,6 @@ import { FindAllUseCase } from './core/use-cases/find-all-use-case';
       inject: ['IUserRepository'],
     },
   ],
-  exports: [FindUserByEmailUserUseCase, 'IPasswordEncoder'],
+  exports: [FindUserByEmailUserUseCase, UpdateUserUseCase, 'IPasswordEncoder'],
 })
 export class UserModule {}

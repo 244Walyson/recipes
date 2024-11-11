@@ -5,6 +5,7 @@ import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case'
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
 import { ResourceNotFoundException } from 'src/user/core/exceptions/resource-not-found.exception';
 import { RecoverPassword } from '../entities/recover-password.entity';
+import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
 
 export class UpdatePasswordUseCase {
   constructor(
@@ -16,6 +17,8 @@ export class UpdatePasswordUseCase {
 
   async execute(dto: IRecoverPasswordRequest): Promise<void> {
     const recoverToken = await this.getRecoverToken(dto.token, dto.email);
+    this.validateRecoverToken(recoverToken);
+
     const user = await this.findByEmailUseCase.execute(dto.email);
     user.password = await this.passwordEncoder.encode(dto.newPassword);
 
@@ -34,5 +37,15 @@ export class UpdatePasswordUseCase {
     }
 
     return recoverToken;
+  }
+
+  private validateRecoverToken(recovertoken: RecoverPassword) {
+    if (recovertoken.revoked) {
+      throw new UnauthorizedException('Recover Token revoked');
+    }
+    const isExpired = recovertoken.expiresAt > BigInt(new Date().getTime());
+    if (isExpired) {
+      throw new UnauthorizedException('Recover Token expired');
+    }
   }
 }

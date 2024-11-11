@@ -1,4 +1,4 @@
-import { DomainException } from '../exceptions/domain.exception';
+import { ResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';
 import { UserMapper } from '../mappers/user.mapper';
@@ -9,7 +9,7 @@ export class FindUserByEmailUserUseCase {
   async execute(email: string): Promise<IUserResponse> {
     const userExists = await this.userRepository.findByEmail(email);
     if (userExists) {
-      throw new DomainException('User Not Found');
+      throw new ResourceNotFoundException('User Not Found');
     }
     return UserMapper.toDTO(userExists);
   }

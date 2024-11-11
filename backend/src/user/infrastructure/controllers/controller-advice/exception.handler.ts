@@ -1,3 +1,3 @@
 export abstract class ExceptionHandler<T extends Error> {
-  public abstract handle(exception: T): void;
+  public abstract handle(exception: T, response, request): void;
 }

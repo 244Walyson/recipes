@@ -1,9 +1,9 @@
-import { DomainException } from '../exceptions/domain.exception';
 import { IPasswordEncoder } from '../interfaces/utils/password-encoder.interface';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';
 import { UserMapper } from '../mappers/user.mapper';
+import { DuplicateresourceException } from '../exceptions/duplicate-resource.exception';
 
 export class CreateUserUseCase {
   constructor(
@@ -14,7 +14,9 @@ export class CreateUserUseCase {
   async execute(dto: IUserRequest): Promise<IUserResponse> {
     const userExists = await this.userRepository.findByEmail(dto.email);
     if (userExists) {
-      throw new DomainException('User with this email already exists');
+      throw new DuplicateresourceException(
+        'User with this email already exists',
+      );
     }
     const password = await this.passwordEncoder.encode(dto.password);
     const user = UserMapper.toEntity(dto);

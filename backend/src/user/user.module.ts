@@ -5,7 +5,6 @@ import { UserRepository } from './infrastructure/repositories/user.repository.im
 import { ControllerAdvice } from './infrastructure/controllers/controller-advice/controller.advice';
 import { PrismaService } from 'src/utils/prisma.service';
 import { IUserRepository } from './core/interfaces/repositories/user-repository.interface';
-import { PasswordEncoder } from '../auth/infrastructure/utils/password-encoder.service';
 import { IPasswordEncoder } from '../auth/core/interfaces/utils/password-encoder.interface';
 import { FindUserByEmailUserUseCase } from './core/use-cases/find-user-by-email.use-case';
 import { FindUserByIdlUserUseCase } from './core/use-cases/find-user-by-id.use-case';
@@ -22,10 +21,6 @@ import { AuthModule } from 'src/auth/auth.module';
     {
       provide: 'IUserRepository',
       useClass: UserRepository,
-    },
-    {
-      provide: 'IPasswordEncoder',
-      useClass: PasswordEncoder,
     },
     {
       provide: CreateUserUseCase,
@@ -66,6 +61,6 @@ import { AuthModule } from 'src/auth/auth.module';
       inject: ['IUserRepository'],
     },
   ],
-  exports: [FindUserByEmailUserUseCase, UpdateUserUseCase],
+  exports: [CreateUserUseCase, FindUserByEmailUserUseCase, UpdateUserUseCase],
 })
 export class UserModule {}

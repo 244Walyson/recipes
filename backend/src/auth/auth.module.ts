@@ -20,6 +20,10 @@ import { UpdatePasswordUseCase } from './core/use-cases/update-password.use-case
 import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case';
 import { NodeMailerService } from './infrastructure/utils/nodemailer.service';
 import { RecoveryPasswordRepository } from './infrastructure/repositories/recovery-password.repository.impl';
+import { PassportGoogleStrategy } from './infrastructure/utils/oauth2-google-provider.impl';
+import { PassportGithubStrategy } from './infrastructure/utils/oauth2-github-provider.impl';
+import { OAuth2AuthenticationUseCase } from './core/use-cases/oauth2-authentication.use-case';
+import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case';
 
 @Module({
   imports: [
@@ -33,6 +37,9 @@ import { RecoveryPasswordRepository } from './infrastructure/repositories/recove
   controllers: [AuthController],
   providers: [
     PrismaService,
+    CreateUserUseCase,
+    PassportGoogleStrategy,
+    PassportGithubStrategy,
     {
       provide: 'IPasswordEncoder',
       useClass: PasswordEncoder,
@@ -135,6 +142,19 @@ import { RecoveryPasswordRepository } from './infrastructure/repositories/recove
         FindUserByEmailUserUseCase,
         'IEmailService',
       ],
+    },
+    {
+      provide: OAuth2AuthenticationUseCase,
+      useFactory: (
+        createUserUseCase: CreateUserUseCase,
+        createAccessTokenUseCase: CreateAccessTokenUseCase,
+      ) => {
+        return new OAuth2AuthenticationUseCase(
+          createUserUseCase,
+          createAccessTokenUseCase,
+        );
+      },
+      inject: [CreateUserUseCase, CreateAccessTokenUseCase],
     },
   ],
   exports: ['IPasswordEncoder'],

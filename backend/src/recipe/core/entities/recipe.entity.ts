@@ -1,6 +1,5 @@
 import { Comment } from './comment.entity';
 import { CuisineStyle } from './cousine-style.entity';
-import { KitchenTool } from './kitchen-toll.entity';
 import { MealType } from './meal-type.entity';
 import { RecipeIngredient } from './recipe-ingredient.entity';
 
@@ -14,7 +13,7 @@ export class Recipe {
   category?: string;
   tags?: string[];
   calories?: number;
-  macronutrients?: { protein: number; carbs: number; fat: number };
+  macronutrients?: Record<string, number>;
   servingSize?: string;
   allergens?: string[];
   cookTime?: number;
@@ -34,11 +33,10 @@ export class Recipe {
   updatedAt: Date = new Date();
   deleted: boolean = false;
   userId: string;
-  comments: Comment[] = [];
-  recipeIngredients: RecipeIngredient[] = [];
-  mealTypes: MealType[] = [];
-  kitchenTools: KitchenTool[] = [];
-  cuisineStyles: CuisineStyle[] = [];
+  comments?: Comment[] = [];
+  recipeIngredients?: RecipeIngredient[] = [];
+  mealTypes?: MealType[] = [];
+  cuisineStyles?: CuisineStyle[] = [];
 
   constructor(props: Partial<Recipe>) {
     this.id = props.id ?? crypto.randomUUID();

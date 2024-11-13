@@ -1,7 +1,12 @@
 import { RecipeIngredient } from './recipe-ingredient.entity';
 
 export class Ingredient {
-  public id: string;
-  public name: string;
-  public recipeIngredients: RecipeIngredient[] = [];
+  id: string;
+  name: string;
+  recipeIngredients?: RecipeIngredient[] = [];
+
+  constructor(props: Partial<Ingredient>) {
+    this.id = props.id ?? crypto.randomUUID();
+    Object.assign(this, props);
+  }
 }

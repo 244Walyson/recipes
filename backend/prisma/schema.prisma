@@ -87,7 +87,6 @@ model Recipe {
   comments          Comment[]
   recipeIngredients RecipeIngredient[]
   mealTypes         RecipeMealType[]
-  kitchenTools      RecipeKitchenTool[]
   cuisineStyles     RecipeCuisineStyle[]
 }
 
@@ -114,13 +113,6 @@ model MealType {
   recipes RecipeMealType[]
 }
 
-model KitchenTool {
-  id          String              @id @default(uuid())
-  name        String
-  description String?
-  recipes     RecipeKitchenTool[]
-}
-
 model CuisineStyle {
   id      String               @id @default(uuid())
   name    String
@@ -145,15 +137,6 @@ model RecipeMealType {
   MealType   MealType @relation(fields: [mealTypeId], references: [id])
 
   @@id([recipeId, mealTypeId])
-}
-
-model RecipeKitchenTool {
-  recipeId      String
-  kitchenToolId String
-  Recipe        Recipe      @relation(fields: [recipeId], references: [id])
-  KitchenTool   KitchenTool @relation(fields: [kitchenToolId], references: [id])
-
-  @@id([recipeId, kitchenToolId])
 }
 
 model RecipeCuisineStyle {

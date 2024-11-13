@@ -1,4 +1,3 @@
-import { IComment } from '../comment/comment.interface';
 import { IIngredient } from '../ingredient/ingredient.interface';
 import { IMealType } from '../meal-type/meal-type.interface';
 import { ICuisineStyle } from '../cuisine-style/cousine-styles.interface';
@@ -33,8 +32,7 @@ export interface IRecipeResponse {
   updatedAt: Date;
   deleted: boolean;
   userId: string;
-  comments: IComment[];
-  recipeIngredients: IIngredient[];
-  mealTypes: IMealType[];
-  cuisineStyles: ICuisineStyle[];
+  recipeIngredients?: IIngredient[];
+  mealTypes?: IMealType[];
+  cuisineStyles?: ICuisineStyle[];
 }

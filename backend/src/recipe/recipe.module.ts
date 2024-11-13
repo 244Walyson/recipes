@@ -15,6 +15,7 @@ import { CreateCuisineStyleUseCase } from './core/use-cases/cuisine-style/create
 import { FindCuisineStyleByIdUseCase } from './core/use-cases/cuisine-style/find-cuisine-style-by-id.use-case';
 import { FindMealTypeByIdUseCase } from './core/use-cases/meal-type/find-cuisine-style-by-id.use-case';
 import { IMealTypeRepository } from './core/interfaces/repositories/meal-type.repository';
+import { FindRecipeByIdUseCase } from './core/use-cases/recipe/find-recipe-by-id.use-case';
 
 @Module({
   imports: [],
@@ -78,6 +79,13 @@ import { IMealTypeRepository } from './core/interfaces/repositories/meal-type.re
         return new CreateCuisineStyleUseCase(cuisineStyleRepository);
       },
       inject: ['ICuisineStyleRepository'],
+    },
+    {
+      provide: FindRecipeByIdUseCase,
+      useFactory: (recipeRepository: IRecipeRepository) => {
+        return new FindRecipeByIdUseCase(recipeRepository);
+      },
+      inject: ['IRecipeRepository'],
     },
     {
       provide: CreateRecipeUseCase,

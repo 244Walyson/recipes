@@ -10,5 +10,5 @@ export interface IRecipeRepository {
     filters: IFindAllFilters,
   ): Promise<{ total: number; data: IRecipeProjection[] }>;
   update(recipe: Recipe): Promise<Recipe>;
-  inactivate(recipeId: string): Promise<void>;
+  delete(recipeId: string): Promise<void>;
 }

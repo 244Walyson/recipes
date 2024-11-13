@@ -17,29 +17,38 @@ export class CreateRecipeUseCase {
   ) {}
 
   async execute(recipe: IReciperequest): Promise<IRecipeResponse> {
-    this.validateMealType(recipe.mealTypes);
-    this.validateCuisineStyle(recipe.cuisineStyles);
-    this.validateIngredients(recipe.ingredients);
+    await this.validateMealTypes(recipe.mealTypes);
+    await this.validateCuisineStyles(recipe.cuisineStyles);
+    await this.validateIngredients(recipe.ingredients);
     const recipeEntity = RecipeMapper.toEntity(recipe);
     const createdRecipe = await this.recipeRepository.create(recipeEntity);
-    return RecipeMapper.toResponse(createdRecipe);
+    console.log('CreateRecipeUseCase.execute', createdRecipe);
+    return RecipeMapper.toResponseMin(createdRecipe);
   }
 
-  private validateMealType = (mealTypes: MealType[]) => {
-    mealTypes.forEach((mealType) => {
-      this.findMealTypeByidUseCase.execute(mealType.id);
-    });
-  };
+  private async validateMealTypes(mealTypes: MealType[]): Promise<void> {
+    await Promise.all(
+      mealTypes.map((mealType) =>
+        this.findMealTypeByidUseCase.execute(mealType.id),
+      ),
+    );
+  }
 
-  private validateCuisineStyle = (cuisineStyles: CuisineStyle[]) => {
-    cuisineStyles.forEach((cuisineStyle) => {
-      this.findCuisineStyleByIdUseCase.execute(cuisineStyle.id);
-    });
-  };
+  private async validateCuisineStyles(
+    cuisineStyles: CuisineStyle[],
+  ): Promise<void> {
+    await Promise.all(
+      cuisineStyles.map((cuisineStyle) =>
+        this.findCuisineStyleByIdUseCase.execute(cuisineStyle.id),
+      ),
+    );
+  }
 
-  private validateIngredients = (ingredients: IIngredient[]) => {
-    ingredients.forEach((ingredient) => {
-      this.findIngredientByIdUseCase.execute(ingredient.id);
-    });
-  };
+  private async validateIngredients(ingredients: IIngredient[]): Promise<void> {
+    await Promise.all(
+      ingredients.map((ingredient) =>
+        this.findIngredientByIdUseCase.execute(ingredient.id),
+      ),
+    );
+  }
 }

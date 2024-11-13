@@ -1,3 +1,4 @@
+import { RecipeIngredient } from '../entities/recipe-ingredient.entity';
 import { Recipe } from '../entities/recipe.entity';
 import { IIngredient } from '../interfaces/ingredient/ingredient.interface';
 import { IMealType } from '../interfaces/meal-type/meal-type.interface';
@@ -44,7 +45,7 @@ export class RecipeMapper {
   private static addIngredients = (
     entity: Recipe,
     ingredients: IIngredient[],
-  ) => {
+  ): RecipeIngredient[] => {
     return ingredients.map((ingredient) => ({
       ingredientId: ingredient.id,
       recipeId: entity.id,
@@ -67,7 +68,7 @@ export class RecipeMapper {
     }));
   };
 
-  static toResponse(recipe: Recipe): IRecipeResponse {
+  static toResponseMin(recipe: Recipe): IRecipeResponse {
     return {
       id: recipe.id,
       name: recipe.name,
@@ -98,8 +99,19 @@ export class RecipeMapper {
       updatedAt: recipe.updatedAt,
       deleted: recipe.deleted,
       userId: recipe.userId,
-      comments: recipe.comments,
-      recipeIngredients: [],
+    };
+  }
+
+  static toResponse(recipe: Recipe): IRecipeResponse {
+    const data = this.toResponseMin(recipe);
+    return {
+      ...data,
+      recipeIngredients: recipe.recipeIngredients.map((ingredient) => ({
+        id: ingredient.ingredientId,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+        name: ingredient.ingredient?.name,
+      })),
       mealTypes: recipe.mealTypes,
       cuisineStyles: recipe.cuisineStyles,
     };

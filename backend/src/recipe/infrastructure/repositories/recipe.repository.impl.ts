@@ -51,10 +51,35 @@ export class RecipeRepository implements IRecipeRepository {
   async findbyId(recipeId: string): Promise<Recipe> {
     const recipe = await this.prismaService.recipe.findUnique({
       where: { id: recipeId, deleted: false },
+      include: {
+        recipeIngredients: {
+          include: { ingredient: true },
+        },
+        mealTypes: {
+          select: { MealType: { select: { id: true, name: true } } },
+        },
+        cuisineStyles: {
+          select: { CuisineStyle: { select: { id: true, name: true } } },
+        },
+      },
     });
+
+    if (!recipe) {
+      throw new Error('Recipe not found');
+    }
+
     return {
       ...recipe,
       macronutrients: recipe.macronutrients as Record<string, number>,
+      mealTypes: recipe.mealTypes.map((item) => item.MealType),
+      cuisineStyles: recipe.cuisineStyles.map((item) => item.CuisineStyle),
+      recipeIngredients: recipe.recipeIngredients.map((item) => ({
+        ...item,
+        ingredient: {
+          id: item.ingredient.id,
+          name: item.ingredient.name,
+        },
+      })),
     };
   }
 
@@ -139,7 +164,7 @@ export class RecipeRepository implements IRecipeRepository {
       macronutrients: updatedRecipe.macronutrients as Record<string, number>,
     };
   }
-  async inactivate(recipeId: string): Promise<void> {
+  async delete(recipeId: string): Promise<void> {
     await this.prismaService.recipe.update({
       where: { id: recipeId },
       data: { deleted: true },

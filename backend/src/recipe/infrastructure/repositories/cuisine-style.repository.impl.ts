@@ -15,9 +15,39 @@ export class CuisineStyleRepository implements ICuisineStyleRepository {
   async findById(id: string): Promise<CuisineStyle> {
     return await this.prismaService.cuisineStyle.findUnique({ where: { id } });
   }
-  async findAll(): Promise<CuisineStyle[]> {
-    return await this.prismaService.cuisineStyle.findMany();
+
+  async findAll({
+    name,
+    offset,
+    limit,
+  }: {
+    name: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: CuisineStyle[] }> {
+    const total = await this.prismaService.cuisineStyle.count({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    const data = await this.prismaService.cuisineStyle.findMany({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return { total, data };
   }
+
   async findByName(name: string): Promise<CuisineStyle> {
     return await this.prismaService.cuisineStyle.findUnique({
       where: { id: name },

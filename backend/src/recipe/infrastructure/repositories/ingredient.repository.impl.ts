@@ -18,9 +18,39 @@ export class ingredientRepository implements IIngredientRepository {
   async findById(id: string): Promise<Ingredient> {
     return await this.prismaService.ingredient.findUnique({ where: { id } });
   }
-  async findAll(): Promise<Ingredient[]> {
-    return await this.prismaService.ingredient.findMany();
+
+  async findAll({
+    name,
+    offset,
+    limit,
+  }: {
+    name: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: Ingredient[] }> {
+    const total = await this.prismaService.ingredient.count({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    const data = await this.prismaService.ingredient.findMany({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return { total, data };
   }
+
   async findByName(name: string): Promise<Ingredient> {
     return await this.prismaService.ingredient.findUnique({
       where: { id: name },

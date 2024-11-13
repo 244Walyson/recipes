@@ -6,7 +6,13 @@ export interface IRecipeRepository {
   create(recipe: Recipe): Promise<Recipe>;
   findbyId(recipeId: string): Promise<Recipe>;
   findAll(
-    pageable: { page: number; limit: number },
+    {
+      offset,
+      limit,
+    }: {
+      offset: number;
+      limit: number;
+    },
     filters: IFindAllFilters,
   ): Promise<{ total: number; data: IRecipeProjection[] }>;
   update(id: string, recipe: Recipe): Promise<Recipe>;

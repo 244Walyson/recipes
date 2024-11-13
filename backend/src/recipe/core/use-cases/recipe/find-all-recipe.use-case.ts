@@ -7,15 +7,27 @@ export class FindAllRecipeUseCase {
   constructor(private recipeRepository: IRecipeRepository) {}
 
   async execute(
-    pageable: { page: number; limit: number },
+    {
+      page,
+      limit,
+    }: {
+      page: number;
+      limit: number;
+    },
     filters?: IFindAllFilters,
   ): Promise<IPaginatedResponse<IRecipeProjection>> {
-    const recipes = await this.recipeRepository.findAll(pageable, filters);
+    const offset = (page - 1) * limit;
+    const numericLimit = parseInt(limit.toString(), 10);
+
+    const recipes = await this.recipeRepository.findAll(
+      { offset, limit: numericLimit },
+      filters,
+    );
     return {
       data: recipes.data,
       total: recipes.total,
-      page: pageable.page,
-      limit: pageable.limit,
+      page: page,
+      limit: limit,
     };
   }
 }

@@ -5,21 +5,28 @@ import { IPaginatedResponse } from '../../interfaces/shared/paginated-response.i
 export class FindCommentByRecipeIdUseCase {
   constructor(private readonly commentrepository: ICommentrepository) {}
 
-  async execute(
-    recipeId: string,
-    pageable: { page: number; limit: number },
-  ): Promise<IPaginatedResponse<IComment>> {
-    const comments = await this.commentrepository.findCommentsByRecipeId(
+  async execute({
+    recipeId,
+    page,
+    limit,
+  }: {
+    recipeId: string;
+    page: number;
+    limit: number;
+  }): Promise<IPaginatedResponse<IComment>> {
+    const offset = (page - 1) * limit;
+    const numericLimit = parseInt(limit.toString(), 10);
+
+    const comments = await this.commentrepository.findCommentByRecipeId({
       recipeId,
-      {
-        page: pageable.page,
-        limit: pageable.limit,
-      },
-    );
+      offset,
+      limit: numericLimit,
+    });
+
     return {
       data: comments.data,
-      page: pageable.page,
-      limit: pageable.limit,
+      page: page,
+      limit: limit,
       total: comments.total,
     };
   }

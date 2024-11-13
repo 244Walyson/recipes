@@ -84,7 +84,13 @@ export class RecipeRepository implements IRecipeRepository {
   }
 
   async findAll(
-    pageable: { page: number; limit: number },
+    {
+      offset,
+      limit,
+    }: {
+      offset: number;
+      limit: number;
+    },
     filters: IFindAllFilters,
   ): Promise<{ total: number; data: IRecipeProjection[] }> {
     const total = await this.prismaService.recipe.count({
@@ -141,8 +147,8 @@ export class RecipeRepository implements IRecipeRepository {
         viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
         deleted: false,
       },
-      skip: (pageable.page - 1) * pageable.limit,
-      take: pageable.limit,
+      skip: offset,
+      take: limit,
     });
 
     const data = recipes.map((recipe) => ({

@@ -3,7 +3,7 @@ import { IReciperequest } from '../../interfaces/recipes/recipe-request.interfac
 import { IRecipeResponse } from '../../interfaces/recipes/recipe-response.interface';
 import { IRecipeRepository } from '../../interfaces/repositories/recipe.repository';
 import { RecipeMapper } from '../../mappers/recipe.mapper';
-import { FindMealTypeByIdUseCase } from '../meal-type/find-cuisine-style-by-id.use-case';
+import { FindMealTypeByIdUseCase } from '../meal-type/find-meal-type-by-id.use-case';
 import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.use-case';
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';

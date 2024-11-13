@@ -13,15 +13,28 @@ import { IIngredientRepository } from './core/interfaces/repositories/ingredient
 import { ICuisineStyleRepository } from './core/interfaces/repositories/cuisine-style.repository';
 import { CreateCuisineStyleUseCase } from './core/use-cases/cuisine-style/create-cuisine-styles.use-case';
 import { FindCuisineStyleByIdUseCase } from './core/use-cases/cuisine-style/find-cuisine-style-by-id.use-case';
-import { FindMealTypeByIdUseCase } from './core/use-cases/meal-type/find-cuisine-style-by-id.use-case';
+import { FindMealTypeByIdUseCase } from './core/use-cases/meal-type/find-meal-type-by-id.use-case';
 import { IMealTypeRepository } from './core/interfaces/repositories/meal-type.repository';
 import { FindRecipeByIdUseCase } from './core/use-cases/recipe/find-recipe-by-id.use-case';
 import { UpdateRecipeUseCase } from './core/use-cases/recipe/update-recipe.use-case';
 import { DeleteRecipeUseCase } from './core/use-cases/recipe/delete-recipe.use-case';
+import { FindAllCuisineStyleUseCase } from './core/use-cases/cuisine-style/find-all-cuisine-style.use-case';
+import { FindAllMealTypeUseCase } from './core/use-cases/meal-type/find-all-meal-type.use-case';
+import { CreateMealTypeUseCase } from './core/use-cases/meal-type/create-meal-type.use-case';
+import { FindAllIngredientUseCase } from './core/use-cases/ingredient/find-all-ingredient.use-case';
+import { CreateIngredientUseCase } from './core/use-cases/ingredient/create-ingredient.use-case';
+import { IngredinetController } from './infrastructure/controllers/ingredient.controller';
+import { CuisineStyleController } from './infrastructure/controllers/cuisine-style.controller';
+import { MealTypeController } from './infrastructure/controllers/meal-type.controller';
 
 @Module({
   imports: [],
-  controllers: [RecipeController],
+  controllers: [
+    RecipeController,
+    IngredinetController,
+    CuisineStyleController,
+    MealTypeController,
+  ],
   providers: [
     PrismaService,
     {
@@ -41,23 +54,44 @@ import { DeleteRecipeUseCase } from './core/use-cases/recipe/delete-recipe.use-c
       useClass: CuisineStyleRepository,
     },
     {
-      provide: FindAllRecipeUseCase,
-      useFactory: (recipeRepository: IRecipeRepository) => {
-        return new FindAllRecipeUseCase(recipeRepository);
+      provide: FindAllMealTypeUseCase,
+      useFactory: (mealTypeRepository: IMealTypeRepository) => {
+        return new FindAllMealTypeUseCase(mealTypeRepository);
       },
-      inject: ['IRecipeRepository'],
+      inject: ['IMealTypeRepository'],
     },
     {
-      provide: FindIngredientByIdUseCase,
-      useFactory: (ingredientRepository: IIngredientRepository) => {
-        return new FindIngredientByIdUseCase(ingredientRepository);
+      provide: CreateMealTypeUseCase,
+      useFactory: (mealTypeRepository: IMealTypeRepository) => {
+        return new CreateMealTypeUseCase(mealTypeRepository);
       },
-      inject: ['IIngredientRepository'],
+      inject: ['IMealTypeRepository'],
     },
     {
       provide: FindMealTypeByIdUseCase,
       useFactory: (mealTypeRepository: IMealTypeRepository) => {
         return new FindMealTypeByIdUseCase(mealTypeRepository);
+      },
+      inject: ['IIngredientRepository'],
+    },
+    {
+      provide: FindAllIngredientUseCase,
+      useFactory: (ingredientRepository: IIngredientRepository) => {
+        return new FindAllIngredientUseCase(ingredientRepository);
+      },
+      inject: ['IIngredientRepository'],
+    },
+    {
+      provide: CreateIngredientUseCase,
+      useFactory: (ingredientRepository: IIngredientRepository) => {
+        return new CreateIngredientUseCase(ingredientRepository);
+      },
+      inject: ['IIngredientRepository'],
+    },
+    {
+      provide: FindIngredientByIdUseCase,
+      useFactory: (ingredientRepository: IIngredientRepository) => {
+        return new FindIngredientByIdUseCase(ingredientRepository);
       },
       inject: ['IIngredientRepository'],
     },
@@ -76,11 +110,18 @@ import { DeleteRecipeUseCase } from './core/use-cases/recipe/delete-recipe.use-c
       inject: ['ICuisineStyleRepository'],
     },
     {
-      provide: CreateCuisineStyleUseCase,
+      provide: FindAllCuisineStyleUseCase,
       useFactory: (cuisineStyleRepository: ICuisineStyleRepository) => {
-        return new CreateCuisineStyleUseCase(cuisineStyleRepository);
+        return new FindAllCuisineStyleUseCase(cuisineStyleRepository);
       },
       inject: ['ICuisineStyleRepository'],
+    },
+    {
+      provide: FindAllRecipeUseCase,
+      useFactory: (recipeRepository: IRecipeRepository) => {
+        return new FindAllRecipeUseCase(recipeRepository);
+      },
+      inject: ['IRecipeRepository'],
     },
     {
       provide: FindRecipeByIdUseCase,

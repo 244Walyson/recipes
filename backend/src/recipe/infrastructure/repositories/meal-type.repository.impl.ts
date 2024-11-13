@@ -15,9 +15,39 @@ export class MealTypeRepository implements IMealTypeRepository {
   async findById(id: string): Promise<MealType> {
     return await this.prismaService.mealType.findUnique({ where: { id } });
   }
-  async findAll(): Promise<MealType[]> {
-    return await this.prismaService.mealType.findMany();
+
+  async findAll({
+    name,
+    offset,
+    limit,
+  }: {
+    name: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: MealType[] }> {
+    const total = await this.prismaService.cuisineStyle.count({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    const data = await this.prismaService.mealType.findMany({
+      where: {
+        name: {
+          contains: name ?? '',
+          mode: 'insensitive',
+        },
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return { total, data };
   }
+
   async findByName(name: string): Promise<MealType> {
     return await this.prismaService.mealType.findUnique({
       where: { id: name },

@@ -9,6 +9,6 @@ export interface IRecipeRepository {
     pageable: { page: number; limit: number },
     filters: IFindAllFilters,
   ): Promise<{ total: number; data: IRecipeProjection[] }>;
-  update(recipe: Recipe): Promise<Recipe>;
+  update(id: string, recipe: Recipe): Promise<Recipe>;
   delete(recipeId: string): Promise<void>;
 }

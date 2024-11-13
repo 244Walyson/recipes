@@ -153,9 +153,9 @@ export class RecipeRepository implements IRecipeRepository {
     return { total, data };
   }
 
-  async update(recipe: Recipe): Promise<Recipe> {
+  async update(id: string, recipe: Recipe): Promise<Recipe> {
     const updatedRecipe = await this.prismaService.recipe.update({
-      where: { id: recipe.id },
+      where: { id },
       data: recipe as unknown as Prisma.RecipeUpdateInput,
     });
 

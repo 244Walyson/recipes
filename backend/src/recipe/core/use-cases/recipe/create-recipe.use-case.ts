@@ -7,6 +7,7 @@ import { FindMealTypeByIdUseCase } from '../meal-type/find-meal-type-by-id.use-c
 import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.use-case';
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
+import { DomainException } from '../../exceptions/domain.exception';
 
 export class CreateRecipeUseCase {
   constructor(
@@ -20,10 +21,14 @@ export class CreateRecipeUseCase {
     await this.validateMealTypes(recipe.mealTypes);
     await this.validateCuisineStyles(recipe.cuisineStyles);
     await this.validateIngredients(recipe.ingredients);
-    const recipeEntity = RecipeMapper.toEntity(recipe);
-    const createdRecipe = await this.recipeRepository.create(recipeEntity);
-    console.log('CreateRecipeUseCase.execute', createdRecipe);
-    return RecipeMapper.toResponseMin(createdRecipe);
+    try {
+      const recipeEntity = RecipeMapper.toEntity(recipe);
+      const createdRecipe = await this.recipeRepository.create(recipeEntity);
+      return RecipeMapper.toResponseMin(createdRecipe);
+    } catch (error) {
+      console.error(error);
+      throw new DomainException('Error creating recipe');
+    }
   }
 
   private async validateMealTypes(mealTypes: MealType[]): Promise<void> {

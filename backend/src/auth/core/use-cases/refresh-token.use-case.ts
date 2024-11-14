@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
 import { IRefreshToken } from '../interfaces/refresh-token/refresh-token.interface';
 import { IRefreshTokenRepository } from '../interfaces/repositories/refresh-token.repository.interface';
-import { CreateAccessTokenUseCase } from './create-access-token-use-case';
+import { CreateAccessTokenUseCase } from './create-access-token.use-case';
 
 export class RefreshTokenUseCase {
   constructor(

@@ -8,7 +8,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateAccessTokenUseCase } from 'src/auth/core/use-cases/create-access-token-use-case';
+import { CreateAccessTokenUseCase } from 'src/auth/core/use-cases/create-access-token.use-case';
 import { RefreshTokenUseCase } from 'src/auth/core/use-cases/refresh-token.use-case';
 import { CredentiaslRequestDto } from '../dtos/creadentials-request.dto';
 import { AccessTokenResponseDto } from '../dtos/access-token-response.dto';

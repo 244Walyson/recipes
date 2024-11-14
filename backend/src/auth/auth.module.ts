@@ -1,10 +1,10 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { PrismaService } from 'src/utils/prisma.service';
-import { CreateAccessTokenUseCase } from './core/use-cases/create-access-token-use-case';
-import { FindUserByEmailUserUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
+import { CreateAccessTokenUseCase } from './core/use-cases/create-access-token.use-case';
+import { FindUserByEmailUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
 import { IJwtService } from './core/interfaces/jwt/jwt.service.interface';
 import { IPasswordEncoder } from 'src/auth/core/interfaces/utils/password-encoder.interface';
-import { CreateRefreshTokenUseCase } from './core/use-cases/create-refresh-toke.use-case';
+import { CreateRefreshTokenUseCase } from './core/use-cases/create-refresh-token.use-case';
 import { PasswordEncoder } from 'src/auth/infrastructure/utils/password-encoder.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './core/contants/jwt-contants';
@@ -63,7 +63,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
     {
       provide: CreateAccessTokenUseCase,
       useFactory: (
-        findUserByEmail: FindUserByEmailUserUseCase,
+        findUserByEmail: FindUserByEmailUseCase,
         jwtService: IJwtService,
         passwordEncoder: IPasswordEncoder,
         createRefreshTokenUseCase: CreateRefreshTokenUseCase,
@@ -76,7 +76,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
         );
       },
       inject: [
-        FindUserByEmailUserUseCase,
+        FindUserByEmailUseCase,
         'IJwtService',
         'IPasswordEncoder',
         CreateRefreshTokenUseCase,
@@ -106,7 +106,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
       provide: UpdatePasswordUseCase,
       useFactory: (
         recoverPasswordRepository: IRecoveryPasswordRepository,
-        findByEmailUseCase: FindUserByEmailUserUseCase,
+        findByEmailUseCase: FindUserByEmailUseCase,
         passwordEncoder: PasswordEncoder,
         updateUserUseCase: UpdateUserUseCase,
       ) => {
@@ -119,7 +119,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
       },
       inject: [
         'IRecoveryPasswordRepository',
-        FindUserByEmailUserUseCase,
+        FindUserByEmailUseCase,
         'IPasswordEncoder',
         UpdateUserUseCase,
       ],
@@ -128,7 +128,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
       provide: CreateRecoverPasswordTokenUseCase,
       useFactory: (
         recoveryPasswordRepository: IRecoveryPasswordRepository,
-        findByEmailUseCase: FindUserByEmailUserUseCase,
+        findByEmailUseCase: FindUserByEmailUseCase,
         emailService: IEmailService,
       ) => {
         return new CreateRecoverPasswordTokenUseCase(
@@ -139,7 +139,7 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
       },
       inject: [
         'IRecoveryPasswordRepository',
-        FindUserByEmailUserUseCase,
+        FindUserByEmailUseCase,
         'IEmailService',
       ],
     },

@@ -1,4 +1,3 @@
-import { log } from 'console';
 import { DuplicateresourceException } from '../exceptions/duplicate-resource.exception';
 import { ResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
@@ -20,7 +19,7 @@ export class UpdateUserUseCase {
       const user = UserMapper.toEntity(dto);
       return UserMapper.toDTO(await this.userRepository.update(id, user));
     } catch (error) {
-      log(error);
+      console.error(error);
       throw new ResourceNotFoundException('User not found');
     }
   }

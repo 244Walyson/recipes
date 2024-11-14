@@ -6,7 +6,7 @@ import { ControllerAdvice } from './infrastructure/controllers/controller-advice
 import { PrismaService } from 'src/utils/prisma.service';
 import { IUserRepository } from './core/interfaces/repositories/user-repository.interface';
 import { IPasswordEncoder } from '../auth/core/interfaces/utils/password-encoder.interface';
-import { FindUserByEmailUserUseCase } from './core/use-cases/find-user-by-email.use-case';
+import { FindUserByEmailUseCase } from './core/use-cases/find-user-by-email.use-case';
 import { FindUserByIdlUserUseCase } from './core/use-cases/find-user-by-id.use-case';
 import { UpdateUserUseCase } from './core/use-cases/update-user.use-case';
 import { FindAllUseCase } from './core/use-cases/find-all-use-case';
@@ -33,9 +33,9 @@ import { AuthModule } from 'src/auth/auth.module';
       inject: ['IUserRepository', 'IPasswordEncoder'],
     },
     {
-      provide: FindUserByEmailUserUseCase,
+      provide: FindUserByEmailUseCase,
       useFactory: (userRepository: IUserRepository) => {
-        return new FindUserByEmailUserUseCase(userRepository);
+        return new FindUserByEmailUseCase(userRepository);
       },
       inject: ['IUserRepository'],
     },
@@ -61,6 +61,6 @@ import { AuthModule } from 'src/auth/auth.module';
       inject: ['IUserRepository'],
     },
   ],
-  exports: [CreateUserUseCase, FindUserByEmailUserUseCase, UpdateUserUseCase],
+  exports: [CreateUserUseCase, FindUserByEmailUseCase, UpdateUserUseCase],
 })
 export class UserModule {}

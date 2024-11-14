@@ -1,6 +1,6 @@
 export interface IRecoverPasswordRequest {
   token: string;
-  userId: string;
+  userId?: string;
   email: string;
   newPassword?: string;
 }

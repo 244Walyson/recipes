@@ -1,16 +1,16 @@
-import { FindUserByEmailUserUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
+import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { IRecoverPasswordRequest } from '../interfaces/recover-password/recover-password-request.interface';
-import { PasswordEncoder } from 'src/auth/infrastructure/utils/password-encoder.service';
-import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case';
+import { PasswordEncoder } from '@/src/auth/infrastructure/utils/password-encoder.service';
+import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
-import { ResourceNotFoundException } from 'src/user/core/exceptions/resource-not-found.exception';
+import { ResourceNotFoundException } from '@/src/user/core/exceptions/resource-not-found.exception';
 import { RecoverPassword } from '../entities/recover-password.entity';
 import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
 
 export class UpdatePasswordUseCase {
   constructor(
     private readonly recoverPasswordRepository: IRecoveryPasswordRepository,
-    private readonly findByEmailUseCase: FindUserByEmailUserUseCase,
+    private readonly findByEmailUseCase: FindUserByEmailUseCase,
     private readonly passwordEncoder: PasswordEncoder,
     private readonly updateUserUseCase: UpdateUserUseCase,
   ) {}
@@ -39,13 +39,13 @@ export class UpdatePasswordUseCase {
     return recoverToken;
   }
 
-  private validateRecoverToken(recovertoken: RecoverPassword) {
-    if (recovertoken.revoked) {
-      throw new UnauthorizedException('Recover Token revoked');
+  private validateRecoverToken(recoveryToken: RecoverPassword) {
+    if (recoveryToken.revoked) {
+      throw new UnauthorizedException('Recover token revoked');
     }
-    const isExpired = recovertoken.expiresAt > BigInt(new Date().getTime());
+    const isExpired = recoveryToken.expiresAt < BigInt(new Date().getTime());
     if (isExpired) {
-      throw new UnauthorizedException('Recover Token expired');
+      throw new UnauthorizedException('Recover token expired');
     }
   }
 }

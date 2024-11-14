@@ -1,18 +1,17 @@
 import { randomBytes } from 'crypto';
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
-import { FindUserByEmailUserUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
+import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { IEmailService } from '../interfaces/recover-password/email-service.interface';
 import { RecoverPasswordMapper } from '../mappers/recover-password.mapper';
 
 export class CreateRecoverPasswordTokenUseCase {
   constructor(
     private readonly recoveryPasswordRepository: IRecoveryPasswordRepository,
-    private readonly findByEmailUseCase: FindUserByEmailUserUseCase,
+    private readonly findByEmailUseCase: FindUserByEmailUseCase,
     private readonly emailService: IEmailService,
   ) {}
 
   async execute({ email }): Promise<void> {
-    console.log(email);
     const user = await this.findByEmailUseCase.execute(email.email);
 
     const token = this.generateToken();

@@ -1,6 +1,6 @@
-export class ResourceNotFoundException extends Error {
+export class UserResourceNotFoundException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = ResourceNotFoundException.name;
+    this.name = UserResourceNotFoundException.name;
   }
 }

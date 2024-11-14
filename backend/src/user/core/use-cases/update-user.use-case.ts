@@ -1,5 +1,5 @@
-import { DuplicateresourceException } from '../exceptions/duplicate-resource.exception';
-import { ResourceNotFoundException } from '../exceptions/resource-not-found.exception';
+import { UserDuplicateresourceException } from '../exceptions/duplicate-resource.exception';
+import { UserResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';
@@ -12,15 +12,14 @@ export class UpdateUserUseCase {
     try {
       const userExists = await this.userRepository.findByEmail(id);
       if (userExists) {
-        throw new DuplicateresourceException(
+        throw new UserDuplicateresourceException(
           'User with this email already exists',
         );
       }
       const user = UserMapper.toEntity(dto);
       return UserMapper.toDTO(await this.userRepository.update(id, user));
-    } catch (error) {
-      console.error(error);
-      throw new ResourceNotFoundException('User not found');
+    } catch {
+      throw new UserResourceNotFoundException('User not found');
     }
   }
 }

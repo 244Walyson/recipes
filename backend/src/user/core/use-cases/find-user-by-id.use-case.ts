@@ -1,5 +1,4 @@
-import { log } from 'console';
-import { ResourceNotFoundException } from '../exceptions/resource-not-found.exception';
+import { UserResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';
 import { UserMapper } from '../mappers/user.mapper';
@@ -11,9 +10,8 @@ export class FindUserByIdlUserUseCase {
     try {
       const userExists = await this.userRepository.findById(id);
       return UserMapper.toDTO(userExists);
-    } catch (error) {
-      log(error.message);
-      throw new ResourceNotFoundException('User Not Found');
+    } catch {
+      throw new UserResourceNotFoundException('User Not Found');
     }
   }
 }

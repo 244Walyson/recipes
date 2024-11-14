@@ -1,6 +1,6 @@
-export class DomainException extends Error {
+export class RecipeDomainException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = DomainException.name;
+    this.name = RecipeDomainException.name;
   }
 }

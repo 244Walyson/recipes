@@ -1,5 +1,5 @@
 import { Catch, ExceptionFilter, ArgumentsHost } from '@nestjs/common';
-import { ControllerAdvice } from 'src/user/infrastructure/controllers/controller-advice/controller.advice';
+import { ControllerAdvice } from './controller-advice/controller.advice';
 
 @Catch(Error)
 export class GlobalExceptionFilter implements ExceptionFilter {

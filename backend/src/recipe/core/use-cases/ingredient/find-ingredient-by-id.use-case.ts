@@ -1,4 +1,4 @@
-import { ResourceNotFoundException } from '../../exceptions/resource-not-found.exception';
+import { RecipeResourceNotFoundException } from '../../exceptions/resource-not-found.exception';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { IIngredientRepository } from '../../interfaces/repositories/ingredients.repository';
 
@@ -12,9 +12,8 @@ export class FindIngredientByIdUseCase {
         id: ingredient.id,
         name: ingredient.name,
       };
-    } catch (error) {
-      console.error(error);
-      throw new ResourceNotFoundException('Meal type not found');
+    } catch {
+      throw new RecipeResourceNotFoundException('Meal type not found');
     }
   }
 }

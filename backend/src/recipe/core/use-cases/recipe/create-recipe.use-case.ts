@@ -7,7 +7,7 @@ import { FindMealTypeByIdUseCase } from '../meal-type/find-meal-type-by-id.use-c
 import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.use-case';
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
-import { DomainException } from '../../exceptions/domain.exception';
+import { RecipeDomainException } from '../../exceptions/domain.exception';
 
 export class CreateRecipeUseCase {
   constructor(
@@ -25,9 +25,8 @@ export class CreateRecipeUseCase {
       const recipeEntity = RecipeMapper.toEntity(recipe);
       const createdRecipe = await this.recipeRepository.create(recipeEntity);
       return RecipeMapper.toResponseMin(createdRecipe);
-    } catch (error) {
-      console.error(error);
-      throw new DomainException('Error creating recipe');
+    } catch {
+      throw new RecipeDomainException('Error creating recipe');
     }
   }
 

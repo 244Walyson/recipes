@@ -15,6 +15,15 @@ export interface IRecipeRepository {
     },
     filters: IFindAllFilters,
   ): Promise<{ total: number; data: IRecipeProjection[] }>;
+  findRecipesByUserId({
+    id,
+    offset,
+    limit,
+  }: {
+    id: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: IRecipeProjection[] }>;
   update(id: string, recipe: Recipe): Promise<Recipe>;
   delete(recipeId: string): Promise<void>;
 }

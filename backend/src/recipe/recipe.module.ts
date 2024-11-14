@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { RecipeController } from './infrastructure/controllers/recipe.controller';
 import { RecipeRepository } from './infrastructure/repositories/recipe.repository.impl';
-import { FindAllRecipeUseCase } from './core/use-cases/recipe/find-all-recipe.use-case';
+import { FindAllRecipeUseCase } from './core/use-cases/recipe/find-all-recipes.use-case';
 import { IRecipeRepository } from './core/interfaces/repositories/recipe.repository';
 import { CreateRecipeUseCase } from './core/use-cases/recipe/create-recipe.use-case';
 import { PrismaService } from 'src/utils/prisma.service';
@@ -26,6 +26,7 @@ import { CreateIngredientUseCase } from './core/use-cases/ingredient/create-ingr
 import { IngredinetController } from './infrastructure/controllers/ingredient.controller';
 import { CuisineStyleController } from './infrastructure/controllers/cuisine-style.controller';
 import { MealTypeController } from './infrastructure/controllers/meal-type.controller';
+import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes-by-user-id.use-case';
 
 @Module({
   imports: [],
@@ -141,6 +142,13 @@ import { MealTypeController } from './infrastructure/controllers/meal-type.contr
       provide: DeleteRecipeUseCase,
       useFactory: (recipeRepository: IRecipeRepository) => {
         return new DeleteRecipeUseCase(recipeRepository);
+      },
+      inject: ['IRecipeRepository'],
+    },
+    {
+      provide: FindRecipesByUserIdUseCase,
+      useFactory: (recipeRepository: IRecipeRepository) => {
+        return new FindRecipesByUserIdUseCase(recipeRepository);
       },
       inject: ['IRecipeRepository'],
     },

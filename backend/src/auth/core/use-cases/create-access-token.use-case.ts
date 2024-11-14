@@ -3,7 +3,7 @@ import { IJwtService } from '../interfaces/jwt/jwt.service.interface';
 import { CreateRefreshTokenUseCase } from './create-refresh-token.use-case';
 import { ICreadentials } from '../interfaces/access-token/credentials.interface';
 import { IPasswordEncoder } from '@/src/user/core/interfaces/utils/password-encoder.interface';
-import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
+import { AuthUnauthorizedException } from '../exceptions/unauthorized.exceptions';
 import { jwtConstants } from '../contants/jwt-contants';
 import { IAccessToken } from '../interfaces/access-token/acces-token.interface';
 
@@ -39,9 +39,8 @@ export class CreateAccessTokenUseCase {
       const payload = { sub: userId, email: email };
       const access_token = this.jwtService.sign(payload);
       return access_token;
-    } catch (error) {
-      console.error(error);
-      throw new UnauthorizedException('Error generating access token');
+    } catch {
+      throw new AuthUnauthorizedException('Error generating access token');
     }
   }
 
@@ -59,7 +58,7 @@ export class CreateAccessTokenUseCase {
       hashedPassword,
     );
     if (!passwordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new AuthUnauthorizedException('Invalid credentials');
     }
   }
 }

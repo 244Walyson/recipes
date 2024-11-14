@@ -3,7 +3,7 @@ import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-e
 import { IJwtService } from 'src/auth/core/interfaces/jwt/jwt.service.interface';
 import { CreateRefreshTokenUseCase } from '@/src/auth/core/use-cases/create-refresh-token.use-case';
 import { IPasswordEncoder } from '@/src/auth/core/interfaces/utils/password-encoder.interface';
-import { UnauthorizedException } from '@/src/auth/core/exceptions/unuthorized.exceptions';
+import { UnauthorizedException } from '@/src/auth/core/exceptions/unauthorized.exceptions';
 import { ICreadentials } from '@/src/auth/core/interfaces/access-token/credentials.interface';
 import { jwtConstants } from '@/src/auth/core/contants/jwt-contants';
 import { User } from '@/src/user/core/entities/user.entity';

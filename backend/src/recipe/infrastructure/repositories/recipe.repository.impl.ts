@@ -159,6 +159,55 @@ export class RecipeRepository implements IRecipeRepository {
     return { total, data };
   }
 
+  async findRecipesByUserId({
+    id,
+    offset,
+    limit,
+  }: {
+    id: string;
+    offset: number;
+    limit: number;
+  }) {
+    const total = await this.prismaService.recipe.count({
+      where: {
+        userId: id,
+        deleted: false,
+      },
+    });
+
+    const recipes = await this.prismaService.recipe.findMany({
+      select: {
+        id: true,
+        name: true,
+        imgUrl: true,
+        difficultyLevel: true,
+        tags: true,
+        calories: true,
+        macronutrients: true,
+        totalTime: true,
+        servingCount: true,
+        viewCount: true,
+        favoriteCount: true,
+        costEstimate: true,
+        version: true,
+        user: { select: { name: true } },
+      },
+      where: {
+        userId: id,
+        deleted: false,
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    const data = recipes.map((recipe) => ({
+      ...recipe,
+      macronutrients: recipe.macronutrients as Record<string, number>,
+    }));
+
+    return { total, data };
+  }
+
   async update(id: string, recipe: Recipe): Promise<Recipe> {
     const updatedRecipe = await this.prismaService.recipe.update({
       where: { id },

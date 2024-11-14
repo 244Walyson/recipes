@@ -20,7 +20,7 @@ export class CreateRecoverPasswordTokenUseCase {
       email: user.email,
       token,
     });
-    this.recoveryPasswordRepository.create(recoveryToken);
+    await this.recoveryPasswordRepository.create(recoveryToken);
 
     await this.sendEmail(user.email, token);
   }

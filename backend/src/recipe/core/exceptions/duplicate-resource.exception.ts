@@ -1,6 +1,6 @@
-export class DuplicateresourceException extends Error {
+export class RecipeDuplicateresourceException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = DuplicateresourceException.name;
+    this.name = RecipeDuplicateresourceException.name;
   }
 }

@@ -21,8 +21,8 @@ export class UserController {
   }
 
   @Get(':id')
-  async findById(@Param() id: string): Promise<UserResponseDto> {
-    return await this.findUserByIdlUserUseCase.execute(id);
+  async findById(@Param() id: { id: string }): Promise<UserResponseDto> {
+    return await this.findUserByIdlUserUseCase.execute(id.id);
   }
 
   @Put(':id')

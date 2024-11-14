@@ -1,4 +1,4 @@
-import { DomainException } from '../../exceptions/domain.exception';
+import { RecipeDomainException } from '../../exceptions/domain.exception';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { IIngredientRepository } from '../../interfaces/repositories/ingredients.repository';
 
@@ -12,9 +12,8 @@ export class CreateIngredientUseCase {
         id: ingredient.id,
         name: ingredient.name,
       };
-    } catch (error) {
-      console.error(error);
-      throw new DomainException('Error creating ingredient');
+    } catch {
+      throw new RecipeDomainException('Error creating ingredient');
     }
   }
 }

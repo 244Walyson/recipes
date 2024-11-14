@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
+import { AuthUnauthorizedException } from '../exceptions/unauthorized.exceptions';
 import { IRefreshToken } from '../interfaces/refresh-token/refresh-token.interface';
 import { IRefreshTokenRepository } from '../interfaces/repositories/refresh-token.repository.interface';
 import { CreateAccessTokenUseCase } from './create-access-token.use-case';
@@ -15,13 +15,13 @@ export class RefreshTokenUseCase {
       await this.refreshTokenRepository.findOne(refresh_token);
 
     if (!refreshTokenRecovered) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new AuthUnauthorizedException('Invalid refresh token');
     }
     if (refreshTokenRecovered.revoked) {
       this.refreshTokenRepository.revokeAllByUserId(
         refreshTokenRecovered.userId,
       );
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new AuthUnauthorizedException('Invalid refresh token');
     }
 
     await this.refreshTokenRepository.revoke(refreshTokenRecovered.id);

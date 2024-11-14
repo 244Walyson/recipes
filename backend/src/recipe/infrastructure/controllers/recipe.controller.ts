@@ -10,12 +10,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateRecipeUseCase } from 'src/recipe/core/use-cases/recipe/create-recipe.use-case';
-import { FindAllRecipeUseCase } from 'src/recipe/core/use-cases/recipe/find-all-recipe.use-case';
+import { FindAllRecipeUseCase } from '@/src/recipe/core/use-cases/recipe/find-all-recipes.use-case';
 import { QueryParamsDto } from '../dto/query-params.dto';
 import { IReciperequest } from 'src/recipe/core/interfaces/recipes/recipe-request.interface';
 import { FindRecipeByIdUseCase } from 'src/recipe/core/use-cases/recipe/find-recipe-by-id.use-case';
 import { UpdateRecipeUseCase } from 'src/recipe/core/use-cases/recipe/update-recipe.use-case';
 import { DeleteRecipeUseCase } from 'src/recipe/core/use-cases/recipe/delete-recipe.use-case';
+import { FindRecipesByUserIdUseCase } from '../../core/use-cases/recipe/find-recipes-by-user-id.use-case';
 
 @Controller('recipes')
 export class RecipeController {
@@ -25,6 +26,7 @@ export class RecipeController {
     private readonly findRecipeByIdUseCase: FindRecipeByIdUseCase,
     private readonly updateRecipeUseCase: UpdateRecipeUseCase,
     private readonly deleteRecipeUseCase: DeleteRecipeUseCase,
+    private readonly findRecipesByUserIdUseCase: FindRecipesByUserIdUseCase,
   ) {}
 
   @Get()
@@ -39,6 +41,15 @@ export class RecipeController {
   @Get(':id')
   async findRecipeById(@Param('id') id: string) {
     return this.findRecipeByIdUseCase.execute(id);
+  }
+
+  @Get('user/:id')
+  async findRecipesByUserId(
+    @Param('id') id: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.findRecipesByUserIdUseCase.execute({ id, page, limit });
   }
 
   @Put(':id')

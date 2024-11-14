@@ -3,7 +3,7 @@ import { IUserRepository } from '../interfaces/repositories/user-repository.inte
 import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { IUserResponse } from '../interfaces/user/user-response.interface';
 import { UserMapper } from '../mappers/user.mapper';
-import { DuplicateresourceException } from '../exceptions/duplicate-resource.exception';
+import { UserDuplicateresourceException } from '../exceptions/duplicate-resource.exception';
 
 export class CreateUserUseCase {
   constructor(
@@ -14,7 +14,7 @@ export class CreateUserUseCase {
   async execute(dto: IUserRequest): Promise<IUserResponse> {
     const userExists = await this.userRepository.findByEmail(dto.email);
     if (userExists) {
-      throw new DuplicateresourceException(
+      throw new UserDuplicateresourceException(
         'User with this email already exists',
       );
     }

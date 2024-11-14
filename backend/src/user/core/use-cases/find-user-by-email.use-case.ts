@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { ResourceNotFoundException } from '../exceptions/resource-not-found.exception';
+import { UserResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 
 export class FindUserByEmailUseCase {
@@ -8,7 +8,7 @@ export class FindUserByEmailUseCase {
   async execute(email: string): Promise<User> {
     const userExists = await this.userRepository.findByEmail(email);
     if (!userExists) {
-      throw new ResourceNotFoundException('User Not Found');
+      throw new UserResourceNotFoundException('User Not Found');
     }
     return userExists;
   }

@@ -3,9 +3,8 @@ import { IRecoverPasswordRequest } from '../interfaces/recover-password/recover-
 import { PasswordEncoder } from '@/src/auth/infrastructure/utils/password-encoder.service';
 import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
-import { ResourceNotFoundException } from '@/src/user/core/exceptions/resource-not-found.exception';
 import { RecoverPassword } from '../entities/recover-password.entity';
-import { UnauthorizedException } from '../exceptions/unuthorized.exceptions';
+import { AuthUnauthorizedException } from '../exceptions/unauthorized.exceptions';
 
 export class UpdatePasswordUseCase {
   constructor(
@@ -33,7 +32,7 @@ export class UpdatePasswordUseCase {
     );
 
     if (!recoverToken) {
-      throw new ResourceNotFoundException('Invalid Reccover token');
+      throw new AuthUnauthorizedException('Invalid Reccover token');
     }
 
     return recoverToken;
@@ -41,11 +40,11 @@ export class UpdatePasswordUseCase {
 
   private validateRecoverToken(recoveryToken: RecoverPassword) {
     if (recoveryToken.revoked) {
-      throw new UnauthorizedException('Recover token revoked');
+      throw new AuthUnauthorizedException('Recover token revoked');
     }
     const isExpired = recoveryToken.expiresAt < BigInt(new Date().getTime());
     if (isExpired) {
-      throw new UnauthorizedException('Recover token expired');
+      throw new AuthUnauthorizedException('Recover token expired');
     }
   }
 }

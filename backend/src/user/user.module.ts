@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './infrastructure/controllers/user.controller';
 import { CreateUserUseCase } from './core/use-cases/create-user.use-case';
 import { UserRepository } from './infrastructure/repositories/user.repository.impl';
-import { ControllerAdvice } from './infrastructure/controllers/controller-advice/controller.advice';
 import { PrismaService } from 'src/utils/prisma.service';
 import { IUserRepository } from './core/interfaces/repositories/user-repository.interface';
 import { IPasswordEncoder } from '../auth/core/interfaces/utils/password-encoder.interface';
@@ -16,7 +15,6 @@ import { AuthModule } from 'src/auth/auth.module';
   imports: [forwardRef(() => AuthModule)],
   controllers: [UserController],
   providers: [
-    ControllerAdvice,
     PrismaService,
     {
       provide: 'IUserRepository',

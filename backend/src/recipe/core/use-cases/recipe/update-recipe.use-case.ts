@@ -1,4 +1,4 @@
-import { ResourceNotFoundException } from '../../exceptions/resource-not-found.exception';
+import { RecipeResourceNotFoundException } from '../../exceptions/resource-not-found.exception';
 import { IReciperequest } from '../../interfaces/recipes/recipe-request.interface';
 import { IRecipeResponse } from '../../interfaces/recipes/recipe-response.interface';
 import { IRecipeRepository } from '../../interfaces/repositories/recipe.repository';
@@ -13,9 +13,8 @@ export class UpdateRecipeUseCase {
       const recipe = RecipeMapper.toEntity(dto);
       const createdRecipe = await this.recipeRepository.update(id, recipe);
       return RecipeMapper.toResponseMin(createdRecipe);
-    } catch (error) {
-      console.error(error);
-      throw new ResourceNotFoundException('Recipe not found');
+    } catch {
+      throw new RecipeResourceNotFoundException('Recipe not found');
     }
   }
 }

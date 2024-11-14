@@ -1,7 +1,7 @@
+import { AuthResourceNotFoundException } from '@/src/auth/core/exceptions/resource-not-found.exception';
 import { IEmailService } from '@/src/auth/core/interfaces/recover-password/email-service.interface';
 import { IRecoveryPasswordRepository } from '@/src/auth/core/interfaces/repositories/recovery-password.repository';
 import { CreateRecoverPasswordTokenUseCase } from '@/src/auth/core/use-cases/create-recover-password-token.use-case';
-import { ResourceNotFoundException } from '@/src/user/core/exceptions/resource-not-found.exception';
 import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { User } from '@prisma/client';
 
@@ -54,7 +54,7 @@ describe('CreateRecoverPasswordTokenUseCase', () => {
 
   it('Should throw resource not found exception if user was not found', async () => {
     findUserByEmailUseCaseMock.execute.mockRejectedValue(
-      new ResourceNotFoundException('User not found'),
+      new AuthResourceNotFoundException('User not found'),
     );
 
     const email = 'nonexistent@example.com';
@@ -62,7 +62,9 @@ describe('CreateRecoverPasswordTokenUseCase', () => {
     try {
       await createRecoverPasswordTokenUseCase.execute({ email });
     } catch (error) {
-      expect(error).toEqual(new ResourceNotFoundException('User not found'));
+      expect(error).toEqual(
+        new AuthResourceNotFoundException('User not found'),
+      );
     }
   });
 

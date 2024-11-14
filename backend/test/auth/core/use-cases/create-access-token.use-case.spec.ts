@@ -3,11 +3,10 @@ import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-e
 import { IJwtService } from 'src/auth/core/interfaces/jwt/jwt.service.interface';
 import { CreateRefreshTokenUseCase } from '@/src/auth/core/use-cases/create-refresh-token.use-case';
 import { IPasswordEncoder } from '@/src/auth/core/interfaces/utils/password-encoder.interface';
-import { UnauthorizedException } from '@/src/auth/core/exceptions/unauthorized.exceptions';
 import { ICreadentials } from '@/src/auth/core/interfaces/access-token/credentials.interface';
 import { jwtConstants } from '@/src/auth/core/contants/jwt-contants';
 import { User } from '@/src/user/core/entities/user.entity';
-import { ResourceNotFoundException } from '@/src/user/core/exceptions/resource-not-found.exception';
+import { AuthResourceNotFoundException } from '@/src/auth/core/exceptions/resource-not-found.exception';
 
 describe('CreateAccessTokenUseCase', () => {
   let createAccessTokenUseCase: CreateAccessTokenUseCase;
@@ -86,7 +85,7 @@ describe('CreateAccessTokenUseCase', () => {
       throw new Error('JWT Error');
     });
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      UnauthorizedException,
+      AuthResourceNotFoundException,
     );
   });
 
@@ -106,7 +105,7 @@ describe('CreateAccessTokenUseCase', () => {
     passwordEncoder.compare.mockResolvedValue(false);
 
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      new UnauthorizedException('Invalid credentials'),
+      AuthResourceNotFoundException,
     );
   });
 
@@ -143,12 +142,10 @@ describe('CreateAccessTokenUseCase', () => {
       password: 'validPassword',
     };
 
-    findUserByEmail.execute.mockRejectedValue(
-      new ResourceNotFoundException('User not found'),
-    );
+    findUserByEmail.execute.mockRejectedValue(AuthResourceNotFoundException);
 
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      ResourceNotFoundException,
+      AuthResourceNotFoundException,
     );
   });
 });

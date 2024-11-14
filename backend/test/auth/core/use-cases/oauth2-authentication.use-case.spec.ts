@@ -1,6 +1,6 @@
+import { AuthDomainException } from '@/src/auth/core/exceptions/domain.exception';
 import { CreateAccessTokenUseCase } from '@/src/auth/core/use-cases/create-access-token.use-case';
 import { OAuth2AuthenticationUseCase } from '@/src/auth/core/use-cases/oauth2-authentication.use-case';
-import { DomainException } from '@/src/recipe/core/exceptions/domain.exception';
 import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-case';
 import { User } from '@prisma/client';
 
@@ -30,7 +30,7 @@ describe('OAuth2AuthenticationUseCase', () => {
     const dto = { email: 'test@example.com', password: 'password123' } as User;
 
     await expect(useCase.execute(dto)).rejects.toThrow(
-      new DomainException('Error generating access token'),
+      new AuthDomainException('Error generating access token'),
     );
   });
 });

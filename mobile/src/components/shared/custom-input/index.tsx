@@ -9,6 +9,7 @@ type LoginInputProps = {
   keyboardType: "default" | "email-address" | "numeric" | "phone-pad";
   onChangeText: (text: string) => void;
   isPassword?: boolean;
+  value?: string;
 };
 
 const CustomInput = ({
@@ -17,6 +18,7 @@ const CustomInput = ({
   keyboardType,
   onChangeText,
   isPassword = false,
+  value,
 }: LoginInputProps) => {
   const { theme } = useTheme();
 
@@ -30,6 +32,7 @@ const CustomInput = ({
         keyboardType={keyboardType}
         secureTextEntry={isPassword}
         autoCapitalize="none"
+        value={value}
         placeholderTextColor={theme.quaternary}
       />
     </View>

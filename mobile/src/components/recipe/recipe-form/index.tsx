@@ -8,7 +8,7 @@ import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import FormInput from "../input";
 import RecipeInstructions from "../recipe-instructions";
-import CustomInput from "../../shared/input";
+import CustomInput from "../../shared/custom-input";
 import InversePrimaryButtonSlim from "../../shared/inverse-primary-button-slim";
 
 type Ingredient = {

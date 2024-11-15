@@ -10,20 +10,102 @@ import SvgTopWaves from "@/src/assets/waves/wave_top";
 import SvgBottomWaves from "@/src/assets/waves/wave_botton";
 import SvgGoggleIcon from "@/src/assets/icons/google_icon";
 import SvgGithubIcon from "@/src/assets/icons/github_icon";
-import { router } from "expo-router";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
-import CustomInput from "@/src/components/shared/input";
+import CustomInput from "@/src/components/shared/custom-input";
+import { updateAndValidate } from "@/src/utils/forms";
+import {
+  getAccessToken,
+  storeAccessToken,
+  storeRefreshToken,
+} from "@/src/services/auth.service";
+import { createUser } from "@/src/services/user.service";
+import { useRouter } from "expo-router";
 
 const Register = () => {
   const { theme } = useTheme();
+  const router = useRouter();
   const [activity, setActivity] = useState("login");
   const [registerStep, setRegisterStep] = useState(1);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState<any>({
+    name: {
+      value: "",
+      id: "name",
+      name: "name",
+      type: "name",
+      placeholder: "name",
+      validation: function (value: string) {
+        return value.length > 2;
+      },
+      message: "o nome não pode ser vazio",
+    },
+    username: {
+      value: "",
+      id: "username",
+      name: "username",
+      type: "default",
+      placeholder: "username",
+      validation: function (value: string) {
+        return value.length > 2;
+      },
+      message: "o username deve conter no minimo 4 caracters",
+    },
+    email: {
+      value: "",
+      id: "email",
+      name: "email",
+      type: "default",
+      placeholder: "email@example.com",
+      validation: function (value: string) {
+        return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+          value.toLowerCase()
+        );
+      },
+      message: "Favor informar um email válido",
+    },
+    password: {
+      value: "",
+      id: "password",
+      name: "password",
+      type: "password",
+      placeholder: "Senha",
+      validation: function (value: string) {
+        return value.length > 5;
+      },
+      message: "a senha deve conter no minimo 6 caracters",
+    },
+    imgUrl: {
+      value: "",
+      id: "imgUrl",
+      name: "imgUrl",
+      type: "default",
+      placeholder: "imgUrl",
+      validation: function (value: string) {
+        return value.length > 5;
+      },
+      message: "a senha deve conter no minimo 6 caracters",
+    },
+  });
 
-  const handleSignIn = () => {
-    router.push("/register");
+  const handleSubmit = async () => {
+    console.log("Submit", activity);
+    if (activity === "register") {
+      const user = await createUser({
+        name: formData.name.value,
+        email: formData.email.value,
+        username: formData.username.value,
+        password: formData.password.value,
+        imgUrl: formData.img,
+      });
+    }
+    const accessToken = await getAccessToken({
+      email: formData.email.value,
+      password: formData.password.value,
+    });
+
+    storeAccessToken(accessToken.accessToken);
+    storeRefreshToken(accessToken.refreshToken);
+    router.replace("/(tabs)/");
   };
 
   const handleGithubLogin = () => {
@@ -32,6 +114,37 @@ const Register = () => {
 
   const handleGoogleLogin = () => {
     console.log("Login com Google");
+  };
+
+  const handleInputChange = (value: string, fieldName: string) => {
+    setFormData(updateAndValidate(formData, fieldName, value));
+  };
+
+  const renderFormFields = () => {
+    const fieldsToRender = Object.keys(formData).filter((key) => {
+      if (activity === "register" && registerStep === 1) {
+        return key === "name" || key === "username";
+      }
+      if (activity === "login" || registerStep === 2) {
+        return key === "email" || key === "password";
+      }
+      return false;
+    });
+
+    return fieldsToRender.map((fieldName) => {
+      const field = formData[fieldName];
+      return (
+        <CustomInput
+          key={fieldName}
+          keyboardType={field.type === "email" ? "email-address" : "default"}
+          placeholder={field.placeholder}
+          label={field.name}
+          value={field.value}
+          onChangeText={(value) => handleInputChange(value, fieldName)}
+          isPassword={field.type === "password"}
+        />
+      );
+    });
   };
 
   return (
@@ -44,41 +157,7 @@ const Register = () => {
           {activity === "login" ? "Login" : "Registre-se"}
         </Text>
 
-        <View style={{ width: "100%" }}>
-          {activity !== "login" && registerStep == 1 && (
-            <>
-              <CustomInput
-                keyboardType="default"
-                placeholder="name"
-                label="name"
-                onChangeText={(text) => setEmail(text)}
-              />
-              <CustomInput
-                keyboardType="default"
-                placeholder="username"
-                label="Username"
-                onChangeText={(text) => setEmail(text)}
-              />
-            </>
-          )}
-          {(activity == "login" || registerStep == 2) && (
-            <>
-              <CustomInput
-                keyboardType="email-address"
-                placeholder="email@example.com"
-                label="Email"
-                onChangeText={(text) => setEmail(text)}
-              />
-              <CustomInput
-                keyboardType="default"
-                placeholder="Password"
-                label="password"
-                onChangeText={(text) => setEmail(text)}
-                isPassword={true}
-              />
-            </>
-          )}
-        </View>
+        <View style={{ width: "100%" }}>{renderFormFields()}</View>
 
         <View style={styles(theme).socialMediaLogin}>
           <TouchableOpacity
@@ -115,7 +194,11 @@ const Register = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles(theme).btnLogin}
-          onPress={() => setRegisterStep(2)}
+          onPress={() =>
+            registerStep == 2 || activity == "login"
+              ? handleSubmit()
+              : setRegisterStep(2)
+          }
         >
           <Text style={styles(theme).textButton}>
             {activity === "register"

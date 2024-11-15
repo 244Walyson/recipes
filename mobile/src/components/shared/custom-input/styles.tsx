@@ -15,5 +15,6 @@ export const styles = (theme: any) =>
       borderRadius: 8,
       paddingLeft: 10,
       backgroundColor: theme.opacityBg,
+      color: theme.foreground,
     },
   });

@@ -1,4 +1,4 @@
-import Profile from "@/src/pages/profile";
+import Profile from "@/src/screens/profile";
 import React from "react";
 
 const ProfileTab = () => {

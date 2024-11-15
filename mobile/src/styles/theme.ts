@@ -17,7 +17,7 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
-  background: colors.black, // Fundo principal escuro
+  background: colors.dark, // Fundo principal escuro
   foreground: colors.white,
   cardBackground: colors.quinary, // Fundo dos cartões ou seções
   text: colors.white, // Texto principal em branco
@@ -25,7 +25,7 @@ export const darkTheme = {
   secondary: colors.secondary, // Cor de destaque secundária
   accent: colors.sextiary, // Cor de ênfase (ícones, bordas)
   tertiary: colors.septenary,
-  quaternary: colors.octonary,
+  quaternary: colors.septenary,
   inputBackground: colors.quinary, // Cor de fundo do TextInput no tema escuro
   secondaryText: colors.tertiary,
   opacityBg: colors.opacityBgDark,

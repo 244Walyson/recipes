@@ -1,4 +1,4 @@
-import RegisterRecipe from "@/src/pages/register-recipe";
+import RegisterRecipe from "@/src/screens/register-recipe";
 import React from "react";
 
 const NewRecipeTab = () => {

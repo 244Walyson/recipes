@@ -1,4 +1,4 @@
-import Home from "@/src/pages/home";
+import Home from "@/src/screens/home";
 import React from "react";
 
 const HomeTab = () => {

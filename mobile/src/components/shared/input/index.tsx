@@ -30,6 +30,7 @@ const CustomInput = ({
         keyboardType={keyboardType}
         secureTextEntry={isPassword}
         autoCapitalize="none"
+        placeholderTextColor={theme.quaternary}
       />
     </View>
   );

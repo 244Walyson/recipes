@@ -1,4 +1,4 @@
-import Recipe from "@/src/pages/recipe";
+import Recipe from "@/src/screens/recipe";
 import React from "react";
 
 const RecipeTab = () => {

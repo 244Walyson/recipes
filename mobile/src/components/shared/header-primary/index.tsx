@@ -1,10 +1,8 @@
-// Header.js
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Constants from "expo-constants";
 import SearchBar from "../search-bar";
-
-const statusBarHeight = Constants.statusBarHeight;
+import { useTheme } from "@/src/context/theme-context";
+import { styles } from "./styles";
 
 type CustomheaderProps = {
   onChange?: (text: string) => void;
@@ -12,19 +10,21 @@ type CustomheaderProps = {
 };
 
 const Header = ({ onChange, onFocus }: CustomheaderProps) => {
+  const { theme } = useTheme();
+
   return (
     <View>
-      <View style={styles.container}>
-        <View style={styles.textWrapper}>
-          <View style={styles.headerWrapper}>
-            <Text style={styles.headerText}>Encontre</Text>
-            <Text style={[styles.headerText, styles.textColored]}>
+      <View style={styles(theme).container}>
+        <View style={styles(theme).textWrapper}>
+          <View style={styles(theme).headerWrapper}>
+            <Text style={styles(theme).headerText}>Encontre</Text>
+            <Text style={[styles(theme).headerText, styles(theme).textColored]}>
               {" "}
               as melhores
             </Text>
           </View>
         </View>
-        <Text style={styles.recipetext}>receitas</Text>
+        <Text style={styles(theme).recipetext}>receitas</Text>
       </View>
       <SearchBar
         placeholder="pesquisar..."
@@ -34,31 +34,5 @@ const Header = ({ onChange, onFocus }: CustomheaderProps) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 20,
-    justifyContent: "center",
-    marginTop: statusBarHeight,
-  },
-  headerWrapper: {
-    flexDirection: "row",
-  },
-  textWrapper: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-  },
-  headerText: {
-    fontSize: 30,
-    fontWeight: "bold",
-  },
-  recipetext: {
-    fontSize: 34,
-    fontWeight: "bold",
-  },
-  textColored: {
-    color: "#F6B100",
-  },
-});
 
 export default Header;

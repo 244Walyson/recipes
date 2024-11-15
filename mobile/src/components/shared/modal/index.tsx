@@ -8,7 +8,6 @@ import {
   ScrollView,
 } from "react-native";
 import PrimaryButton from "../primary-button";
-import InversePrimaryButton from "../inverse-primary-button";
 
 type ModalItems = {
   id: number;
@@ -83,9 +82,13 @@ const CustomModal = ({
           </ScrollView>
 
           <View style={[styles.btnWrapper, !btnApplyText && styles.btnAlign]}>
-            <InversePrimaryButton text="Cancelar" onPress={onClose} />
+            <PrimaryButton text="Cancelar" onPress={onClose} isActive={false} />
             {btnApplyText && btnApplyAction && selected.length > 0 && (
-              <PrimaryButton text={btnApplyText} onPress={handleApply} />
+              <PrimaryButton
+                text={btnApplyText}
+                onPress={handleApply}
+                isActive={true}
+              />
             )}
           </View>
         </View>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollView, View, TouchableOpacity, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomPicker from "../../custom-picker";
-import IngredintsCard from "../../ingredients-card";
+import IngredintsCard from "../ingredients-card";
 import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";

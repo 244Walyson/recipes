@@ -24,17 +24,17 @@ const CategoryCard = ({ name, author, time, imgUrl }: CategoryCardProps) => {
         <Text style={[styles(theme).textTitle]}>{name}</Text>
       </View>
       <View>
-        <Text style={[styles(theme).textTitle, styles(theme).textAuthor]}>
-          by
-        </Text>
+        <View style={styles(theme).textWrapper}>
+          <Text style={[styles(theme).textBy]}>by</Text>
 
-        <Text style={[styles(theme).textTitle, styles(theme).textAuthor]}>
-          {author}
-        </Text>
+          <Text style={[styles(theme).textTitle, styles(theme).textAuthor]}>
+            {author}
+          </Text>
+        </View>
       </View>
       <View style={styles(theme).textWrapper}>
         <Text style={styles(theme).timeText}>{time}</Text>
-        <Ionicons name="heart-outline" size={30} color={theme.background} />
+        <Ionicons name="heart-outline" size={20} color={theme.tertiary} />
       </View>
     </View>
   );

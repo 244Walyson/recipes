@@ -1,4 +1,4 @@
-import Search from "@/src/pages/search";
+import Search from "@/src/screens/search";
 import React from "react";
 import { View, Text } from "react-native";
 

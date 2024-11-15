@@ -3,16 +3,21 @@ import { StyleSheet } from "react-native";
 export const styles = (theme: any) =>
   StyleSheet.create({
     trendingContainer: {
-      width: 220,
-      height: 200,
+      width: 160,
+      height: 140,
       borderRadius: 20,
       alignItems: "center",
       justifyContent: "center",
       marginRight: 10,
-      backgroundColor: theme.accent,
+      backgroundColor: theme.quaternary,
       padding: 10,
       marginTop: 40,
+      gap: 5,
       paddingBottom: 20,
+    },
+    textBy: {
+      fontSize: 12,
+      color: theme.secondaryText,
     },
     textDescWrapper: {
       width: "100%",
@@ -22,29 +27,28 @@ export const styles = (theme: any) =>
     textWrapper: {
       width: "100%",
       flexDirection: "row",
+      alignItems: "center",
       justifyContent: "space-between",
-      marginTop: 10,
     },
     timeText: {
       fontSize: 18,
-      marginLeft: 10,
-      color: theme.background,
+      color: theme.tertiary,
     },
     textTitle: {
-      fontSize: 24,
+      fontSize: 18,
       textAlign: "center",
       fontWeight: "bold",
-      color: theme.background,
+      color: theme.foreground,
     },
     textAuthor: {
       color: theme.secondaryText,
-      fontSize: 20,
+      fontSize: 14,
     },
     image: {
-      borderRadius: 50,
-      width: 100,
-      height: 100,
-      marginTop: -40,
+      borderRadius: 40,
+      width: 80,
+      height: 80,
+      marginTop: -20,
       backgroundColor: theme.background,
       borderWidth: 5,
       borderColor: theme.background,

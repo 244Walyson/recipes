@@ -17,10 +17,11 @@ export const styles = (theme: any) =>
       fontSize: 18,
       fontWeight: "bold",
       marginBottom: 5,
+      color: theme.foreground,
     },
     bulletPoint: {
       fontSize: 16,
-      color: theme.septinry,
+      color: theme.quaternary,
       paddingLeft: 10,
     },
   });

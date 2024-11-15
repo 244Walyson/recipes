@@ -1,18 +1,24 @@
-import { useTheme } from "@/src/context/theme-context";
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 
-type CustomButtomProps = {
+type CustomButtonProps = {
   text: string;
   onPress: () => void;
+  isActive?: boolean;
 };
 
-const PrimaryButton = ({ text, onPress }: CustomButtomProps) => {
+const PrimaryButton = ({
+  text,
+  onPress,
+  isActive = true,
+}: CustomButtonProps) => {
   const { theme } = useTheme();
+
   return (
-    <TouchableOpacity style={styles(theme).btn} onPress={onPress}>
-      <Text style={styles(theme).btnText}>{text}</Text>
+    <TouchableOpacity style={styles(theme, isActive).btn} onPress={onPress}>
+      <Text style={styles(theme, isActive).btnText}>{text}</Text>
     </TouchableOpacity>
   );
 };

@@ -13,6 +13,7 @@ export const styles = (theme: any) =>
       justifyContent: "space-between",
       borderBottomWidth: 1,
       borderBottomColor: theme.tertiary,
+      gap: 5,
     },
     descriptionContainer: {
       flex: 1,
@@ -23,13 +24,15 @@ export const styles = (theme: any) =>
       width: "100%",
       flexDirection: "row",
       justifyContent: "space-between",
+      marginTop: 10,
     },
     textTitle: {
-      fontSize: 24,
+      fontSize: 20,
       fontWeight: "bold",
+      color: theme.foreground,
     },
     textType: {
-      fontSize: 18,
+      fontSize: 16,
       color: theme.tertiary,
     },
     textAuthor: {

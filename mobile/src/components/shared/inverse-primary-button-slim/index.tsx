@@ -16,7 +16,7 @@ const InversePrimaryButtonSlim = ({
 
   return (
     <TouchableOpacity style={styles(theme).btn} onPress={onPress}>
-      <Text>{text}</Text>
+      <Text style={styles(theme).btnText}>{text}</Text>
     </TouchableOpacity>
   );
 };

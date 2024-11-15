@@ -1,4 +1,4 @@
-import Register from "@/src/pages/register-user";
+import Register from "@/src/screens/login";
 import React from "react";
 
 const RegisterTab = () => {

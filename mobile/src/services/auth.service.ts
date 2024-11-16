@@ -28,13 +28,17 @@ export const refreshToken = async (refreshToken: string) => {
   }
 };
 
-export async function storeAccessToken(accessToken: IAccessToken) {
+export async function storeAllTokens(accessToken: IAccessToken) {
   await SecureStore.setItemAsync("accessToken", accessToken.access_token);
   await SecureStore.setItemAsync("refreshToken", accessToken.refresh_token);
-  await SecureStore.setItemAsync(
-    "expiresIn",
-    accessToken.expires_in.toString()
-  );
+}
+
+export async function storeAccessToken(token: string) {
+  await SecureStore.setItemAsync("accessToken", token);
+}
+
+export async function storeRefreshToken(token: string) {
+  await SecureStore.setItemAsync("refreshToken", token);
 }
 
 export async function getStoredAccessToken() {

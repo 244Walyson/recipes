@@ -18,7 +18,9 @@ import {
   decodeAccessToken,
   getAccessToken,
   getStoredAccessToken,
+  getStoredRefreshToken,
   storeAccessToken,
+  storeRefreshToken,
 } from "@/src/services/auth.service";
 import { createUser, getUser } from "@/src/services/user.service";
 import { useRouter } from "expo-router";
@@ -92,6 +94,8 @@ const Register = () => {
 
   const handleSubmit = async () => {
     console.log("Submit", activity);
+    console.log(await getStoredRefreshToken());
+
     if (activity === "register") {
       const user = await createUser({
         name: formData.name.value,
@@ -107,7 +111,8 @@ const Register = () => {
       password: formData.password.value,
     }).then((accessToken) => {
       console.log("accessToken", accessToken);
-      storeAccessToken(accessToken);
+      storeAccessToken(accessToken.access_token);
+      storeRefreshToken(accessToken.refresh_token);
       setUserContext(accessToken.access_token);
     });
 

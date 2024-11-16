@@ -21,6 +21,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const checkToken = async () => {
+      console.log(await getStoredRefreshToken());
       const token = await getStoredAccessToken();
       if (!token) {
         setLoading(false);
@@ -32,7 +33,7 @@ const SplashScreen = () => {
 
       const expiresIn = decodedToken?.exp;
       const expirationDate = new Date(expiresIn!!);
-      if (expirationDate <= new Date()) {
+      if (expirationDate >= new Date()) {
         await getNewTokenWithRefreshToken();
         return;
       }
@@ -55,7 +56,9 @@ const SplashScreen = () => {
       router.replace("/register");
       return;
     }
-    const accessToken = await refreshToken(refresh_token);
+    const accessToken = await refreshToken(refresh_token).catch(() => {
+      router.replace("/register");
+    });
     if (!accessToken) {
       router.replace("/register");
       return;

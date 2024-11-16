@@ -11,3 +11,13 @@ export const createUser = async (user: IUserRequest) => {
     throw error;
   }
 };
+
+export const getUser = async (id: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/users/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

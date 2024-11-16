@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,10 @@ import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
 import IngredintsCard from "@/src/components/recipe/ingredients-card";
 import DescriptionContainer from "@/src/components/recipe/description-container";
 import SvgImageAdd from "@/src/assets/icons/image_add";
+import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
+import { getRecipeById } from "@/src/services/recipe.service";
+import IngredientsCard from "@/src/components/recipe/ingredients-card";
+import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 
 type InstructionStep = {
   step: number;
@@ -69,6 +73,7 @@ const instructions: InstructionStep[] = [
 const Recipe = () => {
   const [focusedBtn, setFocusedBtn] = React.useState("ingredients");
   const { theme } = useTheme();
+  const [recipe, setRecipe] = React.useState<IRecipeResponse>();
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -77,6 +82,13 @@ const Recipe = () => {
     outputRange: [0, -H_SCROLL_DISTANCE],
     extrapolate: "clamp",
   });
+
+  useEffect(() => {
+    getRecipeById("310e587c-62e1-4f70-a557-bb5c3e5143a5").then((response) => {
+      setRecipe(response);
+      console.log(response);
+    });
+  }, []);
 
   return (
     <View style={styles(theme).container}>
@@ -95,7 +107,7 @@ const Recipe = () => {
         ]}
       >
         <ImageBackground
-          source={require("../../assets/food.png")}
+          source={{ uri: recipe?.imgUrl }}
           style={[styles(theme).image, { height: H_MAX_HEIGHT }]}
         >
           <HeaderSecondary
@@ -118,7 +130,19 @@ const Recipe = () => {
         )}
         scrollEventThrottle={16}
       >
-        <DescriptionContainer />
+        {recipe && (
+          <DescriptionContainer
+            title={recipe.name}
+            time={recipe.totalTime?.toString()}
+            likes={recipe.favoriteCount}
+            mealType={
+              recipe.mealTypes && recipe.mealTypes.length > 0
+                ? recipe.mealTypes[0].name
+                : undefined
+            }
+          />
+        )}
+        {/*recipe && <AuthorCard name={recipe.user.name} />*/}
 
         <View style={styles(theme).btnWrapper}>
           <PrimaryButton
@@ -133,16 +157,21 @@ const Recipe = () => {
           />
         </View>
         <View style={{ marginBottom: H_MAX_HEIGHT + 130 }}>
-          {focusedBtn != "ingredients" ? (
-            <RecipeInstructions data={instructions} />
+          {focusedBtn !== "ingredients" ? (
+            <RecipeInstructions data={recipe?.preparationMethod} />
           ) : (
-            <>
-              <IngredintsCard name="fruta" unity="ml" quantity={100} />
-              <IngredintsCard name="fruta" unity="ml" quantity={100} />
-              <IngredintsCard name="fruta" unity="ml" quantity={100} />
-              <IngredintsCard name="fruta" unity="ml" quantity={100} />
-              <IngredintsCard name="fruta" unity="ml" quantity={100} />
-            </>
+            recipe &&
+            recipe.recipeIngredients &&
+            recipe?.recipeIngredients.map((ingredient: IIngredient) => (
+              <IngredientsCard
+                key={ingredient.id}
+                name={ingredient.name}
+                quantity={ingredient.quantity}
+                unit={ingredient.unit}
+                editing={false}
+                onDelete={() => {}}
+              />
+            ))
           )}
         </View>
       </ScrollView>

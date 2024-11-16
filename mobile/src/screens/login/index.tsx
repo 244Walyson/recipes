@@ -15,15 +15,18 @@ import { styles } from "./styles";
 import CustomInput from "@/src/components/shared/custom-input";
 import { updateAndValidate } from "@/src/utils/forms";
 import {
+  decodeAccessToken,
   getAccessToken,
+  getStoredAccessToken,
   storeAccessToken,
-  storeRefreshToken,
 } from "@/src/services/auth.service";
-import { createUser } from "@/src/services/user.service";
+import { createUser, getUser } from "@/src/services/user.service";
 import { useRouter } from "expo-router";
+import { useUser } from "@/src/context/user-context";
 
 const Register = () => {
   const { theme } = useTheme();
+  const { setUser } = useUser();
   const router = useRouter();
   const [activity, setActivity] = useState("login");
   const [registerStep, setRegisterStep] = useState(1);
@@ -97,15 +100,25 @@ const Register = () => {
         password: formData.password.value,
         imgUrl: formData.img,
       });
+      setUser(user);
     }
-    const accessToken = await getAccessToken({
+    getAccessToken({
       email: formData.email.value,
       password: formData.password.value,
+    }).then((accessToken) => {
+      console.log("accessToken", accessToken);
+      storeAccessToken(accessToken);
+      setUserContext(accessToken.access_token);
     });
 
-    storeAccessToken(accessToken.accessToken);
-    storeRefreshToken(accessToken.refreshToken);
-    router.replace("/(tabs)/");
+    router.replace("/(tabs)/home");
+  };
+
+  const setUserContext = (accessToken: string) => {
+    const decoded = decodeAccessToken(accessToken);
+    if (decoded) {
+      getUser(decoded.sub).then((user) => setUser(user));
+    }
   };
 
   const handleGithubLogin = () => {

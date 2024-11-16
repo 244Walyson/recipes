@@ -10,7 +10,7 @@ type InstructionStep = {
 };
 
 type InstructionProps = {
-  data: InstructionStep[];
+  data?: InstructionStep[];
 };
 
 const RecipeInstructions = ({ data }: InstructionProps) => {
@@ -18,16 +18,17 @@ const RecipeInstructions = ({ data }: InstructionProps) => {
 
   return (
     <View style={styles(theme).container}>
-      {data.map((instruction) => (
-        <View key={instruction.step} style={styles(theme).stepContainer}>
-          <Text style={styles(theme).stepTitle}>
-            {instruction.step}. {instruction.title}
-          </Text>
-          <Text style={styles(theme).bulletPoint}>
-            {instruction.description}
-          </Text>
-        </View>
-      ))}
+      {data &&
+        data.map((instruction) => (
+          <View key={instruction.step} style={styles(theme).stepContainer}>
+            <Text style={styles(theme).stepTitle}>
+              {instruction.step}. {instruction.title}
+            </Text>
+            <Text style={styles(theme).bulletPoint}>
+              {instruction.description}
+            </Text>
+          </View>
+        ))}
     </View>
   );
 };

@@ -6,8 +6,8 @@ import { styles } from "./styles";
 
 type CustomIngredientProps = {
   name: string;
-  quantity: number;
-  unity: string;
+  quantity?: number;
+  unit?: string;
   editing?: boolean;
   onDelete?: () => void;
 };
@@ -15,7 +15,7 @@ type CustomIngredientProps = {
 const IngredintsCard = ({
   name,
   quantity,
-  unity,
+  unit,
   editing,
   onDelete,
 }: CustomIngredientProps) => {
@@ -26,7 +26,7 @@ const IngredintsCard = ({
       <Text style={styles(theme).textTitle}>{name}</Text>
       <View style={styles(theme).textWrapper}>
         <Text style={styles(theme).quantityText}>
-          {quantity} {unity}
+          {quantity} {unit}
         </Text>
         {editing && (
           <TouchableOpacity onPress={onDelete}>

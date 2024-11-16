@@ -3,7 +3,7 @@ import CustomModal from "@/src/components/shared/modal";
 import SearchCard from "@/src/components/search/search-card";
 import Header from "@/src/components/shared/header-primary";
 import { useTheme } from "@/src/context/theme-context";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -15,6 +15,9 @@ import {
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import { styles } from "./styles";
+import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
+import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
+import { getRecipes } from "@/src/services/recipe.service";
 
 type ModalItems = {
   title: string;
@@ -209,6 +212,14 @@ const Search = () => {
   const [btnApplyModal, setBtnApplyModal] = useState(false);
   const [focused, setFocused] = useState("");
 
+  const [recipes, setRecipes] = useState<IPaginatedResponse<IRecipeResponse>>();
+
+  useEffect(() => {
+    getRecipes().then((response) => {
+      setRecipes(response);
+    });
+  }, []);
+
   const openModal = (data: ModalItems) => {
     setModalData(data.data);
     setModalTitle(data.title);
@@ -286,7 +297,7 @@ const Search = () => {
       <ScrollView
         style={[
           styles(theme).cardsContainer,
-          { paddingTop: H_MAX_HEIGHT + 20 },
+          { paddingTop: H_MAX_HEIGHT + 80 },
         ]}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -294,15 +305,16 @@ const Search = () => {
         )}
         scrollEventThrottle={16}
       >
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
-        <SearchCard />
+        {recipes?.data.map((recipe) => (
+          <SearchCard
+            key={recipe.id}
+            title={recipe.name}
+            author={recipe.user.name}
+            imgUrl={recipe.imgUrl}
+            time={recipe.totalTime?.toString()}
+            mealType={recipe.mealTypes}
+          />
+        ))}
       </ScrollView>
       <CustomModal
         visible={isModalVisible}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -16,14 +16,25 @@ import { router } from "expo-router";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
+import { IUserResponse } from "@/src/interfaces/user/user-response.interface";
+import { getUser } from "@/src/services/user.service";
+import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
+import { IRecipeProjection } from "@/src/interfaces/recipe/recipe-response-projection.interface";
+import { getRecipesByUserId } from "@/src/services/recipe.service";
+import { removeAllTokens } from "@/src/services/auth.service";
+import { useUser } from "@/src/context/user-context";
 
 const H_MAX_HEIGHT = 320;
 const H_MIN_HEIGHT = 60;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Profile = () => {
+  const { theme } = useTheme();
+  const { user } = useUser();
   const [isFocused, setIsFocused] = useState("grid");
   const [following, setFollowing] = useState(false);
+  const [recipes, setRecipes] =
+    useState<IPaginatedResponse<IRecipeProjection>>();
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -33,9 +44,18 @@ const Profile = () => {
     extrapolate: "clamp",
   });
 
-  const { theme } = useTheme();
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+    getRecipesByUserId(user?.id).then((data) => {
+      console.log(data);
+      setRecipes(data);
+    });
+  }, []);
 
   const logout = () => {
+    removeAllTokens();
     router.push("/register");
   };
 
@@ -53,29 +73,14 @@ const Profile = () => {
   const handleBtnPress = () => {
     if (!isProfileOwner()) {
       setFollowing((prevState) => !prevState);
-    } else {
-      console.log("Editar perfil");
+      return;
     }
+    console.log("Edit profile");
   };
 
   const handleFocusChange = (buttonName: string) => {
     setIsFocused(buttonName);
   };
-
-  const recipes = [
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-    require("../../assets/pancake.png"),
-  ];
 
   return (
     <View style={styles(theme).container}>
@@ -107,11 +112,11 @@ const Profile = () => {
         <View style={styles(theme).middleContainer}>
           <View style={styles(theme).profileInfo}>
             <Image
-              source={require("../../assets/food.png")}
+              source={{ uri: user?.imgUrl }}
               style={styles(theme).imageAvatar}
             />
-            <Text style={styles(theme).textInfo}>Nome</Text>
-            <Text style={styles(theme).textInfoLight}>@Username</Text>
+            <Text style={styles(theme).textInfo}>{user?.name}</Text>
+            <Text style={styles(theme).textInfoLight}>{user?.username}</Text>
             <View style={styles(theme).btnWrapper}>
               <InversePrimaryButtonSlim
                 text={getBtnText()}
@@ -152,11 +157,11 @@ const Profile = () => {
 
       <FlatList
         scrollEventThrottle={16}
-        data={recipes}
+        data={recipes?.data.map((recipe) => recipe.imgUrl)}
         numColumns={3}
         renderItem={({ item }) => (
           <View style={styles(theme).recipeCardContainer}>
-            <Image source={item} style={styles(theme).recipeImage} />
+            <Image source={{ uri: item }} style={styles(theme).recipeImage} />
           </View>
         )}
         keyExtractor={(item, index) => index.toString()}

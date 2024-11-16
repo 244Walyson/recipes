@@ -1,10 +1,12 @@
 import React from "react";
 import { Image, StyleSheet } from "react-native";
 
-const Avatar = () => {
-  return (
-    <Image source={require("../../../assets/food.png")} style={styles.image} />
-  );
+type AvatarProps = {
+  imgUrl?: string;
+};
+
+const Avatar = ({ imgUrl }: AvatarProps) => {
+  return <Image source={{ uri: imgUrl }} style={styles.image} />;
 };
 
 const styles = StyleSheet.create({

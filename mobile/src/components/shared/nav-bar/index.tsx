@@ -65,7 +65,6 @@ function TabBar({ state, descriptors, navigation }: TabBarProps) {
             key={route.key}
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
             style={[

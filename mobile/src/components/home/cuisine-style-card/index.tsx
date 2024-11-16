@@ -4,22 +4,26 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 
-type CategoryCardProps = {
+type cuisineStyleProps = {
   name: string;
   author: string;
-  time: string;
-  imgUrl: string;
+  time?: string;
+  imgUrl?: string;
+  onLikePress?: () => void;
+  onPress?: () => void;
 };
 
-const CategoryCard = ({ name, author, time, imgUrl }: CategoryCardProps) => {
+const CuisineStyleCard = ({
+  name,
+  author,
+  time,
+  imgUrl,
+}: cuisineStyleProps) => {
   const { theme } = useTheme();
 
   return (
     <View style={styles(theme).trendingContainer}>
-      <Image
-        source={require("../../../assets/food.png")}
-        style={styles(theme).image}
-      />
+      <Image source={{ uri: imgUrl }} style={styles(theme).image} />
       <View style={styles(theme).textDescWrapper}>
         <Text style={[styles(theme).textTitle]}>{name}</Text>
       </View>
@@ -40,4 +44,4 @@ const CategoryCard = ({ name, author, time, imgUrl }: CategoryCardProps) => {
   );
 };
 
-export default CategoryCard;
+export default CuisineStyleCard;

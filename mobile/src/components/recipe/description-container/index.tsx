@@ -5,13 +5,26 @@ import { useTheme } from "@/src/context/theme-context";
 import AuthorCard from "../author-card";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
-const DescriptionContainer = () => {
+interface DescriptionContainerProps {
+  title: string;
+  likes: number;
+  mealType?: string;
+  time?: string;
+}
+
+const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
+  title,
+  likes,
+  mealType,
+  time,
+}) => {
   const { theme } = useTheme();
+
   return (
     <View style={styles(theme).container}>
       <View>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textTitle}>Hamburguer do chefe</Text>
+          <Text style={styles(theme).textTitle}>{title}</Text>
           <View
             style={[
               styles(theme).textWrapper,
@@ -19,15 +32,14 @@ const DescriptionContainer = () => {
             ]}
           >
             <AntDesign name="heart" size={24} color={theme.tertiary} />
-            <Text style={styles(theme).textLight}>1k</Text>
+            <Text style={styles(theme).textLight}>{likes}</Text>
           </View>
         </View>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textLight}>Sobremesa</Text>
-          <Text style={styles(theme).textLight}>1h 20min</Text>
+          <Text style={styles(theme).textLight}>{mealType}</Text>
+          <Text style={styles(theme).textLight}>{time}</Text>
         </View>
       </View>
-      <AuthorCard />
     </View>
   );
 };

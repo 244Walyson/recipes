@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URL } from "../utils/system";
 import { IRecipeResponse } from "../interfaces/recipe/recipe-response.interface";
+import { IReciperequest } from "../interfaces/recipe/recipe-request.interface";
 
 export const getRecipeById = async (id: string) => {
   try {
@@ -48,6 +49,16 @@ export const getRecipesByCuisineStyle = async (cuisineStyles: string) => {
     return response.data;
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+};
+
+export const createRecipe = async (recipe: IReciperequest) => {
+  try {
+    const response = await axios.post(`${API_URL}/recipes`, recipe);
+    return response.data;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };

@@ -42,7 +42,7 @@ export const styles = (theme: any) =>
     },
     imageContainer: {
       width: "100%",
-      height: 220,
+      height: 280,
       resizeMode: "cover",
     },
     imagePlaceholder: {

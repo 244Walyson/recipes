@@ -1,30 +1,45 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   ScrollView,
   StatusBar,
   ImageBackground,
   Animated,
+  TouchableOpacity,
 } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import RecipeForm from "@/src/components/recipe/recipe-form";
 import SvgImageAdd from "@/src/assets/icons/image_add";
+import * as ImagePicker from "expo-image-picker";
 
 const H_MAX_HEIGHT = 220;
 const H_MIN_HEIGHT = 0;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
-const RegisterRecipe = () => {
+const RegisterRecipe = async () => {
   const { theme } = useTheme();
   const scrollY = useRef(new Animated.Value(0)).current;
+  const [image, setImage] = useState<string>();
 
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, H_SCROLL_DISTANCE],
     outputRange: [0, -H_SCROLL_DISTANCE],
     extrapolate: "clamp",
   });
+
+  const openGallery = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <View style={styles(theme).container}>
@@ -44,14 +59,29 @@ const RegisterRecipe = () => {
           },
         ]}
       >
-        <HeaderSecondary
-          title="Nova receita"
-          ioniconLeftName="arrow-left"
-          ioniconRightName="check"
-          colorEmphasis={theme.foreground}
-        />
         <View style={styles(theme).imageContainer}>
-          <SvgImageAdd />
+          {image ? (
+            <ImageBackground style={{ flex: 1 }} source={{ uri: image }}>
+              <HeaderSecondary
+                title="Nova receita"
+                ioniconLeftName="arrow-left"
+                ioniconRightName="check"
+                colorEmphasis={theme.foreground}
+              />
+            </ImageBackground>
+          ) : (
+            <>
+              <HeaderSecondary
+                title="Nova receita"
+                ioniconLeftName="arrow-left"
+                ioniconRightName="check"
+                colorEmphasis={theme.foreground}
+              />
+              <TouchableOpacity onPress={openGallery}>
+                <SvgImageAdd />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </Animated.View>
 

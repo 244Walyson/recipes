@@ -226,12 +226,6 @@ const RecipeForm = () => {
     updateAndValidate(macronutrientsFormData, fieldName, value);
   };
 
-  const handleSaveRecipe = () => {
-    console.log("Salvar Receita", genericFormData);
-    console.log("Ingredientes", ingredients);
-    console.log("Instruções", directions);
-  };
-
   const handleGenericInputChange = (value: string, fieldName: string) => {
     setGenericFormData(updateAndValidate(genericFormData, fieldName, value));
   };
@@ -275,12 +269,46 @@ const RecipeForm = () => {
     }
   };
 
+  const handleSaveRecipe = async () => {
+    const getValues = (obj: { [key: string]: any }) => {
+      const values: { [key: string]: any } = {};
+
+      Object.keys(obj).forEach((key) => {
+        values[key] = obj[key]?.value || obj[key];
+      });
+
+      return values;
+    };
+
+    const macronutrients = {
+      carbohydrate: macronutrientsFormData.carbohydrate?.value || 0,
+      fat: macronutrientsFormData.fat?.value || 0,
+      protein: macronutrientsFormData.protein?.value || 0,
+    };
+
+    const data = {
+      ...getValues(genericFormData),
+      ingredients: ingredients.map((ingredient) => ({
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        unity: ingredient.unity,
+      })),
+      prepareMethod: partialDirections.map((direction) => ({
+        step: direction.step,
+        title: direction.title,
+        description: direction.description,
+      })),
+      macronutrients: macronutrients,
+    };
+    console.log(data);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
       {Object.entries(genericFormData).map(([key, field]) => (
         <CustomInput
-          key={key}
-          label={`${field.placeholder}`}
+          key={field.name}
+          label={field.placeholder}
           placeholder={field.placeholder}
           keyboardType={field.type}
           value={field.value}
@@ -290,8 +318,12 @@ const RecipeForm = () => {
 
       {Object.entries(ingredientsFormData).map(([key, field]) =>
         key === "ingredient" ? (
-          <View style={{ marginTop: 20 }}>
+          <View
+            style={{ marginTop: 20 }}
+            key={`ingredient-key-${field.placeholder}`}
+          >
             <CustomInput
+              key={`field.name-${field.name}`}
               placeholder={field.placeholder}
               keyboardType={field.type}
               value={field.value}
@@ -302,9 +334,13 @@ const RecipeForm = () => {
           </View>
         ) : (
           key === "quantity" && (
-            <View style={styles(theme).inputWrapper}>
+            <View
+              style={styles(theme).inputWrapper}
+              key={`quantity-${field.placeholder}`}
+            >
               <View style={styles(theme).input}>
                 <CustomInput
+                  key={`field.name-${field.name}`}
                   placeholder={field.placeholder}
                   keyboardType={field.type}
                   value={field.value}
@@ -315,6 +351,7 @@ const RecipeForm = () => {
               </View>
               <View style={styles(theme).selectWrapper}>
                 <CustomPicker
+                  key="unity-picker"
                   values={["ml", "litros", "xícaras"]}
                   onChange={(value) =>
                     handleIngredientsInputChange(value, "unity")
@@ -334,7 +371,7 @@ const RecipeForm = () => {
       {ingredients.length > 0 &&
         ingredients.map((ingredient, index) => (
           <IngredintsCard
-            key={index}
+            key={`ingredient-${ingredient.name}-${index}`}
             name={ingredient.name}
             quantity={ingredient.quantity}
             unit={ingredient.unity}
@@ -352,15 +389,16 @@ const RecipeForm = () => {
             {" "}
             • Em uma tijela adicione...
           </Text>
-          <Text style={styles(theme).textLight}> • Adicione o açucar...</Text>
+          <Text style={styles(theme).textLight}> • Adicione o açúcar...</Text>
         </View>
 
         {Object.entries(directionsFormData).map(([key, field]) => (
           <>
             {key === "title" && (
-              <View style={styles(theme).inputWrapper}>
+              <View style={styles(theme).inputWrapper} key="title">
                 <View style={styles(theme).input}>
                   <CustomInput
+                    key={`-${field.name}-key`}
                     placeholder={field.placeholder}
                     keyboardType={field.type}
                     onChangeText={(text) =>
@@ -369,10 +407,12 @@ const RecipeForm = () => {
                   />
                 </View>
                 <TouchableOpacity
+                  key={`-${field.name}-key`}
                   style={styles(theme).addWrapper}
                   onPress={() => handlePartialDirections("title")}
                 >
                   <Ionicons
+                    key={`-${field.name}-icon`}
                     name="checkmark"
                     size={30}
                     color={theme.background}
@@ -381,9 +421,10 @@ const RecipeForm = () => {
               </View>
             )}
             {key === "description" && (
-              <View style={styles(theme).inputWrapper}>
+              <View style={styles(theme).inputWrapper} key="description-key">
                 <View style={styles(theme).input}>
                   <CustomInput
+                    key={`field.name-key${field.name}`}
                     placeholder={field.placeholder}
                     keyboardType={field.type}
                     onChangeText={(text) =>
@@ -405,7 +446,7 @@ const RecipeForm = () => {
         <RecipeInstructions data={partialDirections} />
       </View>
 
-      <PrimaryButton text="Salvar Receita" onPress={() => {}} />
+      <PrimaryButton text="Salvar Receita" onPress={handleSaveRecipe} />
     </ScrollView>
   );
 };

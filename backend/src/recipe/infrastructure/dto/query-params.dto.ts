@@ -9,6 +9,6 @@ export class QueryParamsDto implements IFindAllFilters {
   calories?: number;
   servingSize?: string;
   allergens?: string[];
-  totalTime?: number;
+  totalTime?: number[];
   viewCount?: number;
 }

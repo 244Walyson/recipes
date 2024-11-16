@@ -67,13 +67,25 @@ async function main() {
     },
   });
 
-  // Criando Receita
+  // Criando Receita com preparationMethod como JSON
   const recipe = await prisma.recipe.create({
     data: {
       name: 'Pancakes',
-      preparationMethod: 'Mix ingredients and cook on a pan.',
+      preparationMethod: [
+        {
+          step: 1,
+          title: 'Mix ingredients',
+          description: 'In a bowl, mix flour, sugar, and butter.',
+        },
+        {
+          step: 2,
+          title: 'Cook pancakes',
+          description:
+            'Heat a pan and cook the batter until golden brown on both sides.',
+        },
+      ],
       preparationTime: 10,
-      imgUrl: 'http://example.com/pancakes.jpg',
+      imgUrl: 'https://shorturl.at/xzXe1',
       difficultyLevel: 'Easy',
       category: 'Dessert',
       tags: ['sweet', 'breakfast'],

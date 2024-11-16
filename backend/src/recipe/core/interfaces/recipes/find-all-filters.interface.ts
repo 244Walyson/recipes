@@ -1,12 +1,9 @@
 export interface IFindAllFilters {
   name?: string;
-  category?: string;
-  tags?: string[];
-  cuisineStyles?: string[];
-  difficultyLevel?: string;
-  calories?: number;
+  ingredients?: string[];
+  cuisineStyle?: string;
   servingSize?: string;
   allergens?: string[];
-  totalTime?: number;
+  totalTime?: number[];
   viewCount?: number;
 }

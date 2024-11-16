@@ -54,7 +54,7 @@ model PasswordRecovery {
 model Recipe {
   id                String   @id @default(uuid())
   name              String
-  preparationMethod String
+  preparationMethod Json
   preparationTime   Int
   imgUrl            String?
   difficultyLevel   String?

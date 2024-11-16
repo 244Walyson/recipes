@@ -45,6 +45,7 @@ export class RecipeRepository implements IRecipeRepository {
     return {
       ...createdRecipe,
       macronutrients: createdRecipe.macronutrients as Record<string, number>,
+      preparationMethod: createdRecipe.preparationMethod as any,
     };
   }
 
@@ -72,6 +73,7 @@ export class RecipeRepository implements IRecipeRepository {
       ...recipe,
       macronutrients: recipe.macronutrients as Record<string, number>,
       mealTypes: recipe.mealTypes.map((item) => item.MealType),
+      preparationMethod: recipe.preparationMethod as any,
       cuisineStyles: recipe.cuisineStyles.map((item) => item.CuisineStyle),
       recipeIngredients: recipe.recipeIngredients.map((item) => ({
         ...item,
@@ -99,16 +101,47 @@ export class RecipeRepository implements IRecipeRepository {
           contains: filters?.name ? filters.name : '',
           mode: 'insensitive',
         },
-        category: filters?.category ? { equals: filters.category } : undefined,
-        tags: filters?.tags ? { hasSome: filters.tags } : undefined,
-        difficultyLevel: filters?.difficultyLevel
-          ? { equals: filters.difficultyLevel }
+
+        recipeIngredients:
+          filters?.ingredients && filters.ingredients.length > 0
+            ? {
+                some: {
+                  ingredient: {
+                    name: { in: filters.ingredients, mode: 'insensitive' },
+                  },
+                },
+              }
+            : undefined,
+
+        cuisineStyles: filters?.cuisineStyle
+          ? {
+              some: {
+                CuisineStyle: {
+                  name: { equals: filters.cuisineStyle },
+                },
+              },
+            }
           : undefined,
-        calories: filters?.calories ? { equals: filters.calories } : undefined,
-        totalTime: filters?.totalTime
-          ? { equals: filters.totalTime }
+
+        servingCount: filters?.servingSize
+          ? { equals: parseInt(filters.servingSize, 10) }
           : undefined,
+        totalTime:
+          filters?.totalTime &&
+          !isNaN(filters.totalTime[0]) &&
+          !isNaN(filters.totalTime[1])
+            ? {
+                gte: filters.totalTime[0],
+                lte: filters.totalTime[1],
+              }
+            : undefined,
         viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
+        NOT: {
+          allergens: filters?.allergens
+            ? { hasSome: filters?.allergens }
+            : undefined,
+        },
+
         deleted: false,
       },
     });
@@ -135,16 +168,47 @@ export class RecipeRepository implements IRecipeRepository {
           contains: filters?.name ? filters.name : '',
           mode: 'insensitive',
         },
-        category: filters?.category ? { equals: filters.category } : undefined,
-        tags: filters?.tags ? { hasSome: filters.tags } : undefined,
-        difficultyLevel: filters?.difficultyLevel
-          ? { equals: filters.difficultyLevel }
+
+        recipeIngredients:
+          filters?.ingredients && filters.ingredients.length > 0
+            ? {
+                some: {
+                  ingredient: {
+                    name: { in: filters.ingredients, mode: 'insensitive' },
+                  },
+                },
+              }
+            : undefined,
+
+        cuisineStyles: filters?.cuisineStyle
+          ? {
+              some: {
+                CuisineStyle: {
+                  name: { equals: filters.cuisineStyle },
+                },
+              },
+            }
           : undefined,
-        calories: filters?.calories ? { equals: filters.calories } : undefined,
-        totalTime: filters?.totalTime
-          ? { equals: filters.totalTime }
+
+        servingCount: filters?.servingSize
+          ? { equals: parseInt(filters.servingSize, 10) }
           : undefined,
+        totalTime:
+          filters?.totalTime &&
+          !isNaN(filters.totalTime[0]) &&
+          !isNaN(filters.totalTime[1])
+            ? {
+                gte: filters.totalTime[0],
+                lte: filters.totalTime[1],
+              }
+            : undefined,
         viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
+        NOT: {
+          allergens: filters?.allergens
+            ? { hasSome: filters?.allergens }
+            : undefined,
+        },
+
         deleted: false,
       },
       skip: offset,
@@ -217,6 +281,7 @@ export class RecipeRepository implements IRecipeRepository {
     return {
       ...updatedRecipe,
       macronutrients: updatedRecipe.macronutrients as Record<string, number>,
+      preparationMethod: updatedRecipe.preparationMethod as any,
     };
   }
   async delete(recipeId: string): Promise<void> {

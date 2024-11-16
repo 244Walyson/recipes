@@ -19,15 +19,49 @@ export class FindAllRecipeUseCase {
     const offset = (page - 1) * limit;
     const numericLimit = parseInt(limit.toString(), 10);
 
+    const queryParams = this.parseQueryParams(filters);
+
     const recipes = await this.recipeRepository.findAll(
       { offset, limit: numericLimit },
-      filters,
+      queryParams,
     );
     return {
       data: recipes.data,
       total: recipes.total,
       page: page,
       limit: limit,
+    };
+  }
+
+  private parseQueryParams(filters: IFindAllFilters): IFindAllFilters {
+    console.log(filters);
+
+    const timeArray = filters?.totalTime
+      ? filters?.totalTime
+          .toString()
+          .split(',')
+          .map((time) => +time)
+      : undefined;
+
+    const ingredientsArray = filters?.ingredients
+      ? filters.ingredients
+          .toString()
+          .split(',')
+          .map((ingredient) => ingredient.trim())
+      : undefined;
+
+    const allergensArray = filters?.allergens
+      ? filters.allergens
+          .toString()
+          .split(',')
+          .map((allergen) => allergen.trim())
+      : undefined;
+
+    return {
+      ...filters,
+      ingredients: ingredientsArray,
+      allergens: allergensArray,
+      totalTime: timeArray,
     };
   }
 }

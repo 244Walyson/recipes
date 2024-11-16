@@ -2,11 +2,8 @@ export interface IRecipeProjection {
   id: string;
   name: string;
   imgUrl?: string;
-  difficultyLevel?: string;
-  tags?: string[];
-  calories?: number;
   macronutrients?: Record<string, number>;
-  totalTime?: number;
+  preparationTime?: number;
   servingCount?: number;
   viewCount: number;
   favoriteCount: number;

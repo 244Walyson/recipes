@@ -21,7 +21,9 @@
     "seed": "ts-node prisma/seed/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.693.0",
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/mapped-types": "*",
@@ -30,6 +32,8 @@
     "@nestjs/swagger": "^8.0.5",
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
     "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
@@ -43,6 +47,7 @@
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.2",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",

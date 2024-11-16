@@ -13,6 +13,7 @@ import { useTheme } from "@/src/context/theme-context";
 import RecipeForm from "@/src/components/recipe/recipe-form";
 import SvgImageAdd from "@/src/assets/icons/image_add";
 import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "@/src/services/image-upload.service";
 
 const H_MAX_HEIGHT = 220;
 const H_MIN_HEIGHT = 0;
@@ -21,7 +22,7 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 const RegisterRecipe = async () => {
   const { theme } = useTheme();
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [image, setImage] = useState<string>();
+  const [imageUrl, setImageUrl] = useState<string>();
 
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, H_SCROLL_DISTANCE],
@@ -37,7 +38,13 @@ const RegisterRecipe = async () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      try {
+        const file = result.assets[0].uri;
+        const imgUrl = await uploadImage(file);
+        if (imgUrl) setImageUrl(imgUrl.url);
+      } catch (error) {
+        console.error("Erro ao fazer upload da imagem:", error);
+      }
     }
   };
 
@@ -60,8 +67,8 @@ const RegisterRecipe = async () => {
         ]}
       >
         <View style={styles(theme).imageContainer}>
-          {image ? (
-            <ImageBackground style={{ flex: 1 }} source={{ uri: image }}>
+          {imageUrl ? (
+            <ImageBackground style={{ flex: 1 }} source={{ uri: imageUrl }}>
               <HeaderSecondary
                 title="Nova receita"
                 ioniconLeftName="arrow-left"
@@ -96,7 +103,7 @@ const RegisterRecipe = async () => {
         )}
         scrollEventThrottle={16}
       >
-        <RecipeForm />
+        <RecipeForm imgUrl={imageUrl} />
       </ScrollView>
     </View>
   );

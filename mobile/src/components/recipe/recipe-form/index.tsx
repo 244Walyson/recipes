@@ -10,6 +10,8 @@ import RecipeInstructions from "../recipe-instructions";
 import CustomInput from "../../shared/custom-input";
 import InversePrimaryButtonSlim from "../../shared/inverse-primary-button-slim";
 import { updateAndValidate } from "@/src/utils/forms";
+import { createRecipe } from "@/src/services/recipe.service";
+import { all } from "axios";
 
 type Ingredient = {
   name: string;
@@ -33,10 +35,13 @@ type FormField = {
   message: string;
 };
 
-const RecipeForm = () => {
+type RecipeFormProps = {
+  imgUrl?: string;
+};
+
+const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   const { theme } = useTheme();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [directions, setDirections] = useState<Directions[]>([]);
   const [partialDirections, setPartialDirections] = useState<Directions[]>([]);
 
   const [ingredientsFormData, setIngredientsFormData] = useState<
@@ -174,6 +179,24 @@ const RecipeForm = () => {
       validation: (value: string) => value.length > 0,
       message: "O número de porções não pode ser vazio",
     },
+    costEstimate: {
+      value: "",
+      id: "costEstimate",
+      name: "costEstimate",
+      type: "numeric",
+      placeholder: "custo estimado",
+      validation: (value: string) => value.length > 0,
+      message: "O número de porções não pode ser vazio",
+    },
+    allergens: {
+      value: "",
+      id: "allergens",
+      name: "allergens",
+      type: "numeric",
+      placeholder: "Alergênicos",
+      validation: (value: string) => value.length > 0,
+      message: "O número de porções não pode ser vazio",
+    },
     adictionalTips: {
       value: "",
       id: "adictionalTips",
@@ -204,26 +227,13 @@ const RecipeForm = () => {
     });
   };
 
-  const addDirectionStep = () => {
-    console.log("Adicionar Passo", directionsFormData);
-    const { title, description } = directionsFormData;
-    setDirections((prevDirections) => [
-      ...prevDirections,
-      {
-        step: directions.length + 1,
-        title: title.value,
-        description: description.value,
-      },
-    ]);
-    setDirectionsFormData({
-      ...directionsFormData,
-      stepTitle: { ...title, value: "" },
-      stepDescription: { ...description, value: "" },
-    });
-  };
-
-  const addMacronutrient = (value: string, fieldName: string) => {
-    updateAndValidate(macronutrientsFormData, fieldName, value);
+  const handleMacronutrientsInputChange = (
+    value: string,
+    fieldName: string
+  ) => {
+    setMacronutrientsFormData(
+      updateAndValidate(macronutrientsFormData, fieldName, value)
+    );
   };
 
   const handleGenericInputChange = (value: string, fieldName: string) => {
@@ -270,37 +280,51 @@ const RecipeForm = () => {
   };
 
   const handleSaveRecipe = async () => {
-    const getValues = (obj: { [key: string]: any }) => {
-      const values: { [key: string]: any } = {};
-
-      Object.keys(obj).forEach((key) => {
-        values[key] = obj[key]?.value || obj[key];
-      });
-
-      return values;
-    };
-
     const macronutrients = {
-      carbohydrate: macronutrientsFormData.carbohydrate?.value || 0,
-      fat: macronutrientsFormData.fat?.value || 0,
-      protein: macronutrientsFormData.protein?.value || 0,
+      carbs: Number(macronutrientsFormData.carbohydrate?.value) || 0,
+      fat: Number(macronutrientsFormData.fat?.value) || 0,
+      protein: Number(macronutrientsFormData.protein?.value) || 0,
     };
+
+    const genericdata = {
+      name: genericFormData.name.value,
+      type: genericFormData.type.value,
+      totalTime: genericFormData.totalTime.value,
+      preparationTime: Number(genericFormData.preparationTime?.value) || 0, // Aqui convertemos para número
+      servingCount: Number(genericFormData.servingCount.value),
+      adictionalTips: genericFormData.adictionalTips.value,
+      allergens: Array.isArray(genericFormData.allergens?.value)
+        ? genericFormData.allergens.value
+        : [genericFormData.allergens?.value], // Ensure allergens is an array
+      costEstimate: Number(genericFormData.costEstimate.value),
+    };
+
+    const ingredientsData = ingredients.map((ingredient, index) => ({
+      id: "",
+      name: ingredient.name,
+      quantity: ingredient.quantity,
+      unit: ingredient.unity,
+    }));
+
+    const preparationMethod = partialDirections.map((direction) => ({
+      step: direction.step,
+      title: direction.title,
+      description: direction.description,
+    }));
 
     const data = {
-      ...getValues(genericFormData),
-      ingredients: ingredients.map((ingredient) => ({
-        name: ingredient.name,
-        quantity: ingredient.quantity,
-        unity: ingredient.unity,
-      })),
-      prepareMethod: partialDirections.map((direction) => ({
-        step: direction.step,
-        title: direction.title,
-        description: direction.description,
-      })),
+      imgUrl: imgUrl,
+      ...genericdata,
+      ingredients: ingredientsData,
+      preparationMethod: preparationMethod,
       macronutrients: macronutrients,
+      isPublished: true,
+      mealTypes: [],
+      cuisineStyles: [],
     };
+
     console.log(data);
+    await createRecipe(data);
   };
 
   return (
@@ -316,6 +340,31 @@ const RecipeForm = () => {
         />
       ))}
 
+      <View
+        style={[
+          {
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "space-between",
+          },
+        ]}
+      >
+        {Object.entries(macronutrientsFormData).map(([key, field]) => (
+          <View style={{ width: "30%" }}>
+            <CustomInput
+              key={field.name}
+              label={field.placeholder}
+              placeholder={field.placeholder}
+              keyboardType={field.type}
+              value={field.value}
+              onChangeText={(text) =>
+                handleMacronutrientsInputChange(text, field.name)
+              }
+            />
+          </View>
+        ))}
+      </View>
+
       {Object.entries(ingredientsFormData).map(([key, field]) =>
         key === "ingredient" ? (
           <View
@@ -326,6 +375,7 @@ const RecipeForm = () => {
               key={`field.name-${field.name}`}
               placeholder={field.placeholder}
               keyboardType={field.type}
+              label={field.placeholder}
               value={field.value}
               onChangeText={(text) =>
                 handleIngredientsInputChange(text, field.name)

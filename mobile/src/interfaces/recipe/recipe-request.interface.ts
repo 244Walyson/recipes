@@ -1,29 +1,25 @@
-import { ICuisineStyle } from '../cuisine-style/cousine-styles.interface';
-import { IIngredient } from '../ingredient/ingredient.interface';
-import { IMealType } from '../meal-type/meal-type.interface';
+import { ICuisineStyle } from "../cuisine-style/cousine-styles.interface";
+import { IIngredient } from "../ingredient/ingredient.interface";
+import { IMealType } from "../meal-type/meal-type.interface";
+
+type Directions = {
+  step: number;
+  title: string;
+  description: string;
+};
+
+type Macronutrients = { protein: number; carbs: number; fat: number };
 
 export interface IReciperequest {
   name: string;
-  preparationMethod: string;
+  preparationMethod: Directions[];
   preparationTime: number;
   imgUrl?: string;
-  difficultyLevel?: string;
-  category?: string;
-  tags?: string[];
-  calories?: number;
-  macronutrients?: { protein: number; carbs: number; fat: number };
-  servingSize?: string;
-  allergens?: string[];
-  cookTime?: number;
-  totalTime?: number;
+  macronutrients?: Macronutrients;
   servingCount?: number;
-  costEstimate?: number;
-  experienceLevel?: string;
-  additionalTips?: string;
-  videoUrl?: string;
-  sourceUrl?: string;
   isPublished: boolean;
-  userId: string;
+  costEstimate: number;
+  allergens?: string[];
   ingredients: IIngredient[];
   mealTypes: IMealType[];
   cuisineStyles: ICuisineStyle[];

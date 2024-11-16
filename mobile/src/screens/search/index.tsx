@@ -6,189 +6,38 @@ import { useTheme } from "@/src/context/theme-context";
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  StyleSheet,
   ScrollView,
   Text,
   TouchableOpacity,
   Animated,
+  FlatList,
 } from "react-native";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import Feather from "react-native-vector-icons/Feather";
 import { styles } from "./styles";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
 import { getRecipes } from "@/src/services/recipe.service";
+import CustomSearchBar from "@/src/components/shared/search-bar";
+import { IFindAllFilters } from "@/src/interfaces/recipe/find-all-filters.interface";
 
-type ModalItems = {
-  title: string;
-  data: ModalDataItems[];
-};
+import AntDesign from "react-native-vector-icons/AntDesign";
+import Feather from "react-native-vector-icons/Feather";
+import FontAwsome from "react-native-vector-icons/FontAwesome6";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import axios from "axios";
+import { getIngredients } from "@/src/services/ingredient.service";
+import {
+  allergensData,
+  priceData,
+  timeData,
+  trendingData,
+} from "@/src/static/search-modal-data";
 
-type ModalDataItems = {
-  id: number;
-  name: string;
-};
-
-const categories = [
-  {
-    name: "Salada",
-  },
-  {
-    name: "Pizza",
-  },
-  {
-    name: "Sushi",
-  },
-  {
-    name: "Sobremesas",
-  },
-  {
-    name: "Bebidas",
-  },
-  {
-    name: "Massas",
-  },
-  {
-    name: "Carnes",
-  },
-  {
-    name: "Lanches",
-  },
-  {
-    name: "Vegetariano",
-  },
-  {
-    name: "Vegano",
-  },
-  {
-    name: "Doces",
-  },
-  {
-    name: "Salgados",
-  },
-  {
-    name: "Bolos",
-  },
-  {
-    name: "Sopas",
-  },
-  {
-    name: "Caldos",
-  },
-  {
-    name: "Molhos",
-  },
-  {
-    name: "Cremes",
-  },
-  {
-    name: "Geleias",
-  },
-  {
-    name: "Compotas",
-  },
-  {
-    name: "Pães",
-  },
-  {
-    name: "Biscoitos",
-  },
-  {
-    name: "Tortas",
-  },
-  {
-    name: "Pudins",
-  },
-];
-
-const vegetablesData = {
-  title: "Selecione seus ingredientes favoritos",
-  data: [
-    {
-      id: 1,
-      name: "Cenoura",
-    },
-    {
-      id: 2,
-      name: "Beterraba",
-    },
-    {
-      id: 3,
-      name: "Batata",
-    },
-    {
-      id: 4,
-      name: "Tomate",
-    },
-    {
-      id: 5,
-      name: "Cebola",
-    },
-    {
-      id: 6,
-      name: "Alho",
-    },
-    {
-      id: 7,
-      name: "Pimentão",
-    },
-    {
-      id: 8,
-      name: "Abobrinha",
-    },
-    {
-      id: 9,
-      name: "Berinjela",
-    },
-    {
-      id: 10,
-      name: "Pepino",
-    },
-  ],
-};
-
-const trendingData = {
-  title: "O que você prefere?",
-  data: [
-    {
-      id: 1,
-      name: "Mais populares",
-    },
-    {
-      id: 2,
-      name: "Mais recentes",
-    },
-    {
-      id: 3,
-      name: "Mais curtidos",
-    },
-    {
-      id: 4,
-      name: "Mais comentados",
-    },
-  ],
-};
-
-const timeData = {
-  title: "Quanto tempo você tem?",
-  data: [
-    {
-      id: 1,
-      name: "Até 30 min",
-    },
-    {
-      id: 2,
-      name: "Até 1h",
-    },
-    {
-      id: 3,
-      name: "Até 2h",
-    },
-    {
-      id: 4,
-      name: "Mais de 2h",
-    },
-  ],
+type ModalData = {
+  visible?: boolean;
+  data: {
+    title: string;
+    data: { id: number; name: string }[];
+  };
 };
 
 const H_MAX_HEIGHT = 200;
@@ -197,6 +46,22 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Search = () => {
   const { theme } = useTheme();
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [btnApplyModal, setBtnApplyModal] = useState(false);
+  const [focused, setFocused] = useState("");
+  const [searchFilters, setSearchFilters] = useState<IFindAllFilters>({});
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+  const [modalData, setModalData] = useState<ModalData>({
+    visible: false,
+    data: {
+      title: "",
+      data: [],
+    },
+  });
+
+  const [recipes, setRecipes] = useState<IPaginatedResponse<IRecipeResponse>>();
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -206,34 +71,69 @@ const Search = () => {
     extrapolate: "clamp",
   });
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [modalData, setModalData] = useState<ModalDataItems[]>([]);
-  const [modelTitle, setModalTitle] = useState<string>("");
-  const [btnApplyModal, setBtnApplyModal] = useState(false);
-  const [focused, setFocused] = useState("");
-
-  const [recipes, setRecipes] = useState<IPaginatedResponse<IRecipeResponse>>();
-
   useEffect(() => {
-    getRecipes().then((response) => {
+    getRecipes(searchFilters).then((response) => {
       setRecipes(response);
     });
   }, []);
 
-  const openModal = (data: ModalItems) => {
-    setModalData(data.data);
-    setModalTitle(data.title);
-    if (data.title === "Selecione seus ingredientes favoritos") {
-      setBtnApplyModal(true);
-      setModalVisible(true);
+  const openModal = ({
+    data,
+    apiEndpoint,
+    multipleSelection = false,
+  }: {
+    data?: { title: string; data: { id: number; name: string }[] };
+    apiEndpoint?: string;
+    multipleSelection?: boolean;
+  }) => {
+    if (data) {
+      setModalData({ visible: true, data });
+      setBtnApplyModal(multipleSelection);
       return;
     }
-    setBtnApplyModal(false);
-    setModalVisible(true);
+    if (apiEndpoint === "ingredients") {
+      getIngredients().then((response) => {
+        const title = "Selecione seus ingredientes favoritos";
+        setModalData({ visible: true, data: { title, data: response.data } });
+        setBtnApplyModal(multipleSelection);
+      });
+    }
   };
 
   const closeModal = () => {
-    setModalVisible(false);
+    setModalData({ ...modalData, visible: false });
+  };
+
+  const handleSearch = (text: string) => {
+    setSearchFilters({ ...searchFilters, name: text });
+
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+    const newTimeout = setTimeout(async () => {
+      if (text) {
+        try {
+          const data = await getRecipes({ name: text });
+          setRecipes(data);
+        } catch (error) {
+          console.error("Erro ao buscar receitas:", error);
+        }
+      }
+    }, 500);
+
+    setDebounceTimeout(newTimeout);
+    if (text) {
+      const filteredSuggestions = recipes?.data
+        .filter((item) => item.name.toLowerCase().includes(text.toLowerCase()))
+        .map((item) => item.name);
+      setSuggestions(filteredSuggestions || []);
+      return;
+    }
+    setSuggestions([]);
+  };
+
+  const handleSelectSuggestion = (suggestion: string) => {
+    setSearchFilters({ ...searchFilters, name: suggestion });
+    setSuggestions([]);
   };
 
   return (
@@ -252,25 +152,82 @@ const Search = () => {
         ]}
       >
         <Header />
+        <View style={{ paddingHorizontal: 10 }}>
+          <CustomSearchBar
+            onSearch={handleSearch}
+            value={searchFilters?.name}
+          />
+          {suggestions.length > 0 && (
+            <FlatList
+              data={suggestions}
+              renderItem={({ item }) => (
+                <Text
+                  style={styles(theme).suggestion}
+                  onPress={() => handleSelectSuggestion(item)}
+                >
+                  {item}
+                </Text>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          )}
+        </View>
 
         <View style={styles(theme).filterWrapper}>
           <View style={styles(theme).textWrapper}>
             <Text style={styles(theme).filtersText}>Filtros</Text>
-            <AntDesign name="filter" size={24} color={theme.tertiary} />
+            <AntDesign name="filter" size={14} color={theme.tertiary} />
           </View>
+
           <View style={styles(theme).iconWrapper}>
-            <TouchableOpacity onPress={() => openModal(vegetablesData)}>
-              <SvgVegetablesIcon width={25} height={25} opacity={0.3} />
+            <TouchableOpacity
+              onPress={() =>
+                openModal({ data: allergensData, multipleSelection: true })
+              }
+            >
+              <AntDesign name="warning" size={25} color={theme.tertiary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => openModal(trendingData)}>
+            <TouchableOpacity
+              onPress={() =>
+                openModal({ data: priceData, multipleSelection: false })
+              }
+            >
+              <MaterialIcons
+                name="price-change"
+                size={25}
+                color={theme.tertiary}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                openModal({
+                  apiEndpoint: "ingredients",
+                  multipleSelection: true,
+                })
+              }
+            >
+              <FontAwsome name="bowl-food" size={25} color={theme.tertiary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                openModal({
+                  data: trendingData,
+                  multipleSelection: false,
+                })
+              }
+            >
               <Feather name="trending-up" size={25} color={theme.tertiary} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => openModal(timeData)}>
+            <TouchableOpacity
+              onPress={() =>
+                openModal({ data: timeData, multipleSelection: false })
+              }
+            >
               <AntDesign name="clockcircleo" size={25} color={theme.tertiary} />
             </TouchableOpacity>
           </View>
         </View>
-        <ScrollView
+        {/* <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles(theme).filtersContainer}
@@ -291,7 +248,7 @@ const Search = () => {
               {category.name}
             </Text>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </Animated.View>
 
       <ScrollView
@@ -316,14 +273,17 @@ const Search = () => {
           />
         ))}
       </ScrollView>
-      <CustomModal
-        visible={isModalVisible}
-        onClose={closeModal}
-        data={modalData}
-        title={modelTitle}
-        btnApplyText="Aplicar"
-        btnApplyAction={() => console.log("Apply")}
-      />
+      {modalData && (
+        <CustomModal
+          visible={modalData?.visible ?? false}
+          onClose={closeModal}
+          data={modalData.data.data}
+          title={modalData.data.title}
+          btnApplyActive={btnApplyModal}
+          btnApplyText="Aplicar"
+          btnApplyAction={() => console.log("Apply")}
+        />
+      )}
     </View>
   );
 };

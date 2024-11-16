@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { ScrollView, View, TouchableOpacity, Text } from "react-native";
+import {
+  ScrollView,
+  View,
+  TouchableOpacity,
+  Text,
+  FlatList,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomPicker from "../../custom-picker";
 import IngredintsCard from "../ingredients-card";
@@ -8,10 +14,17 @@ import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import RecipeInstructions from "../recipe-instructions";
 import CustomInput from "../../shared/custom-input";
-import InversePrimaryButtonSlim from "../../shared/inverse-primary-button-slim";
 import { updateAndValidate } from "@/src/utils/forms";
 import { createRecipe } from "@/src/services/recipe.service";
 import { all } from "axios";
+import CustomModal from "../../shared/modal";
+import PrimaryButtonSlim from "../../shared/primary-button-slim";
+import {
+  directionsInputs,
+  genericInputs,
+  ingredientsInputs,
+  macronutrientsInputs,
+} from "@/src/static/register-form-inputs";
 
 type Ingredient = {
   name: string;
@@ -39,174 +52,35 @@ type RecipeFormProps = {
   imgUrl?: string;
 };
 
+const dataS = [
+  "Apple",
+  "Banana",
+  "Orange",
+  "Pineapple",
+  "Mango",
+  "Strawberry",
+  "Blueberry",
+  "Raspberry",
+];
+
 const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   const { theme } = useTheme();
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [partialDirections, setPartialDirections] = useState<Directions[]>([]);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  const [ingredientsFormData, setIngredientsFormData] = useState<
-    Record<string, FormField>
-  >({
-    ingredient: {
-      value: "",
-      id: "ingredient",
-      name: "ingredient",
-      type: "default",
-      placeholder: "Ingrediente",
-      validation: (value: string) => value.length > 0,
-      message: "O ingrediente não pode ser vazio",
-    },
-    quantity: {
-      value: "",
-      id: "quantity",
-      name: "quantity",
-      type: "numeric",
-      placeholder: "Quantidade",
-      validation: (value: string) => value.length > 0,
-      message: "A quantidade não pode ser vazia",
-    },
-    unity: {
-      value: "",
-      id: "unity",
-      name: "unity",
-      type: "default",
-      placeholder: "Unidade",
-      validation: (value: string) => value.length > 0,
-      message: "A unidade não pode ser vazia",
-    },
-  });
+  const [ingredientsFormData, setIngredientsFormData] =
+    useState<Record<string, FormField>>(ingredientsInputs);
 
-  const [directionsFormData, setDirectionsFormData] = useState<
-    Record<string, FormField>
-  >({
-    step: {
-      value: "",
-      id: "step",
-      name: "step",
-      type: "default",
-      placeholder: "Passo",
-      validation: (value: string) => value.length > 0,
-      message: "O passo não pode ser vazio",
-    },
-    title: {
-      value: "",
-      id: "title",
-      name: "title",
-      type: "default",
-      placeholder: "Título",
-      validation: (value: string) => value.length > 0,
-      message: "O título não pode ser vazio",
-    },
-    description: {
-      value: "",
-      id: "description",
-      name: "description",
-      type: "default",
-      placeholder: "Descrição",
-      validation: (value: string) => value.length > 0,
-      message: "A descrição não pode ser vazia",
-    },
-  });
+  const [directionsFormData, setDirectionsFormData] =
+    useState<Record<string, FormField>>(directionsInputs);
 
-  const [macronutrientsFormData, setMacronutrientsFormData] = useState<
-    Record<string, FormField>
-  >({
-    fat: {
-      value: "",
-      id: "fat",
-      name: "fat",
-      type: "numeric",
-      placeholder: "Gordura",
-      validation: (value: string) => value.length > 0,
-      message: "A gordura não pode ser vazia",
-    },
-    protein: {
-      value: "",
-      id: "protein",
-      name: "protein",
-      type: "numeric",
-      placeholder: "Proteína",
-      validation: (value: string) => value.length > 0,
-      message: "A proteína não pode ser vazia",
-    },
-    carbohydrate: {
-      value: "",
-      id: "carbohydrate",
-      name: "carbohydrate",
-      type: "numeric",
-      placeholder: "Carboidrato",
-      validation: (value: string) => value.length > 0,
-      message: "O carboidrato não pode ser vazio",
-    },
-  });
+  const [macronutrientsFormData, setMacronutrientsFormData] =
+    useState<Record<string, FormField>>(macronutrientsInputs);
 
-  const [genericFormData, setGenericFormData] = useState<
-    Record<string, FormField>
-  >({
-    name: {
-      value: "",
-      id: "name",
-      name: "name",
-      type: "default",
-      placeholder: "Nome da Receita",
-      validation: (value: string) => value.length > 2,
-      message: "O nome deve ter no mínimo 3 caracteres",
-    },
-    type: {
-      value: "",
-      id: "type",
-      name: "type",
-      type: "default",
-      placeholder: "Tipo (ex.: Sobremesa, Jantar)",
-      validation: (value: string) => value.length > 2,
-      message: "O tipo deve ter no mínimo 3 caracteres",
-    },
-    totalTime: {
-      value: "",
-      id: "totalTime",
-      name: "totalTime",
-      type: "numeric",
-      placeholder: "Tempo de preparo",
-      validation: (value: string) => value.length > 0,
-      message: "O tempo total não pode ser vazio",
-    },
-    servingCount: {
-      value: "",
-      id: "servingCount",
-      name: "servingCount",
-      type: "numeric",
-      placeholder: "Porções",
-      validation: (value: string) => value.length > 0,
-      message: "O número de porções não pode ser vazio",
-    },
-    costEstimate: {
-      value: "",
-      id: "costEstimate",
-      name: "costEstimate",
-      type: "numeric",
-      placeholder: "custo estimado",
-      validation: (value: string) => value.length > 0,
-      message: "O número de porções não pode ser vazio",
-    },
-    allergens: {
-      value: "",
-      id: "allergens",
-      name: "allergens",
-      type: "numeric",
-      placeholder: "Alergênicos",
-      validation: (value: string) => value.length > 0,
-      message: "O número de porções não pode ser vazio",
-    },
-    adictionalTips: {
-      value: "",
-      id: "adictionalTips",
-      name: "adictionalTips",
-      type: "default",
-      placeholder: "Dicas Adicionais",
-      validation: (value: string) => value.length > 0,
-      message: "As dicas adicionais não podem ser vazias",
-    },
-  });
+  const [genericFormData, setGenericFormData] =
+    useState<Record<string, FormField>>(genericInputs);
 
   const addIngredient = () => {
     console.log("Adicionar Ingrediente", ingredientsFormData);
@@ -238,12 +112,14 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
 
   const handleGenericInputChange = (value: string, fieldName: string) => {
     setGenericFormData(updateAndValidate(genericFormData, fieldName, value));
+    handleSearch(value);
   };
 
   const handleIngredientsInputChange = (value: string, fieldName: string) => {
     setIngredientsFormData(
       updateAndValidate(ingredientsFormData, fieldName, value)
     );
+    handleSearch(value);
   };
 
   const handleDirectionsInputChange = (value: string, fieldName: string) => {
@@ -327,18 +203,59 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
     await createRecipe(data);
   };
 
+  const handleSearch = (text: string) => {
+    setQuery(text);
+    if (text) {
+      const filteredSuggestions = dataS.filter((item) =>
+        item.toLowerCase().includes(text.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+      return;
+    }
+    setSuggestions([]);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
-      {Object.entries(genericFormData).map(([key, field]) => (
-        <CustomInput
-          key={field.name}
-          label={field.placeholder}
-          placeholder={field.placeholder}
-          keyboardType={field.type}
-          value={field.value}
-          onChangeText={(text) => handleGenericInputChange(text, field.name)}
-        />
-      ))}
+      {Object.entries(genericFormData).map(([key, field]) =>
+        key === "type" ? (
+          <View>
+            <CustomInput
+              key={field.name}
+              label={field.placeholder}
+              placeholder={field.placeholder}
+              keyboardType={field.type}
+              value={field.value}
+              onChangeText={(text) =>
+                handleGenericInputChange(text, field.name)
+              }
+            />
+            {suggestions.length > 0 && (
+              <FlatList
+                data={suggestions}
+                renderItem={({ item }) => (
+                  <Text
+                    style={styles(theme).suggestion}
+                    onPress={() => handleGenericInputChange(item, "type")}
+                  >
+                    {item}
+                  </Text>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
+          </View>
+        ) : (
+          <CustomInput
+            key={field.name}
+            label={field.placeholder}
+            placeholder={field.placeholder}
+            keyboardType={field.type}
+            value={field.value}
+            onChangeText={(text) => handleGenericInputChange(text, field.name)}
+          />
+        )
+      )}
 
       <View
         style={[
@@ -377,10 +294,28 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
               keyboardType={field.type}
               label={field.placeholder}
               value={field.value}
+              onFocus={() => handleSearch(field.value)}
               onChangeText={(text) =>
                 handleIngredientsInputChange(text, field.name)
               }
             />
+
+            {suggestions.length > 0 && (
+              <FlatList
+                data={suggestions}
+                renderItem={({ item }) => (
+                  <Text
+                    style={styles(theme).suggestion}
+                    onPress={() =>
+                      handleIngredientsInputChange(item, "ingredient")
+                    }
+                  >
+                    {item}
+                  </Text>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
           </View>
         ) : (
           key === "quantity" && (
@@ -413,9 +348,10 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
         )
       )}
 
-      <InversePrimaryButtonSlim
+      <PrimaryButtonSlim
         text="Adicionar Ingrediente"
         onPress={addIngredient}
+        isActive={false}
       />
 
       {ingredients.length > 0 &&

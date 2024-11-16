@@ -14,6 +14,7 @@ export const lightTheme = {
   quaternary: colors.octonary,
   secondaryText: colors.tertiary,
   opacityBg: colors.opacityBg,
+  suggestionBg: colors.nonary,
 };
 
 export const darkTheme = {
@@ -29,4 +30,5 @@ export const darkTheme = {
   inputBackground: colors.quinary, // Cor de fundo do TextInput no tema escuro
   secondaryText: colors.tertiary,
   opacityBg: colors.opacityBgDark,
+  suggestionBg: colors.nonary,
 };

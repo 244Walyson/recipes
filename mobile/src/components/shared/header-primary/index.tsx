@@ -26,11 +26,6 @@ const Header = ({ onChange, onFocus }: CustomheaderProps) => {
         </View>
         <Text style={styles(theme).recipetext}>receitas</Text>
       </View>
-      <SearchBar
-        placeholder="pesquisar..."
-        onChangeText={onChange}
-        onFocus={onFocus}
-      />
     </View>
   );
 };

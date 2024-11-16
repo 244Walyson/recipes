@@ -21,6 +21,7 @@ type CustomModalProps = {
   title: string;
   btnApplyText?: string;
   btnApplyAction?: (selectedItems: string[]) => void;
+  btnApplyActive?: boolean;
 };
 
 const CustomModal = ({
@@ -30,11 +31,12 @@ const CustomModal = ({
   title,
   btnApplyText,
   btnApplyAction,
+  btnApplyActive,
 }: CustomModalProps) => {
   const [selected, setSelected] = React.useState<string[]>([]);
 
   const handleSelect = (attribute: string) => {
-    if (!btnApplyAction) {
+    if (!btnApplyActive || !btnApplyAction) {
       onClose();
       setSelected([attribute]);
       return;
@@ -83,13 +85,16 @@ const CustomModal = ({
 
           <View style={[styles.btnWrapper, !btnApplyText && styles.btnAlign]}>
             <PrimaryButton text="Cancelar" onPress={onClose} isActive={false} />
-            {btnApplyText && btnApplyAction && selected.length > 0 && (
-              <PrimaryButton
-                text={btnApplyText}
-                onPress={handleApply}
-                isActive={true}
-              />
-            )}
+            {btnApplyActive &&
+              btnApplyText &&
+              btnApplyAction &&
+              selected.length > 0 && (
+                <PrimaryButton
+                  text={btnApplyText}
+                  onPress={handleApply}
+                  isActive={true}
+                />
+              )}
           </View>
         </View>
       </View>

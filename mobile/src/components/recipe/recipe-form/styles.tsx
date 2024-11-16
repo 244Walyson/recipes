@@ -91,4 +91,12 @@ export const styles = (theme: any) =>
       marginTop: 20,
       gap: 10,
     },
+    suggestion: {
+      padding: 10,
+      fontSize: 16,
+      backgroundColor: theme.suggestionBg,
+      color: theme.foreground,
+      borderRadius: 8,
+      borderBottomColor: "#ddd",
+    },
   });

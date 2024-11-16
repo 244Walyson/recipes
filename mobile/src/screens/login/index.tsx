@@ -22,13 +22,13 @@ import {
   storeAccessToken,
   storeRefreshToken,
 } from "@/src/services/auth.service";
-import { createUser, getUser } from "@/src/services/user.service";
+import { createUser, getUser, storeUserID } from "@/src/services/user.service";
 import { useRouter } from "expo-router";
 import { useUser } from "@/src/context/user-context";
+import { store } from "expo-router/build/global-state/router-store";
 
 const Register = () => {
   const { theme } = useTheme();
-  const { setUser } = useUser();
   const router = useRouter();
   const [activity, setActivity] = useState("login");
   const [registerStep, setRegisterStep] = useState(1);
@@ -104,7 +104,7 @@ const Register = () => {
         password: formData.password.value,
         imgUrl: formData.img,
       });
-      setUser(user);
+      storeUserID(user.id);
     }
     getAccessToken({
       email: formData.email.value,
@@ -122,7 +122,7 @@ const Register = () => {
   const setUserContext = (accessToken: string) => {
     const decoded = decodeAccessToken(accessToken);
     if (decoded) {
-      getUser(decoded.sub).then((user) => setUser(user));
+      getUser(decoded.sub).then((user) => storeUserID(user.id));
     }
   };
 

@@ -10,6 +10,7 @@ type LoginInputProps = {
   onChangeText: (text: string) => void;
   isPassword?: boolean;
   value?: string;
+  onFocus?: () => void;
 };
 
 const CustomInput = ({
@@ -19,6 +20,7 @@ const CustomInput = ({
   onChangeText,
   isPassword = false,
   value,
+  onFocus,
 }: LoginInputProps) => {
   const { theme } = useTheme();
 
@@ -33,6 +35,7 @@ const CustomInput = ({
         secureTextEntry={isPassword}
         autoCapitalize="none"
         value={value}
+        onFocus={onFocus}
         placeholderTextColor={theme.quaternary}
       />
     </View>

@@ -4,7 +4,11 @@ import { TextInput, View, StyleSheet, TextInputProps } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "./styles";
 
-const SearchBar = (props: TextInputProps) => {
+interface CustomSearchBarProps extends TextInputProps {
+  onSearch: (text: string) => void;
+}
+
+const CustomSearchBar = ({ onSearch, ...props }: CustomSearchBarProps) => {
   const { theme } = useTheme();
 
   return (
@@ -14,10 +18,11 @@ const SearchBar = (props: TextInputProps) => {
         style={styles(theme).input}
         placeholder="Pesquisar"
         placeholderTextColor="#F6B100"
+        onChangeText={onSearch}
         {...props}
       />
     </View>
   );
 };
 
-export default SearchBar;
+export default CustomSearchBar;

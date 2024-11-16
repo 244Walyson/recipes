@@ -11,18 +11,22 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import InversePrimaryButtonSlim from "@/src/components/shared/inverse-primary-button-slim";
 import { router } from "expo-router";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import { IUserResponse } from "@/src/interfaces/user/user-response.interface";
-import { getUser } from "@/src/services/user.service";
+import {
+  getStoredUserID,
+  getUser,
+  removeStoredUserID,
+} from "@/src/services/user.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import { IRecipeProjection } from "@/src/interfaces/recipe/recipe-response-projection.interface";
 import { getRecipesByUserId } from "@/src/services/recipe.service";
 import { removeAllTokens } from "@/src/services/auth.service";
-import { useUser } from "@/src/context/user-context";
+import PrimaryButton from "@/src/components/shared/primary-button";
+import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
 
 const H_MAX_HEIGHT = 320;
 const H_MIN_HEIGHT = 60;
@@ -30,7 +34,7 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Profile = () => {
   const { theme } = useTheme();
-  const { user } = useUser();
+  const [user, setUser] = useState<IUserResponse>();
   const [isFocused, setIsFocused] = useState("grid");
   const [following, setFollowing] = useState(false);
   const [recipes, setRecipes] =
@@ -45,17 +49,24 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-    getRecipesByUserId(user?.id).then((data) => {
-      console.log(data);
-      setRecipes(data);
+    getStoredUserID().then((userId) => {
+      if (!userId) {
+        router.push("/register");
+        return;
+      }
+      getUser(userId).then((data) => {
+        setUser(data);
+      });
+      getRecipesByUserId(userId).then((data) => {
+        console.log(data);
+        setRecipes(data);
+      });
     });
   }, []);
 
   const logout = () => {
     removeAllTokens();
+    removeStoredUserID();
     router.push("/register");
   };
 
@@ -118,9 +129,10 @@ const Profile = () => {
             <Text style={styles(theme).textInfo}>{user?.name}</Text>
             <Text style={styles(theme).textInfoLight}>{user?.username}</Text>
             <View style={styles(theme).btnWrapper}>
-              <InversePrimaryButtonSlim
+              <PrimaryButtonSlim
                 text={getBtnText()}
                 onPress={handleBtnPress}
+                isActive={false}
               />
             </View>
           </View>

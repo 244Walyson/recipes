@@ -10,7 +10,7 @@ export default {
   sextiary: "#F2B84B",
   septenary: "#ccc",
   octonary: "#3a3a3a",
-  nonary: "#D4A139", // Dourado suave
+  nonary: "#0d0d0d",
   denary: "#F1C27D", // Dourado claro
   undernary: "#BC7A12", // Marrom terroso
 

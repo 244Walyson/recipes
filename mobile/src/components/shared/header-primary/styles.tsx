@@ -6,7 +6,7 @@ const statusBarHeight = Constants.statusBarHeight;
 export const styles = (theme: any) =>
   StyleSheet.create({
     container: {
-      paddingVertical: 30,
+      paddingVertical: 20,
       paddingHorizontal: 20,
       justifyContent: "center",
       marginTop: statusBarHeight,

@@ -11,23 +11,20 @@ export const styles = (theme: any) =>
       flexDirection: "row",
       justifyContent: "space-between",
       alignItems: "center",
-      paddingVertical: 10,
+      padding: 20,
       backgroundColor: theme.background,
     },
     textWrapper: {
       flexDirection: "row",
-      justifyContent: "flex-start",
       alignItems: "center",
     },
     filtersContainer: {
       width: "100%",
-      height: 70,
       flexDirection: "row",
       gap: 20,
     },
     filtersText: {
-      fontSize: 24,
-      fontWeight: "bold",
+      fontSize: 20,
       color: theme.tertiary,
     },
     iconWrapper: {
@@ -41,5 +38,13 @@ export const styles = (theme: any) =>
     categoryText: {
       fontSize: 20,
       color: theme.tertiary,
+    },
+    suggestion: {
+      padding: 10,
+      fontSize: 16,
+      backgroundColor: theme.suggestionBg,
+      color: theme.foreground,
+      borderRadius: 8,
+      borderBottomColor: "#ddd",
     },
   });

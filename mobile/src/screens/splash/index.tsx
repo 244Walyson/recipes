@@ -10,12 +10,10 @@ import {
   refreshToken,
 } from "@/src/services/auth.service";
 import { useRouter } from "expo-router";
-import { useUser } from "@/src/context/user-context";
-import { getUser } from "@/src/services/user.service";
+import { storeUserID } from "@/src/services/user.service";
 
 const SplashScreen = () => {
   const { theme } = useTheme();
-  const { setUser } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -68,8 +66,7 @@ const SplashScreen = () => {
       router.replace("/register");
       return;
     }
-    const user = await getUser(decodedToken?.sub);
-    setUser(user);
+    storeUserID(decodedToken.sub);
 
     setLoading(false);
     router.replace("/(tabs)/home");

@@ -1,6 +1,6 @@
 import { useTheme } from "@/src/context/theme-context";
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "./styles";
 
@@ -9,6 +9,7 @@ type TrendinCardProps = {
   imgUrl: any;
   time?: string;
   onLikePress: () => void;
+  onPress: () => void;
 };
 
 const TrendinCard: React.FC<TrendinCardProps> = ({
@@ -16,11 +17,12 @@ const TrendinCard: React.FC<TrendinCardProps> = ({
   imgUrl,
   time,
   onLikePress,
+  onPress,
 }) => {
   const { theme } = useTheme();
 
   return (
-    <View style={styles(theme).trendingContainer}>
+    <TouchableOpacity onPress={onPress} style={styles(theme).trendingContainer}>
       <Image source={{ uri: imgUrl }} style={styles(theme).image} />
       <View style={styles(theme).textWrapper}>
         <Text style={styles(theme).timeText}>{time}</Text>
@@ -34,7 +36,7 @@ const TrendinCard: React.FC<TrendinCardProps> = ({
       <View style={styles(theme).textDescWrapper}>
         <Text style={styles(theme).textTitle}>{title}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

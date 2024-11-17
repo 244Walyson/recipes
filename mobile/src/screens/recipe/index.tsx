@@ -10,16 +10,14 @@ import {
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { useTheme } from "@/src/context/theme-context";
 import PrimaryButton from "@/src/components/shared/primary-button";
-import AuthorCard from "@/src/components/recipe/author-card";
 import { styles } from "./styles";
 import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
-import IngredintsCard from "@/src/components/recipe/ingredients-card";
 import DescriptionContainer from "@/src/components/recipe/description-container";
-import SvgImageAdd from "@/src/assets/icons/image_add";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
 import { getRecipeById } from "@/src/services/recipe.service";
 import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
+import { useLocalSearchParams } from "expo-router";
 
 type InstructionStep = {
   step: number;
@@ -31,48 +29,10 @@ const H_MAX_HEIGHT = 280;
 const H_MIN_HEIGHT = 60;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
-const instructions: InstructionStep[] = [
-  {
-    step: 1,
-    title: "Prepare the spice paste",
-    description:
-      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
-  },
-  {
-    step: 2,
-    title: "Cook the chicken",
-    description:
-      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
-  },
-  {
-    step: 3,
-    title: "Prepare the spice paste",
-    description:
-      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
-  },
-  {
-    step: 4,
-    title: "Cook the chicken",
-    description:
-      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
-  },
-  {
-    step: 5,
-    title: "Prepare the spice paste",
-    description:
-      "• In a recipient, combine garlic, ginger, and spices to make a thick paste.\n• In a recipient, combine garlic, ginger, and spices to make a thick paste.",
-  },
-  {
-    step: 6,
-    title: "Cook the chicken",
-    description:
-      "• Place the chicken in a pan with the spice paste and cook on medium heat until tender. \n• Place the chicken in a pan with the spice paste and cook on medium heat until tender.",
-  },
-];
-
 const Recipe = () => {
   const [focusedBtn, setFocusedBtn] = React.useState("ingredients");
   const { theme } = useTheme();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [recipe, setRecipe] = React.useState<IRecipeResponse>();
 
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -84,7 +44,7 @@ const Recipe = () => {
   });
 
   useEffect(() => {
-    getRecipeById("310e587c-62e1-4f70-a557-bb5c3e5143a5").then((response) => {
+    getRecipeById(id).then((response) => {
       setRecipe(response);
       console.log(response);
     });
@@ -167,7 +127,7 @@ const Recipe = () => {
                 key={ingredient.id}
                 name={ingredient.name}
                 quantity={ingredient.quantity}
-                unit={ingredient.unit}
+                unit={ingredient.unity}
                 editing={false}
                 onDelete={() => {}}
               />

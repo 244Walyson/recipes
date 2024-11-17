@@ -20,7 +20,7 @@ type CustomModalProps = {
   data: ModalItems[];
   title: string;
   btnApplyText?: string;
-  btnApplyAction?: (selectedItems: string[]) => void;
+  btnApplyAction?: (selectedItems: string[] | string) => void;
   btnApplyActive?: boolean;
 };
 
@@ -38,7 +38,7 @@ const CustomModal = ({
   const handleSelect = (attribute: string) => {
     if (!btnApplyActive || !btnApplyAction) {
       onClose();
-      setSelected([attribute]);
+      btnApplyAction && btnApplyAction(attribute);
       return;
     }
     if (selected.includes(attribute)) {
@@ -51,6 +51,7 @@ const CustomModal = ({
   const handleApply = () => {
     if (btnApplyAction && selected.length > 0) {
       btnApplyAction(selected);
+      setSelected([]);
     }
   };
 

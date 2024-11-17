@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import Header from "@/src/components/shared/header-primary";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
@@ -14,16 +14,9 @@ import {
 } from "@/src/services/recipe.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import CuisineStyleCard from "@/src/components/home/cuisine-style-card";
-import {
-  decodeAccessToken,
-  getStoredAccessToken,
-} from "@/src/services/auth.service";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import { useUser } from "@/src/context/user-context";
 
 const Home = () => {
   const { theme } = useTheme();
-  const { user } = useUser();
   const [cuisineStyles, setCuisineStyles] =
     useState<IPaginatedResponse<ICuisineStyle>>();
   const [trending, setTrending] =
@@ -72,16 +65,16 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles(theme).trendingContainerWrapper}
         >
-          {trending &&
-            trending.data.map((recipe, index) => (
-              <TrendinCard
-                key={recipe.id}
-                imgUrl={recipe.imgUrl}
-                title={recipe.name}
-                time={recipe.totalTime?.toString()}
-                onLikePress={() => console.log("Like")}
-              />
-            ))}
+          {trending?.data.map((recipe) => (
+            <TrendinCard
+              key={recipe.id}
+              imgUrl={recipe.imgUrl}
+              title={recipe.name}
+              time={recipe.totalTime?.toString()}
+              onLikePress={() => console.log("Like")}
+              onPress={() => router.push(`/recipes/${recipe.id}`)}
+            />
+          ))}
         </ScrollView>
       </View>
 
@@ -96,21 +89,20 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles(theme).scrollContainer}
         >
-          {cuisineStyles &&
-            cuisineStyles.data.map((item, index) => (
-              <Text
-                key={index}
-                style={[
-                  styles(theme).categoryText,
-                  cuisineStyleFocused === item.name
-                    ? { color: theme.foreground }
-                    : {},
-                ]}
-                onPress={() => handleCuisineStylePress(item.name)}
-              >
-                {item.name}
-              </Text>
-            ))}
+          {cuisineStyles?.data.map((item) => (
+            <Text
+              key={item.id}
+              style={[
+                styles(theme).categoryText,
+                cuisineStyleFocused === item.name
+                  ? { color: theme.foreground }
+                  : {},
+              ]}
+              onPress={() => handleCuisineStylePress(item.name)}
+            >
+              {item.name}
+            </Text>
+          ))}
         </ScrollView>
       </View>
 
@@ -120,18 +112,17 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles(theme).categoryContainerwrapper}
         >
-          {recipeByCuisineStyle &&
-            recipeByCuisineStyle.data.map((item, index) => (
-              <CuisineStyleCard
-                key={item.id}
-                imgUrl={item.imgUrl}
-                name={item.name}
-                time={item.totalTime?.toString()}
-                onLikePress={() => console.log("Like")}
-                onPress={() => router.push(`/recipe/${item.id}`)}
-                author={item.user.name}
-              />
-            ))}
+          {recipeByCuisineStyle?.data.map((item, index) => (
+            <CuisineStyleCard
+              key={item.id}
+              imgUrl={item.imgUrl}
+              name={item.name}
+              time={item.totalTime?.toString()}
+              onLikePress={() => console.log("Like")}
+              onPress={() => router.push(`/recipes/${item.id}`)}
+              author={item.user.name}
+            />
+          ))}
         </ScrollView>
       </View>
     </ScrollView>
@@ -139,6 +130,3 @@ const Home = () => {
 };
 
 export default Home;
-function getTrendingRecipes() {
-  throw new Error("Function not implemented.");
-}

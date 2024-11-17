@@ -16,8 +16,6 @@ import RecipeInstructions from "../recipe-instructions";
 import CustomInput from "../../shared/custom-input";
 import { updateAndValidate } from "@/src/utils/forms";
 import { createRecipe } from "@/src/services/recipe.service";
-import { all } from "axios";
-import CustomModal from "../../shared/modal";
 import PrimaryButtonSlim from "../../shared/primary-button-slim";
 import {
   directionsInputs,
@@ -25,12 +23,9 @@ import {
   ingredientsInputs,
   macronutrientsInputs,
 } from "@/src/static/register-form-inputs";
-
-type Ingredient = {
-  name: string;
-  quantity: number;
-  unity: string;
-};
+import { getIngredients } from "@/src/services/ingredient.service";
+import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
+import { getStoredUserID } from "@/src/services/user.service";
 
 type Directions = {
   step: number;
@@ -52,23 +47,16 @@ type RecipeFormProps = {
   imgUrl?: string;
 };
 
-const dataS = [
-  "Apple",
-  "Banana",
-  "Orange",
-  "Pineapple",
-  "Mango",
-  "Strawberry",
-  "Blueberry",
-  "Raspberry",
-];
-
 const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   const { theme } = useTheme();
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
+  const [ingredientsSuggestions, setIngredientsSuggestions] = useState<
+    IIngredient[]
+  >([]);
   const [partialDirections, setPartialDirections] = useState<Directions[]>([]);
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
 
   const [ingredientsFormData, setIngredientsFormData] =
     useState<Record<string, FormField>>(ingredientsInputs);
@@ -83,11 +71,11 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
     useState<Record<string, FormField>>(genericInputs);
 
   const addIngredient = () => {
-    console.log("Adicionar Ingrediente", ingredientsFormData);
-    const { ingredient, quantity, unity } = ingredientsFormData;
+    const { id, ingredient, quantity, unity } = ingredientsFormData;
     setIngredients((prevIngredients) => [
       ...prevIngredients,
       {
+        id: id.value,
         name: ingredient.value,
         quantity: Number(quantity.value),
         unity: unity.value,
@@ -95,10 +83,49 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
     ]);
     setIngredientsFormData({
       ...ingredientsFormData,
+      id: { ...id, value: "" },
       ingredient: { ...ingredient, value: "" },
       quantity: { ...quantity, value: "" },
       unity: { ...unity, value: "ml" },
     });
+  };
+
+  const handleSelectedIngredient = (ingredient: IIngredient) => {
+    const updatedFormData = {
+      ...ingredientsFormData,
+      id: { ...ingredientsFormData.id, value: ingredient.id },
+      ingredient: { ...ingredientsFormData.ingredient, value: ingredient.name },
+    };
+
+    setIngredientsFormData(updatedFormData);
+    setIngredientsSuggestions([]);
+  };
+
+  const handleIngredientsInputChange = (value: string, fieldName: string) => {
+    setIngredientsFormData({
+      ...updateAndValidate(ingredientsFormData, fieldName, value),
+    });
+    if (fieldName === "ingredient") {
+      handleSearch(value);
+    }
+  };
+
+  const handleSearch = (text: string) => {
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+    const newTimeout = setTimeout(async () => {
+      if (text) {
+        getIngredients(text)
+          .then((response) => {
+            setIngredientsSuggestions(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }, 500);
+
+    setDebounceTimeout(newTimeout);
   };
 
   const handleMacronutrientsInputChange = (
@@ -112,13 +139,6 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
 
   const handleGenericInputChange = (value: string, fieldName: string) => {
     setGenericFormData(updateAndValidate(genericFormData, fieldName, value));
-    handleSearch(value);
-  };
-
-  const handleIngredientsInputChange = (value: string, fieldName: string) => {
-    setIngredientsFormData(
-      updateAndValidate(ingredientsFormData, fieldName, value)
-    );
     handleSearch(value);
   };
 
@@ -166,17 +186,17 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       name: genericFormData.name.value,
       type: genericFormData.type.value,
       totalTime: genericFormData.totalTime.value,
-      preparationTime: Number(genericFormData.preparationTime?.value) || 0, // Aqui convertemos para número
+      preparationTime: Number(genericFormData.preparationTime?.value) || 0,
       servingCount: Number(genericFormData.servingCount.value),
       adictionalTips: genericFormData.adictionalTips.value,
       allergens: Array.isArray(genericFormData.allergens?.value)
         ? genericFormData.allergens.value
-        : [genericFormData.allergens?.value], // Ensure allergens is an array
+        : [genericFormData.allergens?.value],
       costEstimate: Number(genericFormData.costEstimate.value),
     };
 
     const ingredientsData = ingredients.map((ingredient, index) => ({
-      id: "",
+      id: ingredient.id,
       name: ingredient.name,
       quantity: ingredient.quantity,
       unit: ingredient.unity,
@@ -188,6 +208,8 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       description: direction.description,
     }));
 
+    const userId = await getStoredUserID();
+
     const data = {
       imgUrl: imgUrl,
       ...genericdata,
@@ -197,29 +219,18 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       isPublished: true,
       mealTypes: [],
       cuisineStyles: [],
+      userId: userId,
     };
 
     console.log(data);
     await createRecipe(data);
   };
 
-  const handleSearch = (text: string) => {
-    setQuery(text);
-    if (text) {
-      const filteredSuggestions = dataS.filter((item) =>
-        item.toLowerCase().includes(text.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-      return;
-    }
-    setSuggestions([]);
-  };
-
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
       {Object.entries(genericFormData).map(([key, field]) =>
         key === "type" ? (
-          <View>
+          <View key={key}>
             <CustomInput
               key={field.name}
               label={field.placeholder}
@@ -230,9 +241,9 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
                 handleGenericInputChange(text, field.name)
               }
             />
-            {suggestions.length > 0 && (
+            {ingredientsSuggestions.length > 0 && (
               <FlatList
-                data={suggestions}
+                data={ingredients.map((ingredient) => ingredient.name)}
                 renderItem={({ item }) => (
                   <Text
                     style={styles(theme).suggestion}
@@ -267,7 +278,7 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
         ]}
       >
         {Object.entries(macronutrientsFormData).map(([key, field]) => (
-          <View style={{ width: "30%" }}>
+          <View style={{ width: "30%" }} key={key}>
             <CustomInput
               key={field.name}
               label={field.placeholder}
@@ -294,23 +305,20 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
               keyboardType={field.type}
               label={field.placeholder}
               value={field.value}
-              onFocus={() => handleSearch(field.value)}
               onChangeText={(text) =>
                 handleIngredientsInputChange(text, field.name)
               }
             />
 
-            {suggestions.length > 0 && (
+            {ingredientsSuggestions.length > 0 && (
               <FlatList
-                data={suggestions}
+                data={ingredientsSuggestions}
                 renderItem={({ item }) => (
                   <Text
                     style={styles(theme).suggestion}
-                    onPress={() =>
-                      handleIngredientsInputChange(item, "ingredient")
-                    }
+                    onPress={() => handleSelectedIngredient(item)}
                   >
-                    {item}
+                    {item.name}
                   </Text>
                 )}
                 keyExtractor={(item, index) => index.toString()}
@@ -379,7 +387,7 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
         </View>
 
         {Object.entries(directionsFormData).map(([key, field]) => (
-          <>
+          <React.Fragment key={key}>
             {key === "title" && (
               <View style={styles(theme).inputWrapper} key="title">
                 <View style={styles(theme).input}>
@@ -426,7 +434,7 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
                 </TouchableOpacity>
               </View>
             )}
-          </>
+          </React.Fragment>
         ))}
 
         <RecipeInstructions data={partialDirections} />

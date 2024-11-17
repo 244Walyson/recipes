@@ -2,6 +2,6 @@ export interface IIngredient {
   id: string;
   name: string;
   quantity?: number;
-  unit?: string;
+  unity?: string;
   recipeId?: string;
 }

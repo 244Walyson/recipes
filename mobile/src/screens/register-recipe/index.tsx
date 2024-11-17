@@ -34,7 +34,7 @@ const RegisterRecipe = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      quality: 1,
+      quality: 0.3,
     });
 
     if (!result.canceled) {

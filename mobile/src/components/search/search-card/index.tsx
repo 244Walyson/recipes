@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
@@ -10,6 +10,7 @@ type SearchCardProps = {
   time?: string;
   author: string;
   imgUrl?: string;
+  onPress: () => void;
 };
 
 const SearchCard = ({
@@ -18,11 +19,12 @@ const SearchCard = ({
   time,
   author,
   imgUrl,
+  onPress,
 }: SearchCardProps) => {
   const { theme } = useTheme();
 
   return (
-    <View style={styles(theme).container}>
+    <TouchableOpacity style={styles(theme).container} onPress={onPress}>
       <Image
         source={imgUrl ? { uri: imgUrl } : require("../../../assets/food.png")}
         style={styles(theme).image}
@@ -32,14 +34,12 @@ const SearchCard = ({
           <Text style={styles(theme).textTitle}>{title}</Text>
         </View>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textType}>
-            {mealType && mealType[0].name}
-          </Text>
+          <Text style={styles(theme).textType}>{mealType?.[0]?.name}</Text>
           <Text style={styles(theme).textType}>{time}</Text>
         </View>
         <Text style={styles(theme).textAuthor}>by {author}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

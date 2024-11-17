@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
-import { Background, PlatformPressable } from "@react-navigation/elements";
+import { View, Pressable } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { styles } from "./styles";
@@ -11,20 +10,22 @@ type TabBarProps = BottomTabBarProps;
 function TabBar({ state, descriptors, navigation }: TabBarProps) {
   const { theme } = useTheme();
 
+  // Lista de rotas válidas com ícones associados
+  const validRoutes = ["home", "search", "profile", "new-recipe"]; // Liste as rotas válidas aqui
+
+  // Função para obter o ícone da rota
   const getIcon = (routeName: string) => {
     switch (routeName) {
-      case "index":
+      case "home":
         return "home";
-      case "recipes":
-        return "profile";
-      case "profile":
-        return "user";
       case "search":
         return "search1";
+      case "profile":
+        return "user";
       case "new-recipe":
         return "plus";
       default:
-        return "home";
+        return null; // Não renderiza ícone se não for uma rota válida
     }
   };
 
@@ -60,6 +61,10 @@ function TabBar({ state, descriptors, navigation }: TabBarProps) {
           });
         };
 
+        const iconName = validRoutes.includes(route.name)
+          ? getIcon(route.name)
+          : null;
+
         return (
           <Pressable
             key={route.key}
@@ -75,11 +80,13 @@ function TabBar({ state, descriptors, navigation }: TabBarProps) {
             ]}
           >
             <View style={styles(theme).iconContainer}>
-              <AntDesign
-                name={getIcon(route.name)}
-                size={24}
-                color={isFocused ? theme.background : theme.foreground}
-              />
+              {iconName && (
+                <AntDesign
+                  name={iconName}
+                  size={24}
+                  color={isFocused ? theme.background : theme.foreground}
+                />
+              )}
             </View>
           </Pressable>
         );

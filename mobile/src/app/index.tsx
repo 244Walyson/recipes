@@ -1,9 +1,8 @@
-import Home from "@/src/screens/home";
 import SplashScreen from "@/src/screens/splash";
 import React from "react";
 
-const HomeTab = () => {
+const SplashScreenTab = () => {
   return <SplashScreen />;
 };
 
-export default HomeTab;
+export default SplashScreenTab;

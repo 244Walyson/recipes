@@ -2,14 +2,20 @@ import React from "react";
 import { Tabs } from "expo-router";
 import TabBar from "@/src/components/shared/nav-bar";
 
+const CustomTabBar = (props: any) => <TabBar {...props} />;
+
 const TabLayout = () => {
   return (
-    <Tabs tabBar={(props) => <TabBar {...props} />}>
-      <Tabs.Screen name="home" options={{ headerShown: false }} />
-      <Tabs.Screen name="search" options={{ headerShown: false }} />
-      <Tabs.Screen name="new-recipe" options={{ headerShown: false }} />
-      <Tabs.Screen name="recipes" options={{ headerShown: false }} />
-      <Tabs.Screen name="profile" options={{ headerShown: false }} />
+    <Tabs
+      tabBar={CustomTabBar}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen name="home" />
+      <Tabs.Screen name="search" />
+      <Tabs.Screen name="new-recipe" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 };

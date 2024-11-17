@@ -1,4 +1,3 @@
-import SvgVegetablesIcon from "@/src/assets/icons/vegetables_icon";
 import CustomModal from "@/src/components/shared/modal";
 import SearchCard from "@/src/components/search/search-card";
 import Header from "@/src/components/shared/header-primary";
@@ -23,7 +22,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import Feather from "react-native-vector-icons/Feather";
 import FontAwsome from "react-native-vector-icons/FontAwesome6";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-import axios from "axios";
 import { getIngredients } from "@/src/services/ingredient.service";
 import {
   allergensData,
@@ -31,10 +29,12 @@ import {
   timeData,
   trendingData,
 } from "@/src/static/search-modal-data";
+import { useRouter } from "expo-router";
 
 type ModalData = {
   visible?: boolean;
   data: {
+    key: string;
     title: string;
     data: { id: number; name: string }[];
   };
@@ -46,9 +46,9 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Search = () => {
   const { theme } = useTheme();
+  const router = useRouter();
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [btnApplyModal, setBtnApplyModal] = useState(false);
-  const [focused, setFocused] = useState("");
   const [searchFilters, setSearchFilters] = useState<IFindAllFilters>({});
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
@@ -56,6 +56,7 @@ const Search = () => {
   const [modalData, setModalData] = useState<ModalData>({
     visible: false,
     data: {
+      key: "",
       title: "",
       data: [],
     },
@@ -72,32 +73,33 @@ const Search = () => {
   });
 
   useEffect(() => {
+    console.log(searchFilters);
     getRecipes(searchFilters).then((response) => {
+      console.log(response);
       setRecipes(response);
     });
-  }, []);
+  }, [searchFilters]);
 
   const openModal = ({
     data,
-    apiEndpoint,
     multipleSelection = false,
   }: {
-    data?: { title: string; data: { id: number; name: string }[] };
-    apiEndpoint?: string;
+    data: { title: string; key: string; data: { id: number; name: string }[] };
     multipleSelection?: boolean;
   }) => {
-    if (data) {
-      setModalData({ visible: true, data });
-      setBtnApplyModal(multipleSelection);
-      return;
-    }
-    if (apiEndpoint === "ingredients") {
+    if (data.key === "ingredients") {
       getIngredients().then((response) => {
         const title = "Selecione seus ingredientes favoritos";
-        setModalData({ visible: true, data: { title, data: response.data } });
+        setModalData({
+          visible: true,
+          data: { key: data.key, title, data: response.data },
+        });
         setBtnApplyModal(multipleSelection);
       });
+      return;
     }
+    setModalData({ visible: true, data });
+    setBtnApplyModal(multipleSelection);
   };
 
   const closeModal = () => {
@@ -134,6 +136,26 @@ const Search = () => {
   const handleSelectSuggestion = (suggestion: string) => {
     setSearchFilters({ ...searchFilters, name: suggestion });
     setSuggestions([]);
+  };
+
+  const handleModalApply = (selected: string[] | string, key: string) => {
+    if (key === "totalTime") {
+      if (selected === "Até 30 minutos") {
+        setSearchFilters({ ...searchFilters, [key]: [0, 30] });
+      }
+      if (selected === "De 30 a 60 minutos") {
+        setSearchFilters({ ...searchFilters, [key]: [30, 60] });
+      }
+      if (selected === "De 60 a 90 minutos") {
+        setSearchFilters({ ...searchFilters, [key]: [60, 90] });
+      }
+      if (selected === "Mais de 90 minutos") {
+        setSearchFilters({ ...searchFilters, [key]: [90, 9999] });
+      }
+      return closeModal();
+    }
+    setSearchFilters({ ...searchFilters, [key]: selected });
+    closeModal();
   };
 
   return (
@@ -182,14 +204,20 @@ const Search = () => {
           <View style={styles(theme).iconWrapper}>
             <TouchableOpacity
               onPress={() =>
-                openModal({ data: allergensData, multipleSelection: true })
+                openModal({
+                  data: { key: "allergens", ...allergensData },
+                  multipleSelection: true,
+                })
               }
             >
               <AntDesign name="warning" size={25} color={theme.tertiary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                openModal({ data: priceData, multipleSelection: false })
+                openModal({
+                  data: { key: "price", ...priceData },
+                  multipleSelection: false,
+                })
               }
             >
               <MaterialIcons
@@ -201,7 +229,7 @@ const Search = () => {
             <TouchableOpacity
               onPress={() =>
                 openModal({
-                  apiEndpoint: "ingredients",
+                  data: { key: "ingredients", title: "Ingredientes", data: [] },
                   multipleSelection: true,
                 })
               }
@@ -211,7 +239,7 @@ const Search = () => {
             <TouchableOpacity
               onPress={() =>
                 openModal({
-                  data: trendingData,
+                  data: { key: "trending", ...trendingData },
                   multipleSelection: false,
                 })
               }
@@ -220,12 +248,22 @@ const Search = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() =>
-                openModal({ data: timeData, multipleSelection: false })
+                openModal({
+                  data: { key: "totalTime", ...timeData },
+                  multipleSelection: false,
+                })
               }
             >
               <AntDesign name="clockcircleo" size={25} color={theme.tertiary} />
             </TouchableOpacity>
           </View>
+        </View>
+        <View style={{ alignItems: "flex-end" }}>
+          <TouchableOpacity style={{}} onPress={() => setSearchFilters({})}>
+            <Text style={{ width: 100, color: theme.tertiary }}>
+              Limpar Filtros
+            </Text>
+          </TouchableOpacity>
         </View>
         {/* <ScrollView
           horizontal
@@ -254,7 +292,7 @@ const Search = () => {
       <ScrollView
         style={[
           styles(theme).cardsContainer,
-          { paddingTop: H_MAX_HEIGHT + 80 },
+          { paddingTop: H_MAX_HEIGHT + 100 },
         ]}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -270,6 +308,7 @@ const Search = () => {
             imgUrl={recipe.imgUrl}
             time={recipe.totalTime?.toString()}
             mealType={recipe.mealTypes}
+            onPress={() => router.push(`/recipes/${recipe.id}`)}
           />
         ))}
       </ScrollView>
@@ -281,7 +320,9 @@ const Search = () => {
           title={modalData.data.title}
           btnApplyActive={btnApplyModal}
           btnApplyText="Aplicar"
-          btnApplyAction={() => console.log("Apply")}
+          btnApplyAction={(selected) =>
+            handleModalApply(selected, modalData.data.key)
+          }
         />
       )}
     </View>

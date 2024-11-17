@@ -19,6 +19,8 @@ export const getRecipes = async (params: IFindAllFilters) => {
     const queryParams = new URLSearchParams();
 
     if (params.name) queryParams.append("name", params.name);
+    if (params.ingredients)
+      queryParams.append("ingredients", params.ingredients.join(","));
     if (params.cuisineStyles)
       queryParams.append("cuisineStyles", params.cuisineStyles.join(","));
     if (params.servingCount)

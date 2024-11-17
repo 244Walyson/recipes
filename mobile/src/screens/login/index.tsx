@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import SvgTopWaves from "@/src/assets/waves/wave_top";
 import SvgBottomWaves from "@/src/assets/waves/wave_botton";
 import SvgGoggleIcon from "@/src/assets/icons/google_icon";
@@ -17,80 +11,21 @@ import { updateAndValidate } from "@/src/utils/forms";
 import {
   decodeAccessToken,
   getAccessToken,
-  getStoredAccessToken,
   getStoredRefreshToken,
   storeAccessToken,
   storeRefreshToken,
+  storeTokenExpiration,
 } from "@/src/services/auth.service";
 import { createUser, getUser, storeUserID } from "@/src/services/user.service";
 import { useRouter } from "expo-router";
-import { useUser } from "@/src/context/user-context";
-import { store } from "expo-router/build/global-state/router-store";
+import { loginInputs } from "@/src/static/login-ipunts.";
 
 const Register = () => {
   const { theme } = useTheme();
   const router = useRouter();
   const [activity, setActivity] = useState("login");
   const [registerStep, setRegisterStep] = useState(1);
-  const [formData, setFormData] = useState<any>({
-    name: {
-      value: "",
-      id: "name",
-      name: "name",
-      type: "name",
-      placeholder: "name",
-      validation: function (value: string) {
-        return value.length > 2;
-      },
-      message: "o nome não pode ser vazio",
-    },
-    username: {
-      value: "",
-      id: "username",
-      name: "username",
-      type: "default",
-      placeholder: "username",
-      validation: function (value: string) {
-        return value.length > 2;
-      },
-      message: "o username deve conter no minimo 4 caracters",
-    },
-    email: {
-      value: "",
-      id: "email",
-      name: "email",
-      type: "default",
-      placeholder: "email@example.com",
-      validation: function (value: string) {
-        return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          value.toLowerCase()
-        );
-      },
-      message: "Favor informar um email válido",
-    },
-    password: {
-      value: "",
-      id: "password",
-      name: "password",
-      type: "password",
-      placeholder: "Senha",
-      validation: function (value: string) {
-        return value.length > 5;
-      },
-      message: "a senha deve conter no minimo 6 caracters",
-    },
-    imgUrl: {
-      value: "",
-      id: "imgUrl",
-      name: "imgUrl",
-      type: "default",
-      placeholder: "imgUrl",
-      validation: function (value: string) {
-        return value.length > 5;
-      },
-      message: "a senha deve conter no minimo 6 caracters",
-    },
-  });
+  const [formData, setFormData] = useState<Record<string, any>>(loginInputs);
 
   const handleSubmit = async () => {
     console.log("Submit", activity);
@@ -113,16 +48,19 @@ const Register = () => {
       console.log("accessToken", accessToken);
       storeAccessToken(accessToken.access_token);
       storeRefreshToken(accessToken.refresh_token);
-      setUserContext(accessToken.access_token);
+      storeUserId(accessToken.access_token);
     });
 
     router.replace("/(tabs)/home");
   };
 
-  const setUserContext = (accessToken: string) => {
+  const storeUserId = (accessToken: string) => {
     const decoded = decodeAccessToken(accessToken);
     if (decoded) {
-      getUser(decoded.sub).then((user) => storeUserID(user.id));
+      storeTokenExpiration(decoded.exp);
+      getUser(decoded.sub).then((user) => {
+        storeUserID(user.id);
+      });
     }
   };
 

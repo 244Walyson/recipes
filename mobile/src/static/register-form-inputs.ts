@@ -135,6 +135,15 @@ export const macronutrientsInputs = {
 } as Record<string, FormField>;
 
 export const ingredientsInputs = {
+  id: {
+    value: "",
+    id: "id",
+    name: "id",
+    type: "default",
+    placeholder: "id",
+    validation: (value: string) => value.length > 0,
+    message: "O id não pode ser vazio",
+  },
   ingredient: {
     value: "",
     id: "ingredient",

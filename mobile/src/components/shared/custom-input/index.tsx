@@ -11,6 +11,7 @@ type LoginInputProps = {
   isPassword?: boolean;
   value?: string;
   onFocus?: () => void;
+  editable?: boolean;
 };
 
 const CustomInput = ({
@@ -21,6 +22,7 @@ const CustomInput = ({
   isPassword = false,
   value,
   onFocus,
+  editable = true,
 }: LoginInputProps) => {
   const { theme } = useTheme();
 
@@ -36,6 +38,7 @@ const CustomInput = ({
         autoCapitalize="none"
         value={value}
         onFocus={onFocus}
+        editable={editable}
         placeholderTextColor={theme.quaternary}
       />
     </View>

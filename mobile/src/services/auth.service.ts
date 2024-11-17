@@ -33,6 +33,10 @@ export async function storeAllTokens(accessToken: IAccessToken) {
   await SecureStore.setItemAsync("refreshToken", accessToken.refresh_token);
 }
 
+export const storeTokenExpiration = async (expiresIn: number) => {
+  await SecureStore.setItemAsync("expiresIn", expiresIn.toString());
+};
+
 export async function storeAccessToken(token: string) {
   await SecureStore.setItemAsync("accessToken", token);
 }

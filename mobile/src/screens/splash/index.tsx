@@ -5,7 +5,6 @@ import { useTheme } from "@/src/context/theme-context";
 import {
   decodeAccessToken,
   getStoredAccessToken,
-  getStoredExpiresIn,
   getStoredRefreshToken,
   refreshToken,
 } from "@/src/services/auth.service";
@@ -30,7 +29,12 @@ const SplashScreen = () => {
       const decodedToken = await decodeAccessToken(token);
 
       const expiresIn = decodedToken?.exp;
-      const expirationDate = new Date(expiresIn!!);
+      if (!expiresIn) {
+        setLoading(false);
+        router.replace("/register");
+        return;
+      }
+      const expirationDate = new Date(expiresIn);
       if (expirationDate >= new Date()) {
         await getNewTokenWithRefreshToken();
         return;

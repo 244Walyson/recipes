@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Animated,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import { styles } from "./styles";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
@@ -50,6 +51,7 @@ const Search = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [btnApplyModal, setBtnApplyModal] = useState(false);
   const [searchFilters, setSearchFilters] = useState<IFindAllFilters>({});
+  const [refreshing, setRefreshing] = useState(false);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -77,8 +79,9 @@ const Search = () => {
     getRecipes(searchFilters).then((response) => {
       console.log(response);
       setRecipes(response);
+      setRefreshing(false);
     });
-  }, [searchFilters]);
+  }, [searchFilters, refreshing]);
 
   const openModal = ({
     data,
@@ -289,18 +292,14 @@ const Search = () => {
         </ScrollView> */}
       </Animated.View>
 
-      <ScrollView
+      <FlatList
         style={[
           styles(theme).cardsContainer,
           { paddingTop: H_MAX_HEIGHT + 100 },
         ]}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false }
-        )}
-        scrollEventThrottle={16}
-      >
-        {recipes?.data.map((recipe) => (
+        data={recipes?.data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item: recipe }) => (
           <SearchCard
             key={recipe.id}
             title={recipe.name}
@@ -310,8 +309,24 @@ const Search = () => {
             mealType={recipe.mealTypes}
             onPress={() => router.push(`/recipes/${recipe.id}`)}
           />
-        ))}
-      </ScrollView>
+        )}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => setRefreshing(true)}
+            colors={[theme.foreground]}
+            tintColor="transparent"
+            progressBackgroundColor="transparent"
+            style={{ zIndex: 1000 }}
+          />
+        }
+      />
+
       {modalData && (
         <CustomModal
           visible={modalData?.visible ?? false}

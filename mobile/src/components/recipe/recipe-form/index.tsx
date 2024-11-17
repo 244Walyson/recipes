@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomPicker from "../../custom-picker";
@@ -50,6 +51,7 @@ type RecipeFormProps = {
 const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   const { theme } = useTheme();
   const [ingredients, setIngredients] = useState<IIngredient[]>([]);
+  const [loading, setLoading] = useState(false);
   const [ingredientsSuggestions, setIngredientsSuggestions] = useState<
     IIngredient[]
   >([]);
@@ -176,6 +178,7 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   };
 
   const handleSaveRecipe = async () => {
+    setLoading(true);
     const macronutrients = {
       carbs: Number(macronutrientsFormData.carbohydrate?.value) || 0,
       fat: Number(macronutrientsFormData.fat?.value) || 0,
@@ -221,9 +224,16 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       cuisineStyles: [],
       userId: userId,
     };
-
     console.log(data);
-    await createRecipe(data);
+    createRecipe(data)
+      .then((response) => {
+        console.log(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
   };
 
   return (
@@ -440,7 +450,12 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
         <RecipeInstructions data={partialDirections} />
       </View>
 
-      <PrimaryButton text="Salvar Receita" onPress={handleSaveRecipe} />
+      <PrimaryButton
+        text="Salvar Receita"
+        onPress={handleSaveRecipe}
+        loading={loading}
+        isActive={!loading}
+      />
     </ScrollView>
   );
 };

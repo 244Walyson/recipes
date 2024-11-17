@@ -6,6 +6,8 @@ import {
   ImageBackground,
   Animated,
   TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
@@ -19,10 +21,11 @@ const H_MAX_HEIGHT = 220;
 const H_MIN_HEIGHT = 0;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
-const RegisterRecipe = async () => {
+const RegisterRecipe = () => {
   const { theme } = useTheme();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [imageUrl, setImageUrl] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
   const imageTranslateY = scrollY.interpolate({
     inputRange: [0, H_SCROLL_DISTANCE],
@@ -38,10 +41,13 @@ const RegisterRecipe = async () => {
     });
 
     if (!result.canceled) {
+      setLoading(true);
       try {
         const file = result.assets[0].uri;
-        const imgUrl = await uploadImage(file);
-        if (imgUrl) setImageUrl(imgUrl.url);
+        uploadImage(file).then((imgUrl) => {
+          if (imgUrl) setImageUrl(imgUrl.url);
+          setLoading(false);
+        });
       } catch (error) {
         console.error("Erro ao fazer upload da imagem:", error);
       }
@@ -51,6 +57,11 @@ const RegisterRecipe = async () => {
   return (
     <View style={styles(theme).container}>
       <StatusBar translucent backgroundColor="transparent" />
+      {loading && (
+        <View style={styles(theme).loadingContainer}>
+          <ActivityIndicator size="large" color={theme.foreground} />
+        </View>
+      )}
 
       <Animated.View
         style={[
@@ -72,7 +83,8 @@ const RegisterRecipe = async () => {
               <HeaderSecondary
                 title="Nova receita"
                 ioniconLeftName="arrow-left"
-                ioniconRightName="check"
+                ioniconRightName="image-remove"
+                onPressRight={() => setImageUrl("")}
                 colorEmphasis={theme.foreground}
               />
             </ImageBackground>
@@ -81,7 +93,8 @@ const RegisterRecipe = async () => {
               <HeaderSecondary
                 title="Nova receita"
                 ioniconLeftName="arrow-left"
-                ioniconRightName="check"
+                ioniconRightName=""
+                onPressRight={() => setImageUrl("")}
                 colorEmphasis={theme.foreground}
               />
               <TouchableOpacity onPress={openGallery}>

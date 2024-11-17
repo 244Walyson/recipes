@@ -10,7 +10,6 @@ export const styles = (theme: any) =>
       paddingHorizontal: 20,
       justifyContent: "center",
       marginTop: statusBarHeight,
-      backgroundColor: theme.background,
     },
     headerWrapper: {
       flexDirection: "row",

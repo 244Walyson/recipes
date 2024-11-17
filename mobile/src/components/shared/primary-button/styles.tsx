@@ -17,4 +17,7 @@ export const styles = (theme: any, isActive: boolean) =>
       color: isActive ? theme.background : theme.primary,
       fontSize: 18,
     },
+    loadingContainer: {
+      zIndex: 2,
+    },
   });

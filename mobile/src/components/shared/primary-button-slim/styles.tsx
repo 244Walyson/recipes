@@ -4,17 +4,17 @@ export const styles = (theme: any, isActive: boolean) =>
   StyleSheet.create({
     btn: {
       backgroundColor: isActive ? theme.primary : theme.background,
-      height: 50,
+      height: 35,
       borderWidth: 1,
       borderColor: theme.primary,
       alignItems: "center",
       borderRadius: 8,
       justifyContent: "center",
-      padding: 10,
+      padding: 5,
       flex: 1,
     },
     btnText: {
       color: isActive ? theme.background : theme.primary,
-      fontSize: 18,
+      fontSize: 14,
     },
   });

@@ -7,8 +7,9 @@ export default function RootLayout() {
     <ThemeProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="recipes/[id]" options={{ headerShown: false }} />
         <Stack.Screen
-          name="(recipes)/recipes/[id]"
+          name="social-auth/[key]"
           options={{ headerShown: false }}
         />
         <Stack.Screen name="index" options={{ headerShown: false }} />

@@ -8,6 +8,7 @@ import {
   Image,
   FlatList,
   Animated,
+  RefreshControl,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -37,6 +38,7 @@ const Profile = () => {
   const [user, setUser] = useState<IUserResponse>();
   const [isFocused, setIsFocused] = useState("grid");
   const [following, setFollowing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [recipes, setRecipes] =
     useState<IPaginatedResponse<IRecipeProjection>>();
 
@@ -61,17 +63,18 @@ const Profile = () => {
         console.log(data);
         setRecipes(data);
       });
+      setRefreshing(false);
     });
-  }, []);
+  }, [refreshing]);
 
   const logout = () => {
     removeAllTokens();
     removeStoredUserID();
-    router.push("/register");
+    router.replace("/register");
   };
 
   const isProfileOwner = () => {
-    return false;
+    return true;
   };
 
   const getBtnText = () => {
@@ -91,6 +94,10 @@ const Profile = () => {
 
   const handleFocusChange = (buttonName: string) => {
     setIsFocused(buttonName);
+  };
+
+  const handleRecipePress = (id: string) => {
+    router.push(`/recipes/${id}`);
   };
 
   return (
@@ -168,18 +175,33 @@ const Profile = () => {
       </Animated.View>
 
       <FlatList
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => setRefreshing(true)}
+            colors={[theme.foreground]}
+            tintColor="transparent"
+            progressBackgroundColor="transparent"
+          />
+        }
         scrollEventThrottle={16}
-        data={recipes?.data.map((recipe) => recipe.imgUrl)}
+        data={recipes?.data}
         numColumns={3}
         renderItem={({ item }) => (
-          <View style={styles(theme).recipeCardContainer}>
-            <Image source={{ uri: item }} style={styles(theme).recipeImage} />
-          </View>
+          <TouchableOpacity
+            style={styles(theme).recipeCardContainer}
+            onPress={() => handleRecipePress(item.id)}
+          >
+            <Image
+              source={{ uri: item.imgUrl }}
+              style={styles(theme).recipeImage}
+            />
+          </TouchableOpacity>
         )}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={[
           styles(theme).recipeList,
-          { paddingTop: H_MAX_HEIGHT + 30, paddingBottom: 80 },
+          { paddingTop: H_MAX_HEIGHT + 100 },
         ]}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],

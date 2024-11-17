@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, RefreshControl } from "react-native";
 import Header from "@/src/components/shared/header-primary";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
@@ -24,6 +24,7 @@ const Home = () => {
   const [recipeByCuisineStyle, setRecipeByCuisineStyle] =
     useState<IPaginatedResponse<IRecipeResponse>>();
   const [cuisineStyleFocused, setCuisineStyleFocused] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   const router = useRouter();
 
@@ -42,7 +43,8 @@ const Home = () => {
     getRecipesByCuisineStyle(cuisineStyleFocused).then((data) => {
       setRecipeByCuisineStyle(data);
     });
-  }, []);
+    setRefreshing(false);
+  }, [refreshing]);
 
   const handleCuisineStylePress = (cuisineStyle: string) => {
     setCuisineStyleFocused(cuisineStyle);
@@ -52,7 +54,18 @@ const Home = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles(theme).container}>
+    <ScrollView
+      contentContainerStyle={styles(theme).container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => setRefreshing(true)}
+          colors={[theme.foreground]}
+          tintColor="transparent"
+          progressBackgroundColor="transparent"
+        />
+      }
+    >
       <Header onFocus={handleInputFocus} />
 
       <View style={styles(theme).trendingContainer}>

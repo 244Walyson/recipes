@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   StatusBar,
   ScrollView,
   Animated,
+  RefreshControl,
 } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { useTheme } from "@/src/context/theme-context";
@@ -34,6 +35,7 @@ const Recipe = () => {
   const { theme } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [recipe, setRecipe] = React.useState<IRecipeResponse>();
+  const [refreshing, setRefreshing] = useState(false);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -46,9 +48,10 @@ const Recipe = () => {
   useEffect(() => {
     getRecipeById(id).then((response) => {
       setRecipe(response);
+      setRefreshing(false);
       console.log(response);
     });
-  }, []);
+  }, [refreshing]);
 
   return (
     <View style={styles(theme).container}>
@@ -89,6 +92,15 @@ const Recipe = () => {
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => setRefreshing(true)}
+            colors={[theme.foreground]}
+            tintColor="transparent"
+            progressBackgroundColor="transparent"
+          />
+        }
       >
         {recipe && (
           <DescriptionContainer

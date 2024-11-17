@@ -93,4 +93,11 @@ export const styles = (theme: any) =>
       marginTop: 20,
       gap: 10,
     },
+    loadingContainer: {
+      position: "absolute",
+      top: 100,
+      left: "50%",
+      right: "50%",
+      zIndex: 2,
+    },
   });

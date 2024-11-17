@@ -36,7 +36,9 @@ export const styles = (theme: any) =>
       width: "100%",
       alignItems: "center",
       justifyContent: "center",
-      height: 280,
+      height: 300,
+      paddingTop: 20,
+      gap: 10,
     },
     imageAvatar: {
       width: 100,
@@ -47,6 +49,7 @@ export const styles = (theme: any) =>
       width: "100%",
       justifyContent: "center",
       alignItems: "center",
+      gap: 5,
     },
     textInfo: {
       fontSize: 24,

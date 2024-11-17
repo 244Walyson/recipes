@@ -28,6 +28,29 @@ export const refreshToken = async (refreshToken: string) => {
   }
 };
 
+export const getRecoverPasswordToken = async (email: string) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/auth/recover-password/token/${email}`
+    );
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.log("Error:", error);
+    throw error;
+  }
+};
+
+export const oauthLogin = async (provider: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/oauth2/${provider}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error:", error);
+    throw error;
+  }
+};
+
 export async function storeAllTokens(accessToken: IAccessToken) {
   await SecureStore.setItemAsync("accessToken", accessToken.access_token);
   await SecureStore.setItemAsync("refreshToken", accessToken.refresh_token);

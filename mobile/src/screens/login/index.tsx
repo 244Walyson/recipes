@@ -11,6 +11,7 @@ import { updateAndValidate } from "@/src/utils/forms";
 import {
   decodeAccessToken,
   getAccessToken,
+  getRecoverPasswordToken,
   getStoredRefreshToken,
   storeAccessToken,
   storeRefreshToken,
@@ -30,6 +31,18 @@ const Register = () => {
   const handleSubmit = async () => {
     console.log("Submit", activity);
     console.log(await getStoredRefreshToken());
+
+    if (activity === "forgot password") {
+      getRecoverPasswordToken(formData.email.value)
+        .then(() => {
+          setActivity("login");
+          console.log("Token enviado");
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
+      return;
+    }
 
     if (activity === "register") {
       const user = await createUser({
@@ -65,10 +78,12 @@ const Register = () => {
   };
 
   const handleGithubLogin = () => {
+    router.push("/social-auth/github");
     console.log("Login com Github");
   };
 
   const handleGoogleLogin = () => {
+    router.push("/social-auth/google");
     console.log("Login com Google");
   };
 
@@ -83,6 +98,9 @@ const Register = () => {
       }
       if (activity === "login" || registerStep === 2) {
         return key === "email" || key === "password";
+      }
+      if (activity === "forgot password") {
+        return key === "email";
       }
       return false;
     });
@@ -103,30 +121,54 @@ const Register = () => {
     });
   };
 
+  const getButtonText = () => {
+    if (activity === "forgot password") {
+      return "Enviar";
+    }
+    if (activity === "register") {
+      return registerStep === 1 ? "Próximo" : "Registrar-se";
+    }
+    return "Entrar";
+  };
+
   return (
     <View style={styles(theme).container}>
       <SvgTopWaves style={[styles(theme).svg, styles(theme).svgTop]} />
       <SvgBottomWaves style={[styles(theme).svg, styles(theme).svgBottom]} />
-
       <View style={styles(theme).loginContainer}>
         <Text style={[styles(theme).text, styles(theme).textLogin]}>
-          {activity === "login" ? "Login" : "Registre-se"}
+          {(() => {
+            if (activity === "login") return "Login";
+            if (activity === "register") return "Registre-se";
+            return "Recuperar senha";
+          })()}
         </Text>
 
         <View style={{ width: "100%" }}>{renderFormFields()}</View>
 
-        <View style={styles(theme).socialMediaLogin}>
-          <TouchableOpacity
-            style={styles(theme).socialMediaLoginBtn}
-            onPress={handleGoogleLogin}
-          >
-            <SvgGoggleIcon />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles(theme).socialMediaLoginBtn}
-            onPress={handleGithubLogin}
-          >
-            <SvgGithubIcon />
+        <View
+          style={[
+            styles(theme).socialMediaLogin,
+            { justifyContent: "space-between" },
+          ]}
+        >
+          <View style={{ flexDirection: "row" }}>
+            <TouchableOpacity
+              style={styles(theme).socialMediaLoginBtn}
+              onPress={handleGoogleLogin}
+            >
+              <SvgGoggleIcon />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles(theme).socialMediaLoginBtn}
+              onPress={handleGithubLogin}
+            >
+              <SvgGithubIcon />
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={() => setActivity("forgot password")}>
+            <Text style={{ color: theme.tertiary }}>Esqueceu a senha?</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -141,28 +183,28 @@ const Register = () => {
           }
         >
           <Text style={styles(theme).textLight}>
-            {registerStep == 2 && activity !== "login"
-              ? "Voltar"
-              : activity === "login"
-              ? "Não tem uma conta?"
-              : "Já tem uma conta?"}
+            {(() => {
+              if (registerStep == 2 || activity === "forgot password") {
+                return "Voltar";
+              }
+              if (activity === "login") {
+                return "Não tem uma conta?";
+              }
+              return "Já tem uma conta?";
+            })()}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles(theme).btnLogin}
           onPress={() =>
-            registerStep == 2 || activity == "login"
+            registerStep == 2 ||
+            activity == "login" ||
+            activity == "forgot password"
               ? handleSubmit()
               : setRegisterStep(2)
           }
         >
-          <Text style={styles(theme).textButton}>
-            {activity === "register"
-              ? registerStep == 1
-                ? "Próximo"
-                : "Registrar-se"
-              : "Entrar"}
-          </Text>
+          <Text style={styles(theme).textButton}>{getButtonText()}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -138,7 +138,14 @@ export class RecipeRepository implements IRecipeRepository {
         viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
         NOT: {
           allergens: filters?.allergens
-            ? { hasSome: filters?.allergens }
+            ? {
+                hasSome: filters?.allergens.map((allergen) =>
+                  allergen
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, ''),
+                ),
+              }
             : undefined,
         },
 
@@ -205,7 +212,14 @@ export class RecipeRepository implements IRecipeRepository {
         viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
         NOT: {
           allergens: filters?.allergens
-            ? { hasSome: filters?.allergens }
+            ? {
+                hasSome: filters?.allergens.map((allergen) =>
+                  allergen
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, ''),
+                ),
+              }
             : undefined,
         },
 

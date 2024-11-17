@@ -54,7 +54,7 @@ export class AuthController {
     return await this.updatePasswordUseCase.execute(dto);
   }
 
-  @Get('oauth2/google')
+  @Post('oauth2/google')
   @UseGuards(AuthGuard('google'))
   async googleLogin() {}
 

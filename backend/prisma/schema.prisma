@@ -17,8 +17,8 @@ datasource db {
 model User {
   id                 String             @id @default(uuid())
   name               String
-  email              String             @unique
-  password           String
+  email              String?            @unique
+  password           String?
   imgUrl             String?
   numberOfRecipes    Int                @default(0)
   numberOfFollowers  Int                @default(0)

@@ -18,9 +18,10 @@ export class CreateUserUseCase {
         'User with this email already exists',
       );
     }
-    const password = await this.passwordEncoder.encode(dto.password);
+    if (dto.password)
+      dto.password = await this.passwordEncoder.encode(dto.password);
+
     const user = UserMapper.toEntity(dto);
-    user.password = password;
     return UserMapper.toDTO(await this.userRepository.create(user));
   }
 }

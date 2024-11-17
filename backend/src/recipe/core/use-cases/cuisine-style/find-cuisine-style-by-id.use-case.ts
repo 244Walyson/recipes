@@ -11,7 +11,7 @@ export class FindCuisineStyleByIdUseCase {
     try {
       return await this.cuisineStyleRepository.findById(id);
     } catch {
-      throw new RecipeResourceNotFoundException('Meal type not found');
+      throw new RecipeResourceNotFoundException('Cuisine Style not found');
     }
   }
 }

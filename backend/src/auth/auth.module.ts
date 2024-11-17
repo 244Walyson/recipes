@@ -37,7 +37,6 @@ import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case'
   controllers: [AuthController],
   providers: [
     PrismaService,
-    CreateUserUseCase,
     PassportGoogleStrategy,
     PassportGithubStrategy,
     {

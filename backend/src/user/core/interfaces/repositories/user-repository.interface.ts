@@ -12,5 +12,6 @@ export interface IUserRepository {
   delete(id: string): Promise<void>;
   findById(id: string): Promise<User>;
   findByEmail(email: string): Promise<User>;
+  findByUsername(username: string): Promise<User>;
   findAll(params: IFindAllParams): Promise<{ total: number; users: User[] }>;
 }

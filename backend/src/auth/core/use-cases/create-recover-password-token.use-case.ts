@@ -30,7 +30,8 @@ export class CreateRecoverPasswordTokenUseCase {
   }
 
   private async sendEmail(email: string, token: string): Promise<void> {
-    const resetUrl = `https://yourapp.com/reset-password?token=${token}`;
+    const url = process.env.FRONTEND_URL;
+    const resetUrl = `${url}/reset-password?token=${token}&email=${email}`;
     const emailBody = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <h2 style="color: #4A90E2;">Recuperação de Senha</h2>

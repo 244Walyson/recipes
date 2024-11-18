@@ -2,6 +2,6 @@ import { IRecoverPasswordRequest } from 'src/auth/core/interfaces/recover-passwo
 
 export class RecovrePassordRequestDto implements IRecoverPasswordRequest {
   token: string;
-  userId: string;
   email: string;
+  password: string;
 }

@@ -50,7 +50,7 @@ export class AuthController {
     return this.createRecoverPasswordTokenUseCase.execute({ email });
   }
 
-  @Post('recover-password')
+  @Post('reset-password')
   @HttpCode(200)
   async updatePassword(@Body() dto: RecovrePassordRequestDto) {
     return await this.updatePasswordUseCase.execute(dto);

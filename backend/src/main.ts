@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ControllerAdvice } from './utils/controller-advice/controller.advice';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalFilters(new GlobalExceptionFilter(new ControllerAdvice()));
 
   const config = new DocumentBuilder()

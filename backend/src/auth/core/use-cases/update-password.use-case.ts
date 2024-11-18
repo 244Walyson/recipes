@@ -19,7 +19,7 @@ export class UpdatePasswordUseCase {
     this.validateRecoverToken(recoverToken);
 
     const user = await this.findByEmailUseCase.execute(dto.email);
-    user.password = await this.passwordEncoder.encode(dto.newPassword);
+    user.password = await this.passwordEncoder.encode(dto.password);
 
     this.updateUserUseCase.execute(user.id, user);
     this.recoverPasswordRepository.revoke(recoverToken.id);
@@ -42,7 +42,7 @@ export class UpdatePasswordUseCase {
     if (recoveryToken.revoked) {
       throw new AuthUnauthorizedException('Recover token revoked');
     }
-    const isExpired = recoveryToken.expiresAt < BigInt(new Date().getTime());
+    const isExpired = recoveryToken.expiresAt > BigInt(new Date().getTime());
     if (isExpired) {
       throw new AuthUnauthorizedException('Recover token expired');
     }

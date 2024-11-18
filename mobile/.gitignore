@@ -12,6 +12,7 @@ web-build/
 yarn.lock
 android/
 ios/
+.idea/
 
 package-lock.json
 yarn.lock
@@ -23,3 +24,7 @@ yarn.lock
 
 expo-env.d.ts
 # @end expo-cli
+# Expo
+.expo
+dist/
+web-build/

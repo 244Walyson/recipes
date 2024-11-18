@@ -51,6 +51,24 @@ export const oauthLogin = async (provider: string) => {
   }
 };
 
+export const getAccessTokenWithGoogleToken = async (idToken: string) => {
+  try {
+    const data = {
+      idToken: idToken,
+    };
+    const response = await axios.post(
+      `${API_URL}/auth/oauth2/callback/google`,
+      data
+    );
+    console.log("Resposta do servidor:", response.data);
+    return response.data;
+  } catch (error) {
+    // Trata o erro, se houver
+    console.error("Erro ao enviar tokens para o backend:", error);
+    throw error;
+  }
+};
+
 export async function storeAllTokens(accessToken: IAccessToken) {
   await SecureStore.setItemAsync("accessToken", accessToken.access_token);
   await SecureStore.setItemAsync("refreshToken", accessToken.refresh_token);

@@ -12,6 +12,7 @@ export default function RootLayout() {
           name="social-auth/[key]"
           options={{ headerShown: false }}
         />
+        <Stack.Screen name="oauthredirect" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="register" options={{ headerShown: false }} />
       </Stack>

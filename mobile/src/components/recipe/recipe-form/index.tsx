@@ -251,20 +251,16 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
                 handleGenericInputChange(text, field.name)
               }
             />
-            {ingredientsSuggestions.length > 0 && (
-              <FlatList
-                data={ingredients.map((ingredient) => ingredient.name)}
-                renderItem={({ item }) => (
-                  <Text
-                    style={styles(theme).suggestion}
-                    onPress={() => handleGenericInputChange(item, "type")}
-                  >
-                    {item}
-                  </Text>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            )}
+            {ingredientsSuggestions.length > 0 &&
+              ingredientsSuggestions.map((ingredient) => (
+                <Text
+                  style={styles(theme).suggestion}
+                  key={ingredient.id}
+                  onPress={() => handleSelectedIngredient(ingredient)}
+                >
+                  {ingredient.name}
+                </Text>
+              ))}
           </View>
         ) : (
           <CustomInput
@@ -320,20 +316,16 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
               }
             />
 
-            {ingredientsSuggestions.length > 0 && (
-              <FlatList
-                data={ingredientsSuggestions}
-                renderItem={({ item }) => (
-                  <Text
-                    style={styles(theme).suggestion}
-                    onPress={() => handleSelectedIngredient(item)}
-                  >
-                    {item.name}
-                  </Text>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
-            )}
+            {ingredientsSuggestions.length > 0 &&
+              ingredientsSuggestions.map((ingredient) => (
+                <Text
+                  style={styles(theme).suggestion}
+                  key={ingredient.id}
+                  onPress={() => handleSelectedIngredient(ingredient)}
+                >
+                  {ingredient.name}
+                </Text>
+              ))}
           </View>
         ) : (
           key === "quantity" && (

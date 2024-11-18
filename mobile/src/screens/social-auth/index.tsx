@@ -1,31 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet, Text } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { WebView } from "react-native-webview";
 import {
-  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_ID_ANDROID,
   GOOGLE_CALLBACK_URL,
   GITHUB_CLIENT_ID,
   GITHUB_CALLBACK_URL,
+  GOOGLE_CLIENT_ID_IOS,
+  GOOGLE_CLIENT_ID_WEB,
 } from "@/src/utils/system";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import {
+  getAccessTokenWithGoogleToken,
+  storeAllTokens,
+} from "@/src/services/auth.service";
+
+WebBrowser.maybeCompleteAuthSession();
+
+const config = {
+  webClientId: GOOGLE_CLIENT_ID_WEB,
+  iosClientId: GOOGLE_CLIENT_ID_IOS,
+  androidClientId: GOOGLE_CLIENT_ID_ANDROID,
+};
 
 const SocialAuth = () => {
+  const router = useRouter();
   const { key } = useLocalSearchParams<{ key: string }>();
   const [oauthUrl, setOauthUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(config);
+
+  const handleTokenResponse = async () => {
+    console.log(response);
+    if (response?.type === "success") {
+      const { id_token } = response.params;
+      getAccessTokenWithGoogleToken(id_token).then((data) => {
+        storeAllTokens(data);
+        router.replace("/(tabs)/home");
+      });
+    }
+    console.log("response", response);
+  };
 
   useEffect(() => {
-    console.log(GOOGLE_CLIENT_ID);
+    console.log("effect");
+    handleTokenResponse();
+  }, [response]);
+
+  useEffect(() => {
+    console.log("key", key);
     if (key === "google") {
-      setOauthUrl(
-        `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_CALLBACK_URL}&response_type=code&scope=openid%20profile%20email`
-      );
+      console.log("Login com Google");
+      if (request) {
+        setLoading(true);
+        promptAsync()
+          .then(() => setLoading(false))
+          .catch((error) => {
+            console.error("Erro no login com Google:", error);
+            setLoading(false);
+          });
+      }
     } else if (key === "github") {
-      setOauthUrl(
-        `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email`
-      );
-      console.log("github", oauthUrl);
+      const githubUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email`;
+      setOauthUrl(githubUrl);
     }
-  }, [key]);
+  }, [key, request]);
 
   const handleStateChange = (event: any) => {
     if (event.url.includes(GOOGLE_CALLBACK_URL || GITHUB_CALLBACK_URL)) {
@@ -33,7 +74,7 @@ const SocialAuth = () => {
     }
   };
 
-  if (!oauthUrl) {
+  if (loading) {
     return (
       <View style={styles.center}>
         <Text>Redirecionando para o provedor OAuth...</Text>
@@ -43,14 +84,18 @@ const SocialAuth = () => {
   }
 
   return (
-    <WebView
-      originWhitelist={["*"]}
-      source={{ uri: oauthUrl }}
-      startInLoadingState={true}
-      onNavigationStateChange={(event) => {
-        handleStateChange(event);
-      }}
-    />
+    <View style={{ flex: 1 }}>
+      {key === "github" && oauthUrl && (
+        <WebView
+          originWhitelist={["*"]}
+          source={{ uri: oauthUrl }}
+          startInLoadingState={true}
+          onNavigationStateChange={(event) => {
+            handleStateChange(event);
+          }}
+        />
+      )}
+    </View>
   );
 };
 

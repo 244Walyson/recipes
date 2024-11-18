@@ -18,6 +18,7 @@ import { RecovrePassordRequestDto } from '../dtos/recover-password-request.dto';
 import { UpdatePasswordUseCase } from 'src/auth/core/use-cases/update-password.use-case';
 import { AuthGuard } from '@nestjs/passport';
 import { OAuth2AuthenticationUseCase } from 'src/auth/core/use-cases/oauth2-authentication.use-case';
+import { PassportGoogleStrategy } from '../utils/oauth2-google-provider.impl';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +28,7 @@ export class AuthController {
     private readonly createRecoverPasswordTokenUseCase: CreateRecoverPasswordTokenUseCase,
     private readonly updatePasswordUseCase: UpdatePasswordUseCase,
     private readonly oAuth2AuthenticationUseCase: OAuth2AuthenticationUseCase,
+    private readonly passportGoogleStrategy: PassportGoogleStrategy,
   ) {}
 
   @Post('token')
@@ -72,6 +74,14 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   async githubLoginCallback(@Req() req: any) {
     return this.oAuth2AuthenticationUseCase.execute(req.user);
+  }
+
+  @Post('oauth2/callback/google')
+  async googleCallback(@Body() { idToken }: { idToken: string }) {
+    const user = await this.passportGoogleStrategy.validateTokenWithGoogle({
+      idToken,
+    });
+    return this.oAuth2AuthenticationUseCase.execute(user);
   }
 
   @Post('test')

@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { UserRequestDto } from 'src/user/infrastructure/dto/user-request.dto';
+import axios from 'axios';
+import * as jwt from 'jsonwebtoken';
+import * as jwkToPem from 'jwk-to-pem';
 
 @Injectable()
 export class PassportGoogleStrategy extends PassportStrategy(
@@ -30,5 +33,48 @@ export class PassportGoogleStrategy extends PassportStrategy(
     });
 
     return user;
+  }
+
+  async validateTokenWithGoogle({
+    idToken,
+  }: {
+    idToken: string;
+  }): Promise<UserRequestDto> {
+    try {
+      const decoded = jwt.decode(idToken, { complete: true });
+
+      const publickey = await this.getGooglePublicKey().then((keys) => {
+        const key = keys.find((k) => k.kid === decoded.header.kid);
+        return jwkToPem(key);
+      });
+
+      jwt.verify(idToken, publickey, { algorithms: ['RS256'] }, (err) => {
+        if (err) {
+          console.log('Error:', err);
+          throw new UnauthorizedException('Token inválido');
+        }
+      });
+      const { email, name, picture, given_name } = decoded.payload as any;
+
+      const user = new UserRequestDto({
+        email,
+        name,
+        imgUrl: picture,
+        username: given_name,
+      });
+
+      return user;
+    } catch (error) {
+      console.log('Erro ao validar token com Google');
+      console.error(error);
+      throw new Error('Token inválido ou expirado');
+    }
+  }
+
+  private async getGooglePublicKey() {
+    const response = await axios.get(
+      'https://www.googleapis.com/oauth2/v3/certs',
+    );
+    return response.data.keys;
   }
 }

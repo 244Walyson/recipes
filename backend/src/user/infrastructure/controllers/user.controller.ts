@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { CreateUserUseCase } from 'src/user/core/use-cases/create-user.use-case';
+import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-case';
 import { UserRequestDto } from '../dto/user-request.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
-import { FindUserByIdlUserUseCase } from 'src/user/core/use-cases/find-user-by-id.use-case';
-import { UpdateUserUseCase } from 'src/user/core/use-cases/update-user.use-case';
-import { FindAllUseCase } from 'src/user/core/use-cases/find-all-use-case';
+import { FindUserByIdlUserUseCase } from '@/src/user/core/use-cases/find-user-by-id.use-case';
+import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
+import { FindAllUseCase } from '@/src/user/core/use-cases/find-all-use-case';
 
 @Controller('users')
 export class UserController {

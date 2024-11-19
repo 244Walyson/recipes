@@ -1,8 +1,8 @@
-import { User } from 'src/user/core/entities/user.entity';
+import { User } from '@/src/user/core/entities/user.entity';
 import {
   IFindAllParams,
   IUserRepository,
-} from 'src/user/core/interfaces/repositories/user-repository.interface';
+} from '@/src/user/core/interfaces/repositories/user-repository.interface';
 import { PrismaService } from '../../../utils/prisma.service';
 import { Injectable } from '@nestjs/common';
 

@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { UserRequestDto } from 'src/user/infrastructure/dto/user-request.dto';
+import { UserRequestDto } from '@/src/user/infrastructure/dto/user-request.dto';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
 import * as jwkToPem from 'jwk-to-pem';

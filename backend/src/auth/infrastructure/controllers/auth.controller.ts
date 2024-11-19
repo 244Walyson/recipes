@@ -19,6 +19,7 @@ import { UpdatePasswordUseCase } from 'src/auth/core/use-cases/update-password.u
 import { AuthGuard } from '@nestjs/passport';
 import { OAuth2AuthenticationUseCase } from 'src/auth/core/use-cases/oauth2-authentication.use-case';
 import { PassportGoogleStrategy } from '../utils/oauth2-google-provider.impl';
+import { PassportGithubStrategy } from '../utils/oauth2-github-provider.impl';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +30,7 @@ export class AuthController {
     private readonly updatePasswordUseCase: UpdatePasswordUseCase,
     private readonly oAuth2AuthenticationUseCase: OAuth2AuthenticationUseCase,
     private readonly passportGoogleStrategy: PassportGoogleStrategy,
+    private readonly passportGithubStrategy: PassportGithubStrategy,
   ) {}
 
   @Post('token')
@@ -70,10 +72,12 @@ export class AuthController {
     return this.oAuth2AuthenticationUseCase.execute(req.user);
   }
 
-  @Get('oauth2/callback/github')
-  @UseGuards(AuthGuard('github'))
-  async githubLoginCallback(@Req() req: any) {
-    return this.oAuth2AuthenticationUseCase.execute(req.user);
+  @Post('/redirect/github')
+  async githubLoginCallback(@Body() { code }: { code: string }) {
+    const { user } =
+      await this.passportGithubStrategy.getGithubAccessToken(code);
+    console.log(user);
+    return this.oAuth2AuthenticationUseCase.execute(user);
   }
 
   @Post('oauth2/callback/google')

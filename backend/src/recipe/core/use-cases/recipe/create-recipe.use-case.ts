@@ -25,7 +25,8 @@ export class CreateRecipeUseCase {
       const recipeEntity = RecipeMapper.toEntity(recipe);
       const createdRecipe = await this.recipeRepository.create(recipeEntity);
       return RecipeMapper.toResponseMin(createdRecipe);
-    } catch {
+    } catch (error) {
+      console.log(error);
       throw new RecipeDomainException('Error creating recipe');
     }
   }

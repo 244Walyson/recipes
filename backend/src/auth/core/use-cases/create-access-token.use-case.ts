@@ -1,4 +1,4 @@
-import { FindUserByEmailUseCase } from 'src/user/core/use-cases/find-user-by-email.use-case';
+import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { IJwtService } from '../interfaces/jwt/jwt.service.interface';
 import { CreateRefreshTokenUseCase } from './create-refresh-token.use-case';
 import { ICreadentials } from '../interfaces/access-token/credentials.interface';

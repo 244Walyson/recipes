@@ -21,3 +21,14 @@ export const resetPassword = async (
     throw new Error("Failed to reset password. Please try again later.");
   }
 };
+
+export const getAccessToken = async (code: string): Promise<string> => {
+  try {
+    const response = await api.post("/auth/redirect/github", { code });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting access token:", error);
+    throw new Error("Failed to get access token. Please try again later.");
+  }
+};

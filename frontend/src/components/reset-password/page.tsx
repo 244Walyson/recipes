@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import bottomWave from "../../assets/bottomWave.svg";
 import topWave from "../../assets/topWave.svg";
-import { resetPassword } from "@/services/passwordService";
+import { resetPassword } from "@/services/authService";
 
 const ResetPasswordContent = () => {
   const searchParams = useSearchParams();

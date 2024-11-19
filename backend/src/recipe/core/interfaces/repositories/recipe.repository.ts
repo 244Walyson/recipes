@@ -4,7 +4,7 @@ import { IRecipeProjection } from '../recipes/recipe-response-projection.interfa
 import { IRecipeResponse } from '../recipes/recipe-response.interface';
 
 export interface IRecipeRepository {
-  create(recipe: Recipe): Promise<Recipe>;
+  create(recipe: Recipe): Promise<IRecipeResponse>;
   findbyId(recipeId: string): Promise<IRecipeResponse>;
   findAll(
     {
@@ -25,6 +25,6 @@ export interface IRecipeRepository {
     offset: number;
     limit: number;
   }): Promise<{ total: number; data: IRecipeProjection[] }>;
-  update(id: string, recipe: Recipe): Promise<Recipe>;
+  update(id: string, recipe: Recipe): Promise<IRecipeResponse>;
   delete(recipeId: string): Promise<void>;
 }

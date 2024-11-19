@@ -3,11 +3,11 @@ import { ICommentrepository } from '../../interfaces/repositories/comment.reposi
 import { CommentMapper } from '../../mappers/comment.mappes';
 
 export class CreateCommentUseCase {
-  constructor(private commentRepository: ICommentrepository) {}
+  constructor(private readonly commentRepository: ICommentrepository) {}
 
   async execute(dto: IComment): Promise<IComment> {
     const commentData = CommentMapper.toEntity(dto);
     const createdComment = await this.commentRepository.create(commentData);
-    return CommentMapper.toDTO(createdComment);
+    return createdComment;
   }
 }

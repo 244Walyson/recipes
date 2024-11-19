@@ -11,7 +11,7 @@ import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.i
 export class RecipeRepository implements IRecipeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(recipe: Recipe): Promise<Recipe> {
+  async create(recipe: Recipe): Promise<IRecipeResponse> {
     console.log('RecipeRepository.create', recipe);
     const data = recipe as unknown as Prisma.RecipeCreateInput;
     const createdRecipe = await this.prismaService.recipe.create({
@@ -287,10 +287,50 @@ export class RecipeRepository implements IRecipeRepository {
     return { total, data };
   }
 
-  async update(id: string, recipe: Recipe): Promise<Recipe> {
+  async update(id: string, recipe: Recipe): Promise<IRecipeResponse> {
     const updatedRecipe = await this.prismaService.recipe.update({
       where: { id },
-      data: recipe as unknown as Prisma.RecipeUpdateInput,
+      data: {
+        name: recipe.name,
+        preparationMethod: recipe.preparationMethod,
+        preparationTime: recipe.preparationTime,
+        imgUrl: recipe.imgUrl,
+        macronutrients: recipe.macronutrients,
+        allergens: recipe.allergens,
+        servingCount: recipe.servingCount,
+        viewCount: recipe.viewCount,
+        favoriteCount: recipe.favoriteCount,
+        averageRating: recipe.averageRating,
+        costEstimate: recipe.costEstimate,
+        additionalTips: recipe.additionalTips,
+        isPublished: recipe.isPublished,
+        version: recipe.version,
+        updatedAt: new Date(),
+        recipeIngredients: {
+          connect: recipe.recipeIngredients.map((ingredient) => ({
+            recipeId_ingredientId: {
+              recipeId: id,
+              ingredientId: ingredient.ingredientId,
+            },
+          })),
+        },
+        mealTypes: {
+          connect: recipe.mealTypes.map((mealType) => ({
+            recipeId_mealTypeId: {
+              recipeId: id,
+              mealTypeId: mealType.id,
+            },
+          })),
+        },
+        cuisineStyles: {
+          connect: recipe.cuisineStyles.map((cuisineStyle) => ({
+            recipeId_cuisineStyleId: {
+              recipeId: id,
+              cuisineStyleId: cuisineStyle.id,
+            },
+          })),
+        },
+      },
     });
 
     return {

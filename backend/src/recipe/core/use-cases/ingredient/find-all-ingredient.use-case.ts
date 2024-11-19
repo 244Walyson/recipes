@@ -3,7 +3,7 @@ import { IIngredientRepository } from '../../interfaces/repositories/ingredients
 import { IPaginatedResponse } from '../../interfaces/shared/paginated-response.interface';
 
 export class FindAllIngredientUseCase {
-  constructor(private ingredientRepository: IIngredientRepository) {}
+  constructor(private readonly ingredientRepository: IIngredientRepository) {}
 
   async execute({
     name,

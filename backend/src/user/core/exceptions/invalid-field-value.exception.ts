@@ -1,5 +1,5 @@
 export class UserInvalidFieldValueException extends Error {
-  private errors: Record<string, string>[];
+  private readonly errors: Record<string, string>[];
 
   constructor(errors: Record<string, string>[]) {
     super(UserInvalidFieldValueException.formatErrors(errors));

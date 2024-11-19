@@ -3,7 +3,9 @@ import { ICuisineStyleRepository } from '../../interfaces/repositories/cuisine-s
 import { IPaginatedResponse } from '../../interfaces/shared/paginated-response.interface';
 
 export class FindAllCuisineStyleUseCase {
-  constructor(private cuisineStyleRepository: ICuisineStyleRepository) {}
+  constructor(
+    private readonly cuisineStyleRepository: ICuisineStyleRepository,
+  ) {}
 
   async execute({
     name,

@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { MealType } from 'src/recipe/core/entities/meal-type.entity';
 import { IMealTypeRepository } from 'src/recipe/core/interfaces/repositories/meal-type.repository';
 import { PrismaService } from 'src/utils/prisma.service';
+import { IMealType } from '../../core/interfaces/meal-type/meal-type.interface';
 
 @Injectable()
 export class MealTypeRepository implements IMealTypeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(mealType: MealType): Promise<MealType> {
+  async create(mealType: MealType): Promise<IMealType> {
     return await this.prismaService.mealType.create({
       data: mealType,
     });
   }
-  async findById(id: string): Promise<MealType> {
+  async findById(id: string): Promise<IMealType> {
     return await this.prismaService.mealType.findUnique({ where: { id } });
   }
 
@@ -24,7 +25,7 @@ export class MealTypeRepository implements IMealTypeRepository {
     name: string;
     offset: number;
     limit: number;
-  }): Promise<{ total: number; data: MealType[] }> {
+  }): Promise<{ total: number; data: IMealType[] }> {
     const total = await this.prismaService.cuisineStyle.count({
       where: {
         name: {
@@ -48,7 +49,7 @@ export class MealTypeRepository implements IMealTypeRepository {
     return { total, data };
   }
 
-  async findByName(name: string): Promise<MealType> {
+  async findByName(name: string): Promise<IMealType> {
     return await this.prismaService.mealType.findUnique({
       where: { id: name },
     });

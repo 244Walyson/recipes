@@ -26,6 +26,7 @@ model User {
   username           String?            @unique
   createdAt          DateTime?          @default(now())
   isActive           Boolean?           @default(true)
+  authProvider       String?            @default("local")
   recipes            Recipe[]
   comments           Comment[]
   refreshTokens      RefreshToken[]

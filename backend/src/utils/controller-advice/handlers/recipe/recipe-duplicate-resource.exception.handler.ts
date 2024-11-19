@@ -14,6 +14,7 @@ export class RecipeDuplicateresourceExcetionHandler extends ExceptionHandler<Rec
     this.logger.error(exception.message);
     response.status(400).json({
       statusCode: 400,
+      message: exception.message,
       timestamp: new Date().toISOString(),
       path: request.url,
     });

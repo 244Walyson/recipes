@@ -6,7 +6,7 @@ import { IRecipeRepository } from './core/interfaces/repositories/recipe.reposit
 import { CreateRecipeUseCase } from './core/use-cases/recipe/create-recipe.use-case';
 import { PrismaService } from 'src/utils/prisma.service';
 import { FindIngredientByIdUseCase } from './core/use-cases/ingredient/find-ingredient-by-id.use-case';
-import { ingredientRepository } from './infrastructure/repositories/ingredient.repository.impl';
+import { IngredientRepository } from './infrastructure/repositories/ingredient.repository.impl';
 import { MealTypeRepository } from './infrastructure/repositories/meal-type.repository.impl';
 import { CuisineStyleRepository } from './infrastructure/repositories/cuisine-style.repository.impl';
 import { IIngredientRepository } from './core/interfaces/repositories/ingredients.repository';
@@ -44,7 +44,7 @@ import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes
     },
     {
       provide: 'IIngredientRepository',
-      useClass: ingredientRepository,
+      useClass: IngredientRepository,
     },
     {
       provide: 'IMealTypeRepository',
@@ -133,10 +133,13 @@ import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes
     },
     {
       provide: UpdateRecipeUseCase,
-      useFactory: (recipeRepository: IRecipeRepository) => {
-        return new UpdateRecipeUseCase(recipeRepository);
+      useFactory: (
+        recipeRepository: IRecipeRepository,
+        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+      ) => {
+        return new UpdateRecipeUseCase(recipeRepository, findRecipeByIdUseCase);
       },
-      inject: ['IRecipeRepository'],
+      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
     },
     {
       provide: DeleteRecipeUseCase,

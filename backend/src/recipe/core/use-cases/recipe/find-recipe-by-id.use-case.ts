@@ -3,7 +3,7 @@ import { IRecipeResponse } from '../../interfaces/recipes/recipe-response.interf
 import { IRecipeRepository } from '../../interfaces/repositories/recipe.repository';
 
 export class FindRecipeByIdUseCase {
-  constructor(private recipeRepository: IRecipeRepository) {}
+  constructor(private readonly recipeRepository: IRecipeRepository) {}
 
   async execute(id: string): Promise<IRecipeResponse> {
     try {

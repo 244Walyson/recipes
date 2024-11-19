@@ -1,3 +1,5 @@
+import { CuisineStyle } from '../entities/cuisine-style.entity';
+import { MealType } from '../entities/meal-type.entity';
 import { RecipeIngredient } from '../entities/recipe-ingredient.entity';
 import { Recipe } from '../entities/recipe.entity';
 import { IIngredient } from '../interfaces/ingredient/ingredient.interface';
@@ -32,7 +34,7 @@ export class RecipeMapper {
     return recipe;
   }
 
-  private static addIngredients = (
+  private static readonly addIngredients = (
     entity: Recipe,
     ingredients: IIngredient[],
   ): RecipeIngredient[] => {
@@ -44,18 +46,12 @@ export class RecipeMapper {
     }));
   };
 
-  private static addMealTypes = (mealTypes: IMealType[]) => {
-    return mealTypes.map((mealType) => ({
-      id: mealType.id,
-      name: mealType.name,
-    }));
+  private static readonly addMealTypes = (mealTypes: IMealType[]) => {
+    return mealTypes.map((mealType) => new MealType(mealType));
   };
 
-  private static addCuisineStyles = (cuisineStyles: IMealType[]) => {
-    return cuisineStyles.map((cuisineStyle) => ({
-      id: cuisineStyle.id,
-      name: cuisineStyle.name,
-    }));
+  private static readonly addCuisineStyles = (cuisineStyles: IMealType[]) => {
+    return cuisineStyles.map((cuisineStyle) => new CuisineStyle(cuisineStyle));
   };
 
   static toResponseMin(recipe: Recipe): IRecipeResponse {

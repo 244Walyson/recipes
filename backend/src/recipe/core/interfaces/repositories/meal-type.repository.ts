@@ -1,8 +1,9 @@
 import { MealType } from '../../entities/meal-type.entity';
+import { IMealType } from '../meal-type/meal-type.interface';
 
 export interface IMealTypeRepository {
-  create(mealType: MealType): Promise<MealType>;
-  findById(id: string): Promise<MealType>;
+  create(mealType: MealType): Promise<IMealType>;
+  findById(id: string): Promise<IMealType>;
   findAll({
     name,
     offset,
@@ -11,6 +12,6 @@ export interface IMealTypeRepository {
     name: string;
     limit: number;
     offset: number;
-  }): Promise<{ total: number; data: MealType[] }>;
-  findByName(name: string): Promise<MealType>;
+  }): Promise<{ total: number; data: IMealType[] }>;
+  findByName(name: string): Promise<IMealType>;
 }

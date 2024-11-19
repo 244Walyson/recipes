@@ -2,17 +2,20 @@ import { error } from 'console';
 import { RecipeDomainException } from '../../exceptions/domain.exception';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { IIngredientRepository } from '../../interfaces/repositories/ingredients.repository';
+import { Ingredient } from '../../entities/ingredient.entity';
 
 export class CreateIngredientUseCase {
-  constructor(private ingredientRepository: IIngredientRepository) {}
+  constructor(private readonly ingredientRepository: IIngredientRepository) {}
 
   async execute(dto: IIngredient): Promise<IIngredient> {
+    const ingredient = new Ingredient(dto);
     try {
       console.log(dto);
-      const ingredient = await this.ingredientRepository.create(dto);
+      const createdIngredient =
+        await this.ingredientRepository.create(ingredient);
       return {
-        id: ingredient.id,
-        name: ingredient.name,
+        id: createdIngredient.id,
+        name: createdIngredient.name,
       };
     } catch {
       console.log(error);

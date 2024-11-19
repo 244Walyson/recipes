@@ -8,25 +8,23 @@ import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.u
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { RecipeDomainException } from '../../exceptions/domain.exception';
-import { RecipeInvalidFieldValueException } from '../../exceptions/invalid-field-value.exception';
 
 export class CreateRecipeUseCase {
   constructor(
-    private recipeRepository: IRecipeRepository,
+    private readonly recipeRepository: IRecipeRepository,
     private readonly findMealTypeByidUseCase: FindMealTypeByIdUseCase,
     private readonly findCuisineStyleByIdUseCase: FindCuisineStyleByIdUseCase,
     private readonly findIngredientByIdUseCase: FindIngredientByIdUseCase,
   ) {}
 
   async execute(recipe: IReciperequest): Promise<IRecipeResponse> {
-    this.validateRecipe(recipe);
+    const recipeEntity = RecipeMapper.toEntity(recipe);
     await this.validateMealTypes(recipe.mealTypes);
     await this.validateCuisineStyles(recipe.cuisineStyles);
     await this.validateIngredients(recipe.ingredients);
     try {
-      const recipeEntity = RecipeMapper.toEntity(recipe);
       const createdRecipe = await this.recipeRepository.create(recipeEntity);
-      return RecipeMapper.toResponseMin(createdRecipe);
+      return createdRecipe;
     } catch (error) {
       console.log(error);
       throw new RecipeDomainException('Error creating recipe');

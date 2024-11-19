@@ -18,6 +18,7 @@ export class RecipeInvalidFieldValueExceptionHandler extends ExceptionHandler<Re
     this.logger.error(exception.message);
     response.status(422).json({
       statusCode: 422,
+      message: exception.getErrorMessages(),
       timestamp: new Date().toISOString(),
       path: request.url,
     });

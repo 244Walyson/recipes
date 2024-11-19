@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CuisineStyle } from 'src/recipe/core/entities/cousine-style.entity';
+import { CuisineStyle } from '@/src/recipe/core/entities/cuisine-style.entity';
 import { ICuisineStyleRepository } from 'src/recipe/core/interfaces/repositories/cuisine-style.repository';
 import { PrismaService } from 'src/utils/prisma.service';
+import { ICuisineStyle } from '../../core/interfaces/cuisine-style/cousine-styles.interface';
 
 @Injectable()
 export class CuisineStyleRepository implements ICuisineStyleRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(cuisineStyle: CuisineStyle): Promise<CuisineStyle> {
+  async create(cuisineStyle: CuisineStyle): Promise<ICuisineStyle> {
     return await this.prismaService.cuisineStyle.create({
       data: cuisineStyle,
     });
   }
-  async findById(id: string): Promise<CuisineStyle> {
+  async findById(id: string): Promise<ICuisineStyle> {
     return await this.prismaService.cuisineStyle.findUnique({ where: { id } });
   }
 
@@ -24,7 +25,7 @@ export class CuisineStyleRepository implements ICuisineStyleRepository {
     name: string;
     offset: number;
     limit: number;
-  }): Promise<{ total: number; data: CuisineStyle[] }> {
+  }): Promise<{ total: number; data: ICuisineStyle[] }> {
     const total = await this.prismaService.cuisineStyle.count({
       where: {
         name: {
@@ -48,7 +49,7 @@ export class CuisineStyleRepository implements ICuisineStyleRepository {
     return { total, data };
   }
 
-  async findByName(name: string): Promise<CuisineStyle> {
+  async findByName(name: string): Promise<ICuisineStyle> {
     return await this.prismaService.cuisineStyle.findUnique({
       where: { id: name },
     });

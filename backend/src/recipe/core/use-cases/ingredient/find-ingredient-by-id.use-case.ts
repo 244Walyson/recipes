@@ -3,7 +3,7 @@ import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { IIngredientRepository } from '../../interfaces/repositories/ingredients.repository';
 
 export class FindIngredientByIdUseCase {
-  constructor(private ingredientRepository: IIngredientRepository) {}
+  constructor(private readonly ingredientRepository: IIngredientRepository) {}
 
   async execute(id: string): Promise<IIngredient> {
     try {

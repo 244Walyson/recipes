@@ -18,6 +18,7 @@ export class RecipeResourceNotFoundExceptionHandler extends ExceptionHandler<Rec
     this.logger.error(exception.message);
     response.status(404).json({
       statusCode: 404,
+      message: exception.message,
       timestamp: new Date().toISOString(),
       path: request.url,
     });

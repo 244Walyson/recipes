@@ -1,10 +1,10 @@
 import { RecipeInvalidFieldValueException } from '../exceptions/invalid-field-value.exception';
 
-export class MealType {
+export class CuisineStyle {
   id: string;
   name: string;
 
-  constructor(props: Partial<MealType>) {
+  constructor(props: Partial<CuisineStyle>) {
     this.id = props.id ?? crypto.randomUUID();
     Object.assign(this, props);
 
@@ -15,7 +15,7 @@ export class MealType {
     const errorMessages: Record<string, string>[] = [];
     if (!this.name || this.name.length < 2) {
       errorMessages.push({
-        name: 'O nome do tipo de refeição deve conter ao menos 3 letras',
+        name: 'O nome do estilo de culinária deve conter ao menos 3 letras',
       });
     }
 

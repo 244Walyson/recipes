@@ -29,23 +29,20 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
     if (!result.canceled) {
       setLoading(true);
       const fileUri = result.assets[0].uri;
-      uploadImg(fileUri);
+      uploadImage(fileUri)
+        .then((imgUrl) => {
+          if (imgUrl) {
+            const { url } = imgUrl;
+            onImageUpladed(url);
+            setImageUrl(url);
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError("Erro ao enviar imagem");
+          console.log("Error uploading image", error);
+        });
     }
-  };
-
-  const uploadImg = async (file: string) => {
-    uploadImage(file)
-      .then((imgUrl) => {
-        if (imgUrl) {
-          onImageUpladed(imgUrl);
-          setImageUrl(imgUrl);
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError("Erro ao enviar imagem");
-        console.log("Error uploading image", error);
-      });
   };
 
   useEffect(() => {

@@ -6,8 +6,8 @@ export type FormField = {
   placeholder: string;
   validation: (value: string) => {};
   message: string;
-  dirty?: boolean;
-  invalid?: boolean;
+  dirty?: string;
+  invalid?: string;
 };
 
 export const genericInputs = {

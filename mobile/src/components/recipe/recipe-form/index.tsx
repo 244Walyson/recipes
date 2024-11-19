@@ -4,7 +4,12 @@ import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import CustomInput from "../../shared/custom-input";
-import { toDirtyAll, updateAndValidate, validateAll } from "@/src/utils/forms";
+import {
+  hasAnyInvalid,
+  toDirtyAll,
+  updateAndValidate,
+  validateAll,
+} from "@/src/utils/forms";
 import { createRecipe } from "@/src/services/recipe.service";
 import { FormField, genericInputs } from "@/src/static/register-form-inputs";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
@@ -17,6 +22,7 @@ import MealTypeForm from "../meal-type-form";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
 import ErrorContainer from "../../shared/error-container";
 import { IReciperequest } from "@/src/interfaces/recipe/recipe-request.interface";
+import { useRouter } from "expo-router";
 
 type Macronnutrients = {
   carbs: number;
@@ -30,6 +36,7 @@ type RecipeFormProps = {
 
 const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
   const { theme } = useTheme();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [ingredients, setIngredients] = useState<IIngredient[]>([]);
   const [directions, setDirections] = useState<IDirections[]>([]);
@@ -47,9 +54,8 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
     const dirtyGeneric = toDirtyAll(genericFormData);
     const validatedGeneric = validateAll(dirtyGeneric);
 
-    const hasError = Object.values(validatedGeneric).some(
-      (input: any) => input.invalid === "true"
-    );
+    const hasError = hasAnyInvalid(validatedGeneric);
+    console.log(hasError);
 
     if (hasError) return setError(true);
 
@@ -57,13 +63,13 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
 
     const genericdata = {
       name: genericFormData.name.value,
-      preparationTime: Number(genericFormData.preparationTime.value),
+      preparationTime: Number(genericFormData.preparationTime?.value) || 0,
       servingCount: Number(genericFormData.servingCount.value),
-      estimatedCost: Number(genericFormData.estimatedCost.value),
       adictionalTips: genericFormData.adictionalTips.value,
-      allergens: Array.isArray(genericFormData.allergens.value)
+      allergens: Array.isArray(genericFormData.allergens?.value)
         ? genericFormData.allergens.value
-        : [genericFormData.allergens.value],
+        : [genericFormData.allergens?.value],
+      costEstimate: Number(genericFormData.costEstimate.value),
     };
 
     const userId = await getStoredUserID();
@@ -71,7 +77,6 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
     if (!userId) return;
 
     const data: IReciperequest = {
-      costEstimate: Number(genericFormData.estimatedCost.value),
       imgUrl: imgUrl,
       ...genericdata,
       ingredients: ingredients,
@@ -82,10 +87,10 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       cuisineStyles: [],
       userId: userId,
     };
-    console.log(data);
     createRecipe(data)
       .then((response) => {
         console.log(response);
+        router.push(`/recipes/${response.id}`);
         setLoading(false);
       })
       .catch((error) => {
@@ -102,7 +107,7 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
           label={field.placeholder}
           placeholder={field.placeholder}
           keyboardType={field.type}
-          invalid={field.invalid && field.dirty}
+          invalid={field.invalid === "true" && field.dirty === "true"}
           value={field.value}
           onChangeText={(text) => handleGenericInputChange(text, field.name)}
         />

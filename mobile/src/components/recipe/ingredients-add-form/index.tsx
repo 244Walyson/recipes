@@ -11,7 +11,7 @@ import {
   FormField,
   ingredientsInputs,
 } from "@/src/static/register-form-inputs";
-import { toValues, updateAndValidate } from "@/src/utils/forms";
+import { updateAndValidate } from "@/src/utils/forms";
 import CustomPicker from "../../custom-picker";
 import CustomInput from "../../shared/custom-input";
 import PrimaryButtonSlim from "../../shared/primary-button-slim";
@@ -53,8 +53,9 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
     setIngredients((prevIngredients) => [
       ...prevIngredients,
       {
-        ...toValues(ingredientsFormData),
+        id: id.value,
         name: ingredient.value,
+        quantity: parseFloat(quantity.value),
         unit: unit.value,
       },
     ]);
@@ -65,8 +66,11 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
       quantity: { ...quantity, value: "" },
       unit: { ...unit, value: "ml" },
     });
-    onAddIngredient(ingredients);
   };
+
+  useEffect(() => {
+    onAddIngredient(ingredients);
+  }, [ingredients]);
 
   const handleSelectedIngredient = (ingredient: IIngredient) => {
     console.log("ingredient", ingredient);

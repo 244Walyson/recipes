@@ -1,5 +1,5 @@
 import { useTheme } from "@/src/context/theme-context";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import CustomInput from "../../shared/custom-input";
@@ -45,7 +45,6 @@ const DirectionsForm = ({ onDirectionsAdd }: DirectionsFormProps) => {
         }
         return prevDirections;
       });
-      onDirectionsAdd(partialDirections);
     }
     if (field === "title") {
       setPartialDirections((prevDirections) => [
@@ -53,12 +52,16 @@ const DirectionsForm = ({ onDirectionsAdd }: DirectionsFormProps) => {
         {
           step: prevDirections.length + 1,
           title: `• ${directionsFormData.title.value}`,
-          description: "",
+          description: directionsFormData.description.value,
         },
       ]);
       onDirectionsAdd(partialDirections);
     }
   };
+
+  useEffect(() => {
+    onDirectionsAdd(partialDirections);
+  }, [partialDirections]);
 
   return (
     <View style={styles(theme).directionsContainer}>

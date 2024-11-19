@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation"; // Hook para acessar os parâmetros da URL
+import React, { useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -9,7 +9,7 @@ import bottomWave from "../../assets/bottomWave.svg";
 import topWave from "../../assets/topWave.svg";
 import { resetPassword } from "@/services/passwordService";
 
-const ResetPassword = () => {
+const ResetPasswordContent = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const email = searchParams.get("email");
@@ -70,5 +70,11 @@ const ResetPassword = () => {
     </div>
   );
 };
+
+const ResetPassword = () => (
+  <Suspense fallback={<div>Carregando...</div>}>
+    <ResetPasswordContent />
+  </Suspense>
+);
 
 export default ResetPassword;

@@ -1,4 +1,4 @@
-type FormField = {
+export type FormField = {
   value: string;
   id: string;
   name: string;
@@ -6,6 +6,8 @@ type FormField = {
   placeholder: string;
   validation: (value: string) => {};
   message: string;
+  dirty?: boolean;
+  invalid?: boolean;
 };
 
 export const genericInputs = {
@@ -18,19 +20,10 @@ export const genericInputs = {
     validation: (value: string) => value.length > 2,
     message: "O nome deve ter no mínimo 3 caracteres",
   },
-  type: {
+  preparationTime: {
     value: "",
-    id: "type",
-    name: "type",
-    type: "default",
-    placeholder: "Tipo (ex.: Sobremesa, Jantar)",
-    validation: (value: string) => value.length > 2,
-    message: "O tipo deve ter no mínimo 3 caracteres",
-  },
-  totalTime: {
-    value: "",
-    id: "totalTime",
-    name: "totalTime",
+    id: "preparationTime",
+    name: "preparationTime",
     type: "numeric",
     placeholder: "Tempo de preparo",
     validation: (value: string) => value.length > 0,
@@ -52,7 +45,7 @@ export const genericInputs = {
     type: "numeric",
     placeholder: "custo estimado",
     validation: (value: string) => value.length > 0,
-    message: "O número de porções não pode ser vazio",
+    message: "O custo estimado não pode ser vazio",
   },
   allergens: {
     value: "",
@@ -60,8 +53,8 @@ export const genericInputs = {
     name: "allergens",
     type: "default",
     placeholder: "Alergênicos",
-    validation: (value: string) => value.length > 0,
-    message: "O número de porções não pode ser vazio",
+    validation: (value: string) => true,
+    message: "",
   },
   adictionalTips: {
     value: "",
@@ -69,8 +62,8 @@ export const genericInputs = {
     name: "adictionalTips",
     type: "default",
     placeholder: "Dicas Adicionais",
-    validation: (value: string) => value.length > 0,
-    message: "As dicas adicionais não podem ser vazias",
+    validation: (value: string) => true,
+    message: "",
   },
 } as Record<string, FormField>;
 
@@ -111,7 +104,7 @@ export const macronutrientsInputs = {
     name: "fat",
     type: "numeric",
     placeholder: "Gordura",
-    validation: (value: string) => value.length > 0,
+    validation: (value: string) => true,
     message: "A gordura não pode ser vazia",
   },
   protein: {
@@ -120,16 +113,16 @@ export const macronutrientsInputs = {
     name: "protein",
     type: "numeric",
     placeholder: "Proteína",
-    validation: (value: string) => value.length > 0,
+    validation: (value: string) => true,
     message: "A proteína não pode ser vazia",
   },
-  carbohydrate: {
+  carbs: {
     value: "",
-    id: "carbohydrate",
-    name: "carbohydrate",
+    id: "carbs",
+    name: "carbs",
     type: "numeric",
     placeholder: "Carboidrato",
-    validation: (value: string) => value.length > 0,
+    validation: (value: string) => true,
     message: "O carboidrato não pode ser vazio",
   },
 } as Record<string, FormField>;
@@ -162,13 +155,34 @@ export const ingredientsInputs = {
     validation: (value: string) => value.length > 0,
     message: "A quantidade não pode ser vazia",
   },
-  unity: {
+  unit: {
     value: "",
-    id: "unity",
-    name: "unity",
+    id: "unit",
+    name: "unit",
     type: "default",
     placeholder: "Unidade",
     validation: (value: string) => value.length > 0,
     message: "A unidade não pode ser vazia",
+  },
+} as Record<string, FormField>;
+
+export const mealTypesInputs = {
+  id: {
+    value: "",
+    id: "id",
+    name: "id",
+    type: "default",
+    placeholder: "id",
+    validation: (value: string) => value.length > 0,
+    message: "O id não pode ser vazio",
+  },
+  name: {
+    value: "",
+    id: "name",
+    name: "name",
+    type: "default",
+    placeholder: "Tipo (ex.: Sobremesa, Jantar)",
+    validation: (value: string) => value.length > 2,
+    message: "O tipo deve ter no mínimo 3 caracteres",
   },
 } as Record<string, FormField>;

@@ -17,4 +17,7 @@ export const styles = (theme: any) =>
       backgroundColor: theme.opacityBg,
       color: theme.foreground,
     },
+    invalid: {
+      borderColor: theme.error,
+    },
   });

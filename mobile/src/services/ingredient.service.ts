@@ -16,3 +16,13 @@ export const getIngredients = async (name?: string) => {
     throw error;
   }
 };
+
+export const createIngredient = async (name: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/ingredients`, { name });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

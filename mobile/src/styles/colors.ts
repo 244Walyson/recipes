@@ -13,6 +13,8 @@ export default {
   nonary: "#0d0d0d",
   denary: "#F1C27D", // Dourado claro
   undernary: "#BC7A12", // Marrom terroso
+  error: "#ff0033",
+  success: "#00cc00",
 
   opacityBg: "rgba(255, 255, 255, 0.4)",
   opacityBgDark: "rgba(0, 0, 0, 0.4)",

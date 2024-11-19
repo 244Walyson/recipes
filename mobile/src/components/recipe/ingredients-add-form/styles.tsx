@@ -99,12 +99,4 @@ export const styles = (theme: any) =>
       borderRadius: 8,
       borderBottomColor: "#ddd",
     },
-    errorContainer: {
-      alignItems: "flex-start",
-      borderWidth: 1,
-      borderColor: theme.error,
-      padding: 10,
-      borderRadius: 8,
-      marginBottom: 10,
-    },
   });

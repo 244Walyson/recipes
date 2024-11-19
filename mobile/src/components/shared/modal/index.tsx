@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 import PrimaryButton from "../primary-button";
 
 type ModalItems = {
-  id: number;
+  id: string;
   name: string;
 };
 
@@ -22,6 +22,8 @@ type CustomModalProps = {
   btnApplyText?: string;
   btnApplyAction?: (selectedItems: string[] | string) => void;
   btnApplyActive?: boolean;
+  selectItemsOnOpen?: boolean;
+  loading?: boolean;
 };
 
 const CustomModal = ({
@@ -32,6 +34,8 @@ const CustomModal = ({
   btnApplyText,
   btnApplyAction,
   btnApplyActive,
+  selectItemsOnOpen,
+  loading,
 }: CustomModalProps) => {
   const [selected, setSelected] = React.useState<string[]>([]);
 
@@ -54,6 +58,12 @@ const CustomModal = ({
       setSelected([]);
     }
   };
+
+  useEffect(() => {
+    if (selectItemsOnOpen && visible) {
+      setSelected(data.map((item) => item.name));
+    }
+  }, [selectItemsOnOpen, visible, data]);
 
   return (
     <Modal
@@ -94,6 +104,7 @@ const CustomModal = ({
                   text={btnApplyText}
                   onPress={handleApply}
                   isActive={true}
+                  loading={loading}
                 />
               )}
           </View>

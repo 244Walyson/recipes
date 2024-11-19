@@ -1,6 +1,6 @@
 import { useTheme } from "@/src/context/theme-context";
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { styles } from "./styles";
 

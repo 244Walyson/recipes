@@ -19,4 +19,5 @@ export interface IReciperequest {
   ingredients: IIngredient[];
   mealTypes: IMealType[];
   cuisineStyles: ICuisineStyle[];
+  userId: string;
 }

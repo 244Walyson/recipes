@@ -15,6 +15,8 @@ export const lightTheme = {
   secondaryText: colors.tertiary,
   opacityBg: colors.opacityBg,
   suggestionBg: colors.nonary,
+  error: colors.error,
+  success: colors.success,
 };
 
 export const darkTheme = {
@@ -31,4 +33,6 @@ export const darkTheme = {
   secondaryText: colors.tertiary,
   opacityBg: colors.opacityBgDark,
   suggestionBg: colors.nonary,
+  error: colors.error,
+  success: colors.success,
 };

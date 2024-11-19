@@ -6,14 +6,22 @@ import { IAccessToken } from "../interfaces/auth/access-token/acces-token.interf
 import { jwtDecode } from "jwt-decode";
 
 export const getAccessToken = async (credentials: ICreadentials) => {
-  console.log(credentials);
   try {
     const response = await axios.post(`${API_URL}/auth/token`, credentials);
-    return response.data;
+    const accessToken = response.data;
+    storeTokenAndExpiration(accessToken);
+    return accessToken;
   } catch (error) {
     console.log("Error:", error);
     throw error;
   }
+};
+
+const storeTokenAndExpiration = async (accessToken: IAccessToken) => {
+  await storeAccessToken(accessToken.access_token);
+  await storeRefreshToken(accessToken.refresh_token);
+  const decoded = decodeAccessToken(accessToken.access_token);
+  await storeTokenExpiration(decoded?.exp ?? 0);
 };
 
 export const refreshToken = async (refreshToken: string) => {
@@ -21,7 +29,9 @@ export const refreshToken = async (refreshToken: string) => {
     const response = await axios.post(`${API_URL}/auth/refresh-token`, {
       refresh_token: refreshToken,
     });
-    return response.data;
+    const accessToken = response.data;
+    storeTokenAndExpiration(accessToken);
+    return accessToken;
   } catch (error) {
     console.log("Error:", error);
     throw error;
@@ -33,7 +43,6 @@ export const getRecoverPasswordToken = async (email: string) => {
     const response = await axios.post(
       `${API_URL}/auth/recover-password/token/${email}`
     );
-    console.log(response);
     return response.data;
   } catch (error) {
     console.log("Error:", error);
@@ -51,7 +60,9 @@ export const oauthLogin = async (provider: string) => {
   }
 };
 
-export const getAccessTokenWithGoogleToken = async (idToken: string) => {
+export const getAccessTokenWithGoogleToken = async (
+  idToken: string
+): Promise<IAccessToken> => {
   try {
     const data = {
       idToken: idToken,
@@ -60,12 +71,29 @@ export const getAccessTokenWithGoogleToken = async (idToken: string) => {
       `${API_URL}/auth/oauth2/callback/google`,
       data
     );
-    console.log("Resposta do servidor:", response.data);
-    return response.data;
+    const accessToken = response.data;
+    storeTokenAndExpiration(accessToken);
+    return accessToken;
   } catch (error) {
     // Trata o erro, se houver
     console.error("Erro ao enviar tokens para o backend:", error);
     throw error;
+  }
+};
+
+export const getAccessTokenWithGithubCode = async (
+  code: string
+): Promise<IAccessToken> => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/redirect/github`, {
+      code,
+    });
+    const accessToken = response.data;
+    storeTokenAndExpiration(accessToken);
+    return accessToken;
+  } catch (error) {
+    console.error("Error getting access token:", error);
+    throw new Error("Failed to get access token. Please try again later.");
   }
 };
 
@@ -126,8 +154,6 @@ interface JwtPayload {
 export function decodeAccessToken(token: string): JwtPayload | null {
   try {
     const decoded = jwtDecode<JwtPayload>(token);
-    console.log("Decoded JWT:", decoded);
-
     return decoded;
   } catch (error) {
     console.error("Erro ao decodificar o token", error);

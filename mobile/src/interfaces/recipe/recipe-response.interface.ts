@@ -1,17 +1,12 @@
 import { IIngredient } from "../ingredient/ingredient.interface";
 import { IMealType } from "../meal-type/meal-type.interface";
 import { ICuisineStyle } from "../cuisine-style/cousine-styles.interface";
-
-type IInstructionStep = {
-  step: number;
-  title: string;
-  description: string;
-};
+import { IDirections } from "./directions.interface";
 
 export interface IRecipeResponse {
   id: string;
   name: string;
-  preparationMethod: IInstructionStep[];
+  preparationMethod: IDirections[];
   preparationTime: number;
   imgUrl?: string;
   difficultyLevel?: string;

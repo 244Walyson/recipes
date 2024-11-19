@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet, Text } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
 import { WebView } from "react-native-webview";
 import {
   GOOGLE_CLIENT_ID_ANDROID,
@@ -13,9 +13,11 @@ import {
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import {
+  getAccessTokenWithGithubCode,
   getAccessTokenWithGoogleToken,
   storeAllTokens,
 } from "@/src/services/auth.service";
+import { CommonActions } from "@react-navigation/native";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -27,6 +29,7 @@ const config = {
 
 const SocialAuth = () => {
   const router = useRouter();
+  const navigation = useNavigation();
   const { key } = useLocalSearchParams<{ key: string }>();
   const [oauthUrl, setOauthUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +41,11 @@ const SocialAuth = () => {
       const { id_token } = response.params;
       getAccessTokenWithGoogleToken(id_token).then((data) => {
         storeAllTokens(data);
-        router.replace("/(tabs)/home");
+        navigation.dispatch(
+          CommonActions.reset({
+            routes: [{ key: "(tabs)", name: "(tabs)" }],
+          })
+        );
       });
     }
     console.log("response", response);
@@ -69,9 +76,26 @@ const SocialAuth = () => {
   }, [key, request]);
 
   const handleStateChange = (event: any) => {
-    if (event.url.includes(GOOGLE_CALLBACK_URL || GITHUB_CALLBACK_URL)) {
-      console.log(event.url);
+    console.log(event);
+    const url = event.url;
+    if (url.includes(GITHUB_CALLBACK_URL)) {
+      const code = extractCodeFromUrl(url);
+      if (!code) return;
+      getAccessTokenWithGithubCode(code).then((data) => {
+        storeAllTokens(data);
+        navigation.dispatch(
+          CommonActions.reset({
+            routes: [{ key: "(tabs)", name: "(tabs)" }],
+          })
+        );
+      });
     }
+  };
+
+  const extractCodeFromUrl = (url: string) => {
+    const urlParams = new URLSearchParams(url.split("?")[1]);
+    const code = urlParams.get("code");
+    return code;
   };
 
   if (loading) {

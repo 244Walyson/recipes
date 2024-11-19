@@ -12,6 +12,8 @@ type LoginInputProps = {
   value?: string;
   onFocus?: () => void;
   editable?: boolean;
+  onBlur?: () => void;
+  invalid?: boolean;
 };
 
 const CustomInput = ({
@@ -22,15 +24,16 @@ const CustomInput = ({
   isPassword = false,
   value,
   onFocus,
+  onBlur,
   editable = true,
+  invalid = false,
 }: LoginInputProps) => {
   const { theme } = useTheme();
-
   return (
     <View>
       {label && <Text style={styles(theme).textSpan}>{label}</Text>}
       <TextInput
-        style={[styles(theme).input]}
+        style={[styles(theme).input, invalid && styles(theme).invalid]}
         placeholder={placeholder}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
@@ -39,6 +42,7 @@ const CustomInput = ({
         value={value}
         onFocus={onFocus}
         editable={editable}
+        onBlur={onBlur}
         placeholderTextColor={theme.quaternary}
       />
     </View>

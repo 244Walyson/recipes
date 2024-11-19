@@ -20,12 +20,12 @@ model User {
   email              String?            @unique
   password           String?
   imgUrl             String?
-  numberOfRecipes    Int                @default(0)
-  numberOfFollowers  Int                @default(0)
+  numberOfRecipes    Int?               @default(0)
+  numberOfFollowers  Int?               @default(0)
   numberOfFollowings Int                @default(0)
-  username           String             @unique
-  createdAt          DateTime           @default(now())
-  isActive           Boolean            @default(true)
+  username           String?            @unique
+  createdAt          DateTime?          @default(now())
+  isActive           Boolean?           @default(true)
   recipes            Recipe[]
   comments           Comment[]
   refreshTokens      RefreshToken[]

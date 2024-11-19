@@ -32,8 +32,7 @@ export interface IRecipeResponse {
   createdAt: Date;
   updatedAt: Date;
   deleted: boolean;
-  userId: string;
-  user: { name: string };
+  user: { id: string; name: string };
   recipeIngredients?: IIngredient[];
   mealTypes?: IMealType[];
   cuisineStyles?: ICuisineStyle[];

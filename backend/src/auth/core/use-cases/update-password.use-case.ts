@@ -5,6 +5,7 @@ import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-cas
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
 import { RecoverPassword } from '../entities/recover-password.entity';
 import { AuthUnauthorizedException } from '../exceptions/unauthorized.exceptions';
+import { User } from '@/src/user/core/entities/user.entity';
 
 export class UpdatePasswordUseCase {
   constructor(
@@ -18,8 +19,13 @@ export class UpdatePasswordUseCase {
     const recoverToken = await this.getRecoverToken(dto.token, dto.email);
     this.validateRecoverToken(recoverToken);
 
-    const user = await this.findByEmailUseCase.execute(dto.email);
-    user.password = await this.passwordEncoder.encode(dto.password);
+    const existingUser = await this.findByEmailUseCase.execute(dto.email);
+    existingUser.password = await this.passwordEncoder.encode(dto.password);
+
+    const user = new User({
+      ...existingUser,
+      id: existingUser.id,
+    });
 
     this.updateUserUseCase.execute(user.id, user);
     this.recoverPasswordRepository.revoke(recoverToken.id);

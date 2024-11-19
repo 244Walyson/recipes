@@ -1,7 +1,7 @@
 export interface IUserRequest {
   name: string;
   email: string;
-  imgUrl: string;
+  imgUrl?: string;
   username: string;
   password: string;
 }

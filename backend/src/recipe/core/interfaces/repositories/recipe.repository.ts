@@ -1,10 +1,11 @@
 import { Recipe } from '../../entities/recipe.entity';
 import { IFindAllFilters } from '../recipes/find-all-filters.interface';
 import { IRecipeProjection } from '../recipes/recipe-response-projection.interface';
+import { IRecipeResponse } from '../recipes/recipe-response.interface';
 
 export interface IRecipeRepository {
   create(recipe: Recipe): Promise<Recipe>;
-  findbyId(recipeId: string): Promise<Recipe>;
+  findbyId(recipeId: string): Promise<IRecipeResponse>;
   findAll(
     {
       offset,

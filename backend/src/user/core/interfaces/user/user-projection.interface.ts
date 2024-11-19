@@ -3,7 +3,7 @@ export interface IUserProjection {
   name: string;
   username: string;
   imgUrl: string;
-  numberOfRecipes: number;
-  numberOfFollowers: number;
-  numberOfFollowings: number;
+  numberOfRecipes?: number;
+  numberOfFollowers?: number;
+  numberOfFollowings?: number;
 }

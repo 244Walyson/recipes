@@ -12,16 +12,32 @@ export class CreateUserUseCase {
   ) {}
 
   async execute(dto: IUserRequest): Promise<IUserResponse> {
-    const userExists = await this.userRepository.findByEmail(dto.email);
+    const user = UserMapper.toEntity(dto);
+
+    await this.validateEmail(dto.email);
+    await this.validateUsername(dto.username);
+
+    if (dto.password)
+      dto.password = await this.passwordEncoder.encode(dto.password);
+
+    return await this.userRepository.create(user);
+  }
+
+  private async validateEmail(email: string): Promise<void> {
+    const userExists = await this.userRepository.findByEmail(email);
     if (userExists) {
       throw new UserDuplicateresourceException(
         'User with this email already exists',
       );
     }
-    if (dto.password)
-      dto.password = await this.passwordEncoder.encode(dto.password);
+  }
 
-    const user = UserMapper.toEntity(dto);
-    return UserMapper.toDTO(await this.userRepository.create(user));
+  private async validateUsername(username: string): Promise<void> {
+    const userExists = await this.userRepository.findByUsername(username);
+    if (userExists) {
+      throw new UserDuplicateresourceException(
+        'User with this username already exists',
+      );
+    }
   }
 }

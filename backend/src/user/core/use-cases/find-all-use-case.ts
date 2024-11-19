@@ -1,6 +1,5 @@
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserPaginated } from '../interfaces/user/user-paginated.interface';
-import { UserMapper } from '../mappers/user.mapper';
 
 interface FindAllParams {
   name?: string;
@@ -19,9 +18,8 @@ export class FindAllUseCase {
       offset,
       limit: pageSize,
     });
-    const data = UserMapper.toProjectionList(users);
     return {
-      data,
+      data: users,
       total,
       page,
       limit,

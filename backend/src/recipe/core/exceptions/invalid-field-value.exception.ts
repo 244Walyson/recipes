@@ -1,6 +1,6 @@
 export class RecipeInvalidFieldValueException extends Error {
-  constructor(fieldName: string, message: string) {
-    super(`Invalid value for field ${fieldName}: ${message}`);
+  constructor(errors: Record<string, string>[]) {
+    super(errors.toString());
     this.name = RecipeInvalidFieldValueException.name;
   }
 }

@@ -8,6 +8,7 @@ import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.u
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { RecipeDomainException } from '../../exceptions/domain.exception';
+import { RecipeInvalidFieldValueException } from '../../exceptions/invalid-field-value.exception';
 
 export class CreateRecipeUseCase {
   constructor(
@@ -18,6 +19,7 @@ export class CreateRecipeUseCase {
   ) {}
 
   async execute(recipe: IReciperequest): Promise<IRecipeResponse> {
+    this.validateRecipe(recipe);
     await this.validateMealTypes(recipe.mealTypes);
     await this.validateCuisineStyles(recipe.cuisineStyles);
     await this.validateIngredients(recipe.ingredients);

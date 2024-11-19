@@ -17,7 +17,7 @@ export class UpdateUserUseCase {
         );
       }
       const user = UserMapper.toEntity(dto);
-      return UserMapper.toDTO(await this.userRepository.update(id, user));
+      return await this.userRepository.update(id, user);
     } catch {
       throw new UserResourceNotFoundException('User not found');
     }

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  Text,
   ImageBackground,
   StatusBar,
   ScrollView,
@@ -19,6 +18,7 @@ import { getRecipeById } from "@/src/services/recipe.service";
 import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 import { useLocalSearchParams } from "expo-router";
+import { getStoredUserID } from "@/src/services/user.service";
 
 type InstructionStep = {
   step: number;
@@ -34,8 +34,9 @@ const Recipe = () => {
   const [focusedBtn, setFocusedBtn] = React.useState("ingredients");
   const { theme } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const [isRecipeOwner, setIsRecipeOwner] = useState(false);
   const [recipe, setRecipe] = React.useState<IRecipeResponse>();
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -50,6 +51,13 @@ const Recipe = () => {
       setRecipe(response);
       setRefreshing(false);
       console.log(response);
+    });
+
+    getStoredUserID().then((userId) => {
+      if (recipe?.user.id === userId) {
+        console.log("ids", recipe?.user.id, userId);
+        setIsRecipeOwner(true);
+      }
     });
   }, [refreshing]);
 
@@ -76,7 +84,7 @@ const Recipe = () => {
           <HeaderSecondary
             title="Nova receita"
             ioniconLeftName="arrow-left"
-            ioniconRightName="check"
+            ioniconRightName={isRecipeOwner ? "square-edit-outline" : ""}
             colorEmphasis="#fff"
           />
         </ImageBackground>
@@ -132,14 +140,12 @@ const Recipe = () => {
           {focusedBtn !== "ingredients" ? (
             <RecipeInstructions data={recipe?.preparationMethod} />
           ) : (
-            recipe &&
-            recipe.recipeIngredients &&
-            recipe?.recipeIngredients.map((ingredient: IIngredient) => (
+            recipe?.recipeIngredients?.map((ingredient: IIngredient) => (
               <IngredientsCard
                 key={ingredient.id}
                 name={ingredient.name}
                 quantity={ingredient.quantity}
-                unit={ingredient.unity}
+                unit={ingredient.unit}
                 editing={false}
                 onDelete={() => {}}
               />

@@ -1,10 +1,10 @@
-import { User } from '@/src/user/core/entities/user.entity';
-import {
-  IFindAllParams,
-  IUserRepository,
-} from '@/src/user/core/interfaces/repositories/user-repository.interface';
-import { PrismaService } from '../../../utils/prisma.service';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { Injectable } from '@nestjs/common';
+import { User } from '@prisma/client';
+import {
+  IUserRepository,
+  IFindAllParams,
+} from '../../core/interfaces/repositories/user-repository.interface';
 
 @Injectable()
 export class UserRepository implements IUserRepository {

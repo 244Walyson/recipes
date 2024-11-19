@@ -1,3 +1,4 @@
+import { RecipeInvalidFieldValueException } from '../exceptions/invalid-field-value.exception';
 import { Comment } from './comment.entity';
 import { CuisineStyle } from './cousine-style.entity';
 import { MealType } from './meal-type.entity';
@@ -35,5 +36,32 @@ export class Recipe {
   constructor(props: Partial<Recipe>) {
     this.id = props.id ?? crypto.randomUUID();
     Object.assign(this, props);
+
+    this.validate();
+  }
+
+  private validate(): void {
+    let errorMessages: Record<string, string>[];
+    if (this.name.length < 2) {
+      errorMessages.push({
+        nome: 'O nome da receita deve conter ao menos 3 letras',
+      });
+    }
+    if (this.preparationMethod.length < 1) {
+      errorMessages.push({
+        ModoDePreparo: 'O Modo de preparo deve ser informado',
+      });
+    }
+    if (this.preparationTime.toString.length < 1) {
+      errorMessages.push({
+        tempoDePreparo: 'O tempo de preparo deve ser informado',
+      });
+    }
+    if (!this.userId) {
+      errorMessages.push({ idDoUsuario: 'O id do usuario deve ser informado' });
+    }
+    if (errorMessages.length > 0) {
+      throw new RecipeInvalidFieldValueException(errorMessages);
+    }
   }
 }

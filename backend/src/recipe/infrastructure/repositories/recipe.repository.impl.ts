@@ -5,6 +5,7 @@ import { IFindAllFilters } from 'src/recipe/core/interfaces/recipes/find-all-fil
 import { IRecipeProjection } from 'src/recipe/core/interfaces/recipes/recipe-response-projection.interface';
 import { IRecipeRepository } from 'src/recipe/core/interfaces/repositories/recipe.repository';
 import { PrismaService } from 'src/utils/prisma.service';
+import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.interface';
 
 @Injectable()
 export class RecipeRepository implements IRecipeRepository {
@@ -49,7 +50,7 @@ export class RecipeRepository implements IRecipeRepository {
     };
   }
 
-  async findbyId(recipeId: string): Promise<Recipe> {
+  async findbyId(recipeId: string): Promise<IRecipeResponse> {
     const recipe = await this.prismaService.recipe.findUnique({
       where: { id: recipeId, deleted: false },
       include: {
@@ -62,6 +63,7 @@ export class RecipeRepository implements IRecipeRepository {
         cuisineStyles: {
           select: { CuisineStyle: { select: { id: true, name: true } } },
         },
+        user: { select: { id: true, name: true, imgUrl: true } },
       },
     });
 
@@ -76,11 +78,10 @@ export class RecipeRepository implements IRecipeRepository {
       preparationMethod: recipe.preparationMethod as any,
       cuisineStyles: recipe.cuisineStyles.map((item) => item.CuisineStyle),
       recipeIngredients: recipe.recipeIngredients.map((item) => ({
-        ...item,
-        ingredient: {
-          id: item.ingredient.id,
-          name: item.ingredient.name,
-        },
+        id: item.ingredient.id,
+        name: item.ingredient.name,
+        quantity: item.quantity,
+        unit: item.unit,
       })),
     };
   }

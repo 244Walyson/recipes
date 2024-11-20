@@ -48,7 +48,7 @@ export class UpdatePasswordUseCase {
     if (recoveryToken.revoked) {
       throw new AuthUnauthorizedException('Recover token revoked');
     }
-    const isExpired = recoveryToken.expiresAt > BigInt(new Date().getTime());
+    const isExpired = recoveryToken.expiresAt < BigInt(new Date().getTime());
     if (isExpired) {
       throw new AuthUnauthorizedException('Recover token expired');
     }

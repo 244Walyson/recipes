@@ -6,7 +6,7 @@ import { IPasswordEncoder } from '@/src/auth/core/interfaces/utils/password-enco
 import { ICreadentials } from '@/src/auth/core/interfaces/access-token/credentials.interface';
 import { jwtConstants } from '@/src/auth/core/contants/jwt-contants';
 import { User } from '@/src/user/core/entities/user.entity';
-import { AuthResourceNotFoundException } from '@/src/auth/core/exceptions/resource-not-found.exception';
+import { AuthUnauthorizedException } from '@/src/auth/core/exceptions/unauthorized.exceptions';
 
 describe('CreateAccessTokenUseCase', () => {
   let createAccessTokenUseCase: CreateAccessTokenUseCase;
@@ -85,7 +85,7 @@ describe('CreateAccessTokenUseCase', () => {
       throw new Error('JWT Error');
     });
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      AuthResourceNotFoundException,
+      AuthUnauthorizedException,
     );
   });
 
@@ -105,7 +105,7 @@ describe('CreateAccessTokenUseCase', () => {
     passwordEncoder.compare.mockResolvedValue(false);
 
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      AuthResourceNotFoundException,
+      AuthUnauthorizedException,
     );
   });
 
@@ -142,10 +142,12 @@ describe('CreateAccessTokenUseCase', () => {
       password: 'validPassword',
     };
 
-    findUserByEmail.execute.mockRejectedValue(AuthResourceNotFoundException);
+    findUserByEmail.execute.mockRejectedValue(
+      new AuthUnauthorizedException('User not found '),
+    );
 
     await expect(createAccessTokenUseCase.execute(credentials)).rejects.toThrow(
-      AuthResourceNotFoundException,
+      AuthUnauthorizedException,
     );
   });
 });

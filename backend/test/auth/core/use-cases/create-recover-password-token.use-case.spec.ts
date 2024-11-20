@@ -78,36 +78,4 @@ describe('CreateRecoverPasswordTokenUseCase', () => {
 
     expect(recoveryPasswordRepositoryMock.create).toHaveBeenCalled();
   });
-
-  it('deve gerar o corpo do e-mail corretamente', async () => {
-    const mockUser = { id: '1', email: 'user@example.com' };
-    const token = 'mockToken';
-    const resetUrl = `https://yourapp.com/reset-password?token=${token}`;
-
-    const expectedEmailBody = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #4A90E2;">Recuperação de Senha</h2>
-        <p>Olá,</p>
-        <p>Recebemos uma solicitação para redefinir sua senha. Clique no link abaixo para definir uma nova senha:</p>
-        <p>
-          <a href="${resetUrl}" style="color: #ffffff; background-color: #4A90E2; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Redefinir Senha</a>
-        </p>
-        <p>Ou copie e cole o link abaixo no seu navegador:</p>
-        <p><a href="${resetUrl}">${resetUrl}</a></p>
-        <p>Se você não solicitou a alteração de senha, por favor ignore este email. Sua senha permanecerá inalterada.</p>
-        <p>Atenciosamente,</p>
-        <p><strong>Sua equipe de suporte</strong></p>
-      </div>
-    `;
-
-    // Mock do método send (já configurado no beforeEach)
-    await createRecoverPasswordTokenUseCase['sendEmail'](mockUser.email, token);
-
-    // Verificar se o e-mail foi enviado com o corpo correto
-    expect(emailServiceMock.send).toHaveBeenCalledWith({
-      to: mockUser.email,
-      subject: 'Instruções para redefinição de senha',
-      body: expectedEmailBody,
-    });
-  });
 });

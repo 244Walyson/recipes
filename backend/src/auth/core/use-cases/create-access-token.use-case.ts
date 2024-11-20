@@ -21,17 +21,22 @@ export class CreateAccessTokenUseCase {
   ): Promise<IAccessToken> {
     const { email, password } = credentials;
 
-    const user = await this.findUserByEmail.execute(email);
+    try {
+      const user = await this.findUserByEmail.execute(email);
 
-    if (withPassword) {
-      await this.validatePassword(password, user.password);
+      if (withPassword) {
+        await this.validatePassword(password, user.password);
+      }
+
+      const access_token = await this.getAccessToken(user.id, user.email);
+      const refresh_token = await this.getRefreshToken(user.id, user.email);
+      const expires_in = jwtConstants.expiresIn;
+
+      return { access_token, token_type: 'Bearer', expires_in, refresh_token };
+    } catch (error) {
+      console.error(error);
+      throw new AuthUnauthorizedException('Invalid credentials');
     }
-
-    const access_token = await this.getAccessToken(user.id, user.email);
-    const refresh_token = await this.getRefreshToken(user.id, user.email);
-    const expires_in = jwtConstants.expiresIn;
-
-    return { access_token, token_type: 'Bearer', expires_in, refresh_token };
   }
 
   private async getAccessToken(userId: string, email: string) {

@@ -1,22 +1,20 @@
 import { UserResourceNotFoundException } from '@/src/user/core/exceptions/resource-not-found.exception';
 import { IUserRepository } from '@/src/user/core/interfaces/repositories/user-repository.interface';
-import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
+import { FindUserByUsernameUseCase } from '@/src/user/core/use-cases/find-user-by-username.use-case';
 
-describe('FindUserByEmalUseCase', () => {
-  let findUserByEmailUseCase: FindUserByEmailUseCase;
+describe('FindUserByUsernameUseCase', () => {
+  let findUserByUsernamelUseCase: FindUserByUsernameUseCase;
   let userRepository: jest.Mocked<IUserRepository>;
 
   beforeEach(() => {
     userRepository = {
-      create: jest.fn(),
-      findByEmail: jest.fn(),
       findByUsername: jest.fn(),
     } as unknown as jest.Mocked<IUserRepository>;
 
-    findUserByEmailUseCase = new FindUserByEmailUseCase(userRepository);
+    findUserByUsernamelUseCase = new FindUserByUsernameUseCase(userRepository);
   });
 
-  it('Should return a user when email exists', async () => {
+  it('Should return a user when username exists', async () => {
     const user = {
       id: 'user-id',
       name: 'John Doe',
@@ -25,16 +23,15 @@ describe('FindUserByEmalUseCase', () => {
       numberOfRecipes: 0,
       numberOfFollowers: 0,
       numberOfFollowings: 0,
-      username: 'john_doe',
+      username: 'existing_username',
       createdAt: new Date(),
       isActive: true,
     };
 
-    userRepository.findByEmail.mockResolvedValue(user);
+    userRepository.findByUsername.mockResolvedValue(user);
 
-    const result = await findUserByEmailUseCase.execute(
-      'existingemail@gmail.com',
-    );
+    const result =
+      await findUserByUsernamelUseCase.execute('existing_username');
 
     expect(result).toMatchObject(user);
     expect(result.email).toEqual(user.email);
@@ -42,11 +39,13 @@ describe('FindUserByEmalUseCase', () => {
     expect(result.name).toEqual(user.name);
   });
 
-  it('Should throw an error when email not exists', async () => {
-    userRepository.findByEmail.mockResolvedValue(null);
+  it('Should throw an error when username does not exist', async () => {
+    userRepository.findByUsername.mockResolvedValue(null);
 
     await expect(
-      findUserByEmailUseCase.execute('nonexistingemail@gmail.com'),
-    ).rejects.toThrow(UserResourceNotFoundException);
+      findUserByUsernamelUseCase.execute('nonexisting_username'),
+    ).rejects.toThrow(
+      new UserResourceNotFoundException('User not found: nonexisting_username'),
+    );
   });
 });

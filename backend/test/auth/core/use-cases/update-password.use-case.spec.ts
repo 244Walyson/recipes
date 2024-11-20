@@ -49,7 +49,9 @@ describe('UpdatePasswordUseCase', () => {
 
     findUserByEmailUseCase.execute.mockResolvedValue({
       id: 'userId',
+      name: 'John Doe',
       email: 'example@email.com',
+      username: 'john_doe',
       password: 'oldPassword',
     } as User);
 
@@ -58,7 +60,7 @@ describe('UpdatePasswordUseCase', () => {
     await useCase.execute({
       email: 'email@example.com',
       userId: 'userId',
-      newPassword: 'newPassword',
+      password: 'newPassword',
       token: 'validToken',
     });
 
@@ -76,7 +78,7 @@ describe('UpdatePasswordUseCase', () => {
     await expect(
       useCase.execute({
         email: 'email@example.com',
-        newPassword: 'newPassword',
+        password: 'newPassword',
         token: 'validToken',
       }),
     ).rejects.toThrow(new UnauthorizedException('Recover token revoked'));

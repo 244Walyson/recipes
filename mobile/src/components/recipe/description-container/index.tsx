@@ -1,8 +1,7 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
-import AuthorCard from "../author-card";
 import AntDesign from "react-native-vector-icons/AntDesign";
 
 interface DescriptionContainerProps {
@@ -10,6 +9,7 @@ interface DescriptionContainerProps {
   likes: number;
   mealType?: string;
   time?: string;
+  liked?: boolean;
 }
 
 const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
@@ -17,8 +17,17 @@ const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
   likes,
   mealType,
   time,
+  liked,
 }) => {
   const { theme } = useTheme();
+  const [favourite, setFavourite] = useState(liked);
+
+  const handleFavourite = () => {
+    console.log(favourite);
+    setFavourite(!favourite);
+  };
+
+  console.log(favourite);
 
   return (
     <View style={styles(theme).container}>
@@ -31,7 +40,13 @@ const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
               { gap: 10, alignItems: "center" },
             ]}
           >
-            <AntDesign name="heart" size={24} color={theme.tertiary} />
+            <TouchableOpacity onPress={handleFavourite}>
+              <AntDesign
+                name="heart"
+                size={24}
+                color={!favourite ? theme.tertiary : theme.error}
+              />
+            </TouchableOpacity>
             <Text style={styles(theme).textLight}>{likes}</Text>
           </View>
         </View>

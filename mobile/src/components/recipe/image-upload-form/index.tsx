@@ -76,8 +76,13 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
               onPressRight={() => setImageUrl("")}
               colorEmphasis={theme.foreground}
             />
-            <TouchableOpacity onPress={openGallery}>
-              <SvgImageAdd />
+            <TouchableOpacity
+              onPress={openGallery}
+              style={{ alignItems: "center", marginTop: 30 }}
+            >
+              <View style={{ width: 150, height: 150 }}>
+                <SvgImageAdd />
+              </View>
             </TouchableOpacity>
           </>
         )}

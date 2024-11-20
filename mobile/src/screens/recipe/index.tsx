@@ -19,6 +19,7 @@ import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 import { useLocalSearchParams } from "expo-router";
 import { getStoredUserID } from "@/src/services/user.service";
+import AuthorCard from "@/src/components/recipe/author-card";
 
 type InstructionStep = {
   step: number;
@@ -47,11 +48,15 @@ const Recipe = () => {
   });
 
   useEffect(() => {
-    getRecipeById(id).then((response) => {
-      setRecipe(response);
-      setRefreshing(false);
-      console.log(response);
-    });
+    getRecipeById(id)
+      .then((response) => {
+        setRecipe(response);
+        setRefreshing(false);
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
 
     getStoredUserID().then((userId) => {
       if (recipe?.user.id === userId) {
@@ -111,18 +116,25 @@ const Recipe = () => {
         }
       >
         {recipe && (
-          <DescriptionContainer
-            title={recipe.name}
-            time={recipe.totalTime?.toString()}
-            likes={recipe.favoriteCount}
-            mealType={
-              recipe.mealTypes && recipe.mealTypes.length > 0
-                ? recipe.mealTypes[0].name
-                : undefined
-            }
-          />
+          <>
+            <DescriptionContainer
+              title={recipe.name}
+              time={recipe.preparationTime?.toString()}
+              likes={recipe.favoriteCount}
+              mealType={
+                recipe.mealTypes && recipe.mealTypes.length > 0
+                  ? recipe.mealTypes[0].name
+                  : undefined
+              }
+              liked={recipe.isFavorite}
+            />
+            <AuthorCard
+              name={recipe.user.name}
+              avatarUrl={recipe.user.imgUrl}
+              recipeCount={recipe.user.numberOfRecipes}
+            />
+          </>
         )}
-        {/*recipe && <AuthorCard name={recipe.user.name} />*/}
 
         <View style={styles(theme).btnWrapper}>
           <PrimaryButton

@@ -83,3 +83,37 @@ export const createRecipe = async (recipe: IReciperequest) => {
     throw error;
   }
 };
+
+export const favouriteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/recipes/favourite/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const unfavouriteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/recipes/unfavourite/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const viewRecipe = async (recipeId: string) => {
+  try {
+    const response = await axios.put(`${API_URL}/recipes/view/${recipeId}`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -3,34 +3,27 @@ import { View, StyleSheet } from "react-native";
 import LottieView from "lottie-react-native";
 import { useTheme } from "@/src/context/theme-context";
 import {
-  decodeAccessToken,
   getStoredAccessToken,
+  getStoredExpiresIn,
   getStoredRefreshToken,
   refreshToken,
 } from "@/src/services/auth.service";
 import { useRouter } from "expo-router";
-import { storeUserID } from "@/src/services/user.service";
 
 const SplashScreen = () => {
   const { theme } = useTheme();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [animationFinished, setAnimationFinished] = useState(false);
 
   useEffect(() => {
     const checkToken = async () => {
-      console.log(await getStoredRefreshToken());
       const token = await getStoredAccessToken();
       if (!token) {
-        setLoading(false);
         router.replace("/register");
         return;
       }
-
-      const decodedToken = await decodeAccessToken(token);
-
-      const expiresIn = decodedToken?.exp;
+      const expiresIn = await getStoredExpiresIn();
       if (!expiresIn) {
-        setLoading(false);
         router.replace("/register");
         return;
       }
@@ -39,18 +32,13 @@ const SplashScreen = () => {
         await getNewTokenWithRefreshToken();
         return;
       }
-      setLoading(false);
       router.replace("/(tabs)/home");
     };
 
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-
-    checkToken();
-
-    return () => clearTimeout(timeout);
-  }, []);
+    if (animationFinished) {
+      checkToken();
+    }
+  }, [animationFinished]);
 
   const getNewTokenWithRefreshToken = async () => {
     const refresh_token = await getStoredRefreshToken();
@@ -65,14 +53,6 @@ const SplashScreen = () => {
       router.replace("/register");
       return;
     }
-    const decodedToken = await decodeAccessToken(accessToken.access_token);
-    if (!decodedToken) {
-      router.replace("/register");
-      return;
-    }
-    storeUserID(decodedToken.sub);
-
-    setLoading(false);
     router.replace("/(tabs)/home");
   };
 
@@ -83,6 +63,7 @@ const SplashScreen = () => {
         autoPlay={true}
         loop={false}
         style={{ height: 200, width: 300, marginEnd: -70 }}
+        onAnimationFinish={() => setAnimationFinished(true)}
       />
     </View>
   );

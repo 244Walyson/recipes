@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet, Text } from "react-native";
-import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { WebView } from "react-native-webview";
 import {
   GOOGLE_CLIENT_ID_ANDROID,
-  GOOGLE_CALLBACK_URL,
   GITHUB_CLIENT_ID,
   GITHUB_CALLBACK_URL,
   GOOGLE_CLIENT_ID_IOS,
@@ -28,7 +27,6 @@ const config = {
 };
 
 const SocialAuth = () => {
-  const router = useRouter();
   const navigation = useNavigation();
   const { key } = useLocalSearchParams<{ key: string }>();
   const [oauthUrl, setOauthUrl] = useState<string | null>(null);

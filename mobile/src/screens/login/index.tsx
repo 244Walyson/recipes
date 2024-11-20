@@ -9,29 +9,23 @@ import { styles } from "./styles";
 import CustomInput from "@/src/components/shared/custom-input";
 import { updateAndValidate } from "@/src/utils/forms";
 import {
-  decodeAccessToken,
   getAccessToken,
   getRecoverPasswordToken,
-  getStoredRefreshToken,
-  storeAccessToken,
-  storeRefreshToken,
-  storeTokenExpiration,
 } from "@/src/services/auth.service";
-import { createUser, getUser, storeUserID } from "@/src/services/user.service";
-import { useRouter } from "expo-router";
+import { createUser, storeUserID } from "@/src/services/user.service";
+import { useRouter, useNavigation } from "expo-router";
+import { CommonActions } from "@react-navigation/native";
 import { loginInputs } from "@/src/static/login-ipunts.";
 
 const Register = () => {
   const { theme } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
   const [activity, setActivity] = useState("login");
   const [registerStep, setRegisterStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, any>>(loginInputs);
 
   const handleSubmit = async () => {
-    console.log("Submit", activity);
-    console.log(await getStoredRefreshToken());
-
     if (activity === "forgot password") {
       getRecoverPasswordToken(formData.email.value)
         .then(() => {
@@ -44,47 +38,58 @@ const Register = () => {
       return;
     }
 
-    if (activity === "register") {
-      const user = await createUser({
-        name: formData.name.value,
-        email: formData.email.value,
-        username: formData.username.value,
-        password: formData.password.value,
-        imgUrl: formData.img,
-      });
-      storeUserID(user.id);
+    if (activity === "login") {
+      getToken();
+      return;
     }
+
+    if (activity === "register") {
+      registerUser();
+    }
+  };
+
+  const getToken = () => {
     getAccessToken({
       email: formData.email.value,
       password: formData.password.value,
-    }).then((accessToken) => {
-      console.log("accessToken", accessToken);
-      storeAccessToken(accessToken.access_token);
-      storeRefreshToken(accessToken.refresh_token);
-      storeUserId(accessToken.access_token);
-    });
-
-    router.replace("/(tabs)/home");
+    })
+      .then((accessToken) => {
+        navigation.dispatch(
+          CommonActions.reset({
+            routes: [{ key: "(tabs)", name: "(tabs)" }],
+          })
+        );
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
   };
 
-  const storeUserId = (accessToken: string) => {
-    const decoded = decodeAccessToken(accessToken);
-    if (decoded) {
-      storeTokenExpiration(decoded.exp);
-      getUser(decoded.sub).then((user) => {
+  const registerUser = () => {
+    createUser({
+      name: formData.name.value,
+      email: formData.email.value,
+      username: formData.username.value,
+      password: formData.password.value,
+      imgUrl: formData.img,
+    })
+      .then((user) => {
+        getToken();
         storeUserID(user.id);
+        console.log(user);
+      })
+      .catch((error) => {
+        "erro";
+        console.log("Error:", error);
       });
-    }
   };
 
   const handleGithubLogin = () => {
     router.push("/social-auth/github");
-    console.log("Login com Github");
   };
 
   const handleGoogleLogin = () => {
     router.push("/social-auth/google");
-    console.log("Login com Google");
   };
 
   const handleInputChange = (value: string, fieldName: string) => {
@@ -174,13 +179,15 @@ const Register = () => {
       </View>
       <View style={styles(theme).btnLoginContainer}>
         <TouchableOpacity
-          onPress={() =>
-            activity === "login"
-              ? setActivity("register")
-              : registerStep == 2
-              ? setRegisterStep(1)
-              : setActivity("login")
-          }
+          onPress={() => {
+            if (activity === "login") {
+              setActivity("register");
+            } else if (registerStep == 2) {
+              setRegisterStep(1);
+            } else {
+              setActivity("login");
+            }
+          }}
         >
           <Text style={styles(theme).textLight}>
             {(() => {

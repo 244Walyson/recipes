@@ -27,4 +27,7 @@ export interface IRecipeRepository {
   }): Promise<{ total: number; data: IRecipeProjection[] }>;
   update(id: string, recipe: Recipe): Promise<IRecipeResponse>;
   delete(recipeId: string): Promise<void>;
+  favouriteRecipe(recipeId: string, userId: string): Promise<void>;
+  unfavouriteRecipe(recipeId: string, userId: string): Promise<void>;
+  addViewCount(recipeId: string, userId: string): Promise<void>;
 }

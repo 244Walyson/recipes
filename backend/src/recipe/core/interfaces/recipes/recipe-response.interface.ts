@@ -26,5 +26,6 @@ export interface IRecipeResponse {
     id: string;
     name: string;
     imgUrl: string;
+    numberOfRecipes: number;
   };
 }

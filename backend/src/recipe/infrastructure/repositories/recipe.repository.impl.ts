@@ -11,6 +11,58 @@ import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.i
 export class RecipeRepository implements IRecipeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async favouriteRecipe(recipeId: string, userId: string): Promise<void> {
+    await this.prismaService.favoriteRecipe.create({
+      data: {
+        userId,
+        recipeId,
+      },
+    });
+    await this.prismaService.recipe.update({
+      where: { id: recipeId },
+      data: {
+        favoriteCount: {
+          increment: 1,
+        },
+      },
+    });
+  }
+  async unfavouriteRecipe(recipeId: string, userId: string): Promise<void> {
+    await this.prismaService.favoriteRecipe.delete({
+      where: {
+        userId_recipeId: {
+          userId,
+          recipeId,
+        },
+      },
+    });
+    await this.prismaService.recipe.update({
+      where: { id: recipeId },
+      data: {
+        favoriteCount: {
+          decrement: 1,
+        },
+      },
+    });
+  }
+
+  async addViewCount(recipeId: string, userId: string): Promise<void> {
+    await this.prismaService.viewRecipe.create({
+      data: {
+        userId,
+        recipeId,
+      },
+    });
+    await this.prismaService.recipe.update({
+      where: { id: recipeId },
+      data: {
+        viewCount: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
   async create(recipe: Recipe): Promise<IRecipeResponse> {
     console.log('RecipeRepository.create', recipe);
     const data = recipe as unknown as Prisma.RecipeCreateInput;
@@ -63,7 +115,9 @@ export class RecipeRepository implements IRecipeRepository {
         cuisineStyles: {
           select: { CuisineStyle: { select: { id: true, name: true } } },
         },
-        user: { select: { id: true, name: true, imgUrl: true } },
+        user: {
+          select: { id: true, name: true, imgUrl: true, numberOfRecipes: true },
+        },
       },
     });
 

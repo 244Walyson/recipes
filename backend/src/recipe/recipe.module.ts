@@ -27,6 +27,9 @@ import { IngredinetController } from './infrastructure/controllers/ingredient.co
 import { CuisineStyleController } from './infrastructure/controllers/cuisine-style.controller';
 import { MealTypeController } from './infrastructure/controllers/meal-type.controller';
 import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes-by-user-id.use-case';
+import { FavouriteRecipeUseCase } from './core/use-cases/recipe/favourite-recipe.use-case';
+import { UnfavouriteRecipeUseCase } from './core/use-cases/recipe/unfavourite-recipe.use-case';
+import { ViewCountAddUseCase } from './core/use-cases/recipe/view-count-add.use-case';
 
 @Module({
   imports: [],
@@ -176,6 +179,42 @@ import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes
         FindIngredientByIdUseCase,
         FindCuisineStyleByIdUseCase,
       ],
+    },
+    {
+      provide: FavouriteRecipeUseCase,
+      useFactory: (
+        recipeRepository: IRecipeRepository,
+        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+      ) => {
+        return new FavouriteRecipeUseCase(
+          recipeRepository,
+          findRecipeByIdUseCase,
+        );
+      },
+      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+    },
+    {
+      provide: UnfavouriteRecipeUseCase,
+      useFactory: (
+        recipeRepository: IRecipeRepository,
+        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+      ) => {
+        return new UnfavouriteRecipeUseCase(
+          recipeRepository,
+          findRecipeByIdUseCase,
+        );
+      },
+      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+    },
+    {
+      provide: ViewCountAddUseCase,
+      useFactory: (
+        recipeRepository: IRecipeRepository,
+        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+      ) => {
+        return new ViewCountAddUseCase(recipeRepository, findRecipeByIdUseCase);
+      },
+      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
     },
   ],
   exports: [],

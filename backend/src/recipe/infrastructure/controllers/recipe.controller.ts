@@ -17,6 +17,9 @@ import { FindRecipeByIdUseCase } from 'src/recipe/core/use-cases/recipe/find-rec
 import { UpdateRecipeUseCase } from 'src/recipe/core/use-cases/recipe/update-recipe.use-case';
 import { DeleteRecipeUseCase } from 'src/recipe/core/use-cases/recipe/delete-recipe.use-case';
 import { FindRecipesByUserIdUseCase } from '../../core/use-cases/recipe/find-recipes-by-user-id.use-case';
+import { UnfavouriteRecipeUseCase } from '../../core/use-cases/recipe/unfavourite-recipe.use-case';
+import { FavouriteRecipeUseCase } from '../../core/use-cases/recipe/favourite-recipe.use-case';
+import { ViewCountAddUseCase } from '../../core/use-cases/recipe/view-count-add.use-case';
 
 @Controller('recipes')
 export class RecipeController {
@@ -27,6 +30,9 @@ export class RecipeController {
     private readonly updateRecipeUseCase: UpdateRecipeUseCase,
     private readonly deleteRecipeUseCase: DeleteRecipeUseCase,
     private readonly findRecipesByUserIdUseCase: FindRecipesByUserIdUseCase,
+    private readonly favouriteRecipeUseCase: FavouriteRecipeUseCase,
+    private readonly unfavouriteRecipeUseCase: UnfavouriteRecipeUseCase,
+    private readonly viewCountAddUseCase: ViewCountAddUseCase,
   ) {}
 
   @Get()
@@ -66,5 +72,30 @@ export class RecipeController {
   @Post()
   async createRecipe(@Body() dto: IReciperequest) {
     return this.createRecipeUseCase.execute(dto);
+  }
+
+  @Post('favourite/:id')
+  async favouriteRecipe(@Param('id') id: string) {
+    return this.favouriteRecipeUseCase.execute({
+      userId: '31ad0c5c-47f3-499c-8183-60b24a4afe78',
+      recipeId: id,
+    });
+  }
+
+  @Delete('unfavourite/:id')
+  @HttpCode(204)
+  async unfavouriteRecipe(@Param('id') id: string) {
+    return this.unfavouriteRecipeUseCase.execute({
+      userId: '31ad0c5c-47f3-499c-8183-60b24a4afe78',
+      recipeId: id,
+    });
+  }
+
+  @Post('view/:id')
+  async addViewCount(@Param('id') id: string) {
+    return this.viewCountAddUseCase.execute({
+      recipeId: id,
+      userId: '31ad0c5c-47f3-499c-8183-60b24a4afe78',
+    });
   }
 }

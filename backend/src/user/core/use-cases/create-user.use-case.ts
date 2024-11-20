@@ -13,12 +13,12 @@ export class CreateUserUseCase {
 
   async execute(dto: IUserRequest): Promise<IUserResponse> {
     const user = UserMapper.toEntity(dto);
-
     await this.validateEmail(dto.email);
     await this.validateUsername(dto.username);
 
-    if (dto.password)
-      dto.password = await this.passwordEncoder.encode(dto.password);
+    if (!dto.authProvider || dto.authProvider === 'local') {
+      user.password = await this.passwordEncoder.encode(dto.password);
+    }
 
     return await this.userRepository.create(user);
   }

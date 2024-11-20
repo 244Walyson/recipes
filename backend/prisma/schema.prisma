@@ -32,8 +32,10 @@ model User {
   refreshTokens      RefreshToken[]
   passwordRecoveries PasswordRecovery[]
 
-  following Follow[] @relation("FollowingRelation")
-  followers Follow[] @relation("FollowerRelation")
+  following      Follow[]         @relation("FollowingRelation")
+  followers      Follow[]         @relation("FollowerRelation")
+  FavoriteRecipe FavoriteRecipe[]
+  ViewRecipe     ViewRecipe[]
 }
 
 model Follow {
@@ -47,6 +49,28 @@ model Follow {
   createdAt DateTime @default(now())
 
   @@unique([followerId, followeeId])
+}
+
+model ViewRecipe {
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@id([userId, recipeId])
+}
+
+model FavoriteRecipe {
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@id([userId, recipeId])
 }
 
 model RefreshToken {
@@ -97,6 +121,8 @@ model Recipe {
   mealTypes         RecipeMealType[]
   cuisineStyles     RecipeCuisineStyle[]
   user              User                 @relation(fields: [userId], references: [id])
+  FavoriteRecipe    FavoriteRecipe[]
+  ViewRecipe        ViewRecipe[]
 }
 
 model RecipeIngredient {

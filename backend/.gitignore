@@ -4,6 +4,9 @@
 /build
 /temp
 
+/.env
+/.env.production
+
 # Logs
 logs
 *.log

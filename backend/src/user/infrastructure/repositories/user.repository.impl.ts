@@ -1,6 +1,5 @@
 import { PrismaService } from '@/src/utils/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import {
   IUserRepository,
   IFindAllParams,
@@ -8,6 +7,7 @@ import {
 import { IFollow } from '../../core/interfaces/user/follow-interface';
 import { IUserProjection } from '../../core/interfaces/user/user-projection.interface';
 import { IUserResponse } from '../../core/interfaces/user/user-response.interface';
+import { User } from '../../core/entities/user.entity';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -15,7 +15,16 @@ export class UserRepository implements IUserRepository {
 
   async create(user: User): Promise<IUserResponse> {
     const createdUser = await this.prismaService.user.create({
-      data: user,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        imgUrl: user.imgUrl,
+        username: user.username,
+        createdAt: user.createdAt,
+        authProvider: user.authProvider,
+      },
       select: {
         id: true,
         name: true,
@@ -35,10 +44,19 @@ export class UserRepository implements IUserRepository {
     return createdUser;
   }
 
-  async update(id: string, user: User): Promise<User> {
+  async update(id: string, user: User): Promise<IUserResponse> {
     return await this.prismaService.user.update({
       where: { id },
-      data: user,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        imgUrl: user.imgUrl,
+        username: user.username,
+        createdAt: user.createdAt,
+        authProvider: user.authProvider,
+      },
     });
   }
   async addFollower(data: IFollow): Promise<void> {
@@ -105,20 +123,20 @@ export class UserRepository implements IUserRepository {
   async delete(id: string): Promise<void> {
     await this.prismaService.user.delete({ where: { id } });
   }
-  async findById(id: string): Promise<User> {
+  async findById(id: string): Promise<IUserResponse> {
     return await this.prismaService.user.findUnique({ where: { id } });
   }
-  async findByEmail(email: string): Promise<User> {
+  async findByEmail(email: string): Promise<IUserResponse> {
     return await this.prismaService.user.findUnique({ where: { email } });
   }
 
-  async findByUsername(username: string): Promise<User> {
+  async findByUsername(username: string): Promise<IUserResponse> {
     return await this.prismaService.user.findUnique({ where: { username } });
   }
 
   async findAll(
     params: IFindAllParams,
-  ): Promise<{ total: number; users: User[] }> {
+  ): Promise<{ total: number; users: IUserProjection[] }> {
     const [users, total] = await Promise.all([
       this.prismaService.user.findMany({
         where: {

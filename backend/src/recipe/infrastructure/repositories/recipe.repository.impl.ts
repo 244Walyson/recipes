@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { Recipe } from '@/src/recipe/core/entities/recipe.entity';
 import { IFindAllFilters } from '@/src/recipe/core/interfaces/recipes/find-all-filters.interface';
 import { IRecipeProjection } from '@/src/recipe/core/interfaces/recipes/recipe-response-projection.interface';
@@ -65,7 +64,7 @@ export class RecipeRepository implements IRecipeRepository {
 
   async create(recipe: Recipe): Promise<IRecipeResponse> {
     console.log('RecipeRepository.create', recipe);
-    const data = recipe as unknown as Prisma.RecipeCreateInput;
+    const data = recipe;
     const createdRecipe = await this.prismaService.recipe.create({
       data: {
         ...data,

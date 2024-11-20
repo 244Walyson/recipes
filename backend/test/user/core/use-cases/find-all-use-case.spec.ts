@@ -20,14 +20,11 @@ describe('FindAllUsersUseCase', () => {
         {
           id: 'user-id',
           name: 'John Doe',
-          email: 'johndoe@example.com',
           imgUrl: null,
           numberOfRecipes: 0,
           numberOfFollowers: 0,
           numberOfFollowings: 0,
           username: 'john_doe',
-          createdAt: new Date(),
-          isActive: true,
         },
       ],
     });

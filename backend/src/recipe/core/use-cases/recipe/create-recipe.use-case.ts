@@ -1,4 +1,3 @@
-import { CuisineStyle, MealType } from '@prisma/client';
 import { IReciperequest } from '../../interfaces/recipes/recipe-request.interface';
 import { IRecipeResponse } from '../../interfaces/recipes/recipe-response.interface';
 import { IRecipeRepository } from '../../interfaces/repositories/recipe.repository';
@@ -8,6 +7,8 @@ import { FindIngredientByIdUseCase } from '../ingredient/find-ingredient-by-id.u
 import { FindCuisineStyleByIdUseCase } from '../cuisine-style/find-cuisine-style-by-id.use-case';
 import { IIngredient } from '../../interfaces/ingredient/ingredient.interface';
 import { RecipeDomainException } from '../../exceptions/domain.exception';
+import { ICuisineStyle } from '../../interfaces/cuisine-style/cousine-styles.interface';
+import { IMealType } from '../../interfaces/meal-type/meal-type.interface';
 
 export class CreateRecipeUseCase {
   constructor(
@@ -31,7 +32,7 @@ export class CreateRecipeUseCase {
     }
   }
 
-  private async validateMealTypes(mealTypes: MealType[]): Promise<void> {
+  private async validateMealTypes(mealTypes: IMealType[]): Promise<void> {
     await Promise.all(
       mealTypes.map((mealType) =>
         this.findMealTypeByidUseCase.execute(mealType.id),
@@ -40,7 +41,7 @@ export class CreateRecipeUseCase {
   }
 
   private async validateCuisineStyles(
-    cuisineStyles: CuisineStyle[],
+    cuisineStyles: ICuisineStyle[],
   ): Promise<void> {
     await Promise.all(
       cuisineStyles.map((cuisineStyle) =>

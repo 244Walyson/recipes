@@ -18,7 +18,7 @@ export interface IUserRepository {
   findByUsername(username: string): Promise<IUserResponse>;
   findAll(
     params: IFindAllParams,
-  ): Promise<{ total: number; users: IUserResponse[] }>;
+  ): Promise<{ total: number; users: IUserProjection[] }>;
   addFollower(data: IFollow): Promise<void>;
   removeFollow(data: IFollow): Promise<void>;
   findFollowingUsers(

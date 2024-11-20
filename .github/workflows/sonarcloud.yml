@@ -17,6 +17,7 @@ jobs:
   analyze:
     name: Analyze with SonarCloud
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -27,16 +28,44 @@ jobs:
         with:
           node-version: 18
 
-      - name: Cache Node.js modules
+      - name: Cache Node.js modules for backend
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          path: backend/node_modules
+          key: ${{ runner.os }}-backend-node-${{ hashFiles('backend/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node
+            ${{ runner.os }}-backend-node
 
-      - name: Install dependencies
-        run: npm install
+      - name: Cache Node.js modules for frontend
+        uses: actions/cache@v3
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node
+
+      - name: Cache Node.js modules for mobile
+        uses: actions/cache@v3
+        with:
+          path: mobile/node_modules
+          key: ${{ runner.os }}-mobile-node-${{ hashFiles('mobile/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-mobile-node
+
+      - name: Install dependencies in backend
+        run: |
+          cd backend
+          npm install
+
+      - name: Install dependencies in frontend
+        run: |
+          cd frontend
+          npm install
+
+      - name: Install dependencies in mobile
+        run: |
+          cd mobile
+          npm install
 
       - name: Run SonarCloud analysis
         env:
@@ -46,6 +75,6 @@ jobs:
           npx sonar-scanner \
             -Dsonar.projectKey=244walyson_GWApp \
             -Dsonar.organization=seu_organizacao_no_sonarcloud \
-            -Dsonar.sources=src \
+            -Dsonar.sources=backend/src,frontend/src,mobile/src \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}

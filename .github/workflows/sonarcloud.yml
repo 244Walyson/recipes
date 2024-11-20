@@ -56,6 +56,11 @@ jobs:
     needs: [install-backend, install-frontend, install-mobile]
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Java 17 for SonarCloud
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "adoptopenjdk"
       - name: Run SonarCloud analysis
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

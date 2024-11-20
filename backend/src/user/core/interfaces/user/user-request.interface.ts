@@ -3,5 +3,5 @@ export interface IUserRequest {
   email: string;
   imgUrl?: string;
   username: string;
-  password: string;
+  password?: string;
 }

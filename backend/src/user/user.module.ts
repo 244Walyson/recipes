@@ -10,6 +10,9 @@ import { FindUserByIdlUserUseCase } from './core/use-cases/find-user-by-id.use-c
 import { UpdateUserUseCase } from './core/use-cases/update-user.use-case';
 import { FindAllUseCase } from './core/use-cases/find-all-use-case';
 import { AuthModule } from 'src/auth/auth.module';
+import { FollowUserByIdUseCase } from './core/use-cases/follow-user-by-id.use-case';
+import { UnfollowUserByIdUseCase } from './core/use-cases/unfollow-user-by-id.use-case';
+import { FindFollowingUsersUseCase } from './core/use-cases/find-following-users.use-case';
 
 @Module({
   imports: [forwardRef(() => AuthModule)],
@@ -55,6 +58,43 @@ import { AuthModule } from 'src/auth/auth.module';
       provide: FindAllUseCase,
       useFactory: (userRepository: IUserRepository) => {
         return new FindAllUseCase(userRepository);
+      },
+      inject: ['IUserRepository'],
+    },
+    {
+      provide: FollowUserByIdUseCase,
+      useFactory: (
+        userRepository: IUserRepository,
+        findUserByIdUserCase: FindUserByIdlUserUseCase,
+        updateUserUseCase: UpdateUserUseCase,
+      ) => {
+        return new FollowUserByIdUseCase(
+          userRepository,
+          findUserByIdUserCase,
+          updateUserUseCase,
+        );
+      },
+      inject: ['IUserRepository', FindUserByIdlUserUseCase, UpdateUserUseCase],
+    },
+    {
+      provide: UnfollowUserByIdUseCase,
+      useFactory: (
+        userRepository: IUserRepository,
+        findUserByIdUserCase: FindUserByIdlUserUseCase,
+        updateUserUseCase: UpdateUserUseCase,
+      ) => {
+        return new UnfollowUserByIdUseCase(
+          userRepository,
+          findUserByIdUserCase,
+          updateUserUseCase,
+        );
+      },
+      inject: ['IUserRepository', FindUserByIdlUserUseCase, UpdateUserUseCase],
+    },
+    {
+      provide: FindFollowingUsersUseCase,
+      useFactory: (userRepository: IUserRepository) => {
+        return new FindFollowingUsersUseCase(userRepository);
       },
       inject: ['IUserRepository'],
     },

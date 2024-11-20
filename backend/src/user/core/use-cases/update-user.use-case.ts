@@ -1,4 +1,4 @@
-import { UserDuplicateresourceException } from '../exceptions/duplicate-resource.exception';
+import { UserDomainException } from '../exceptions/domain.exception';
 import { UserResourceNotFoundException } from '../exceptions/resource-not-found.exception';
 import { IUserRepository } from '../interfaces/repositories/user-repository.interface';
 import { IUserRequest } from '../interfaces/user/user-request.interface';
@@ -10,16 +10,15 @@ export class UpdateUserUseCase {
 
   async execute(id: string, dto: IUserRequest): Promise<IUserResponse> {
     try {
-      const userExists = await this.userRepository.findByEmail(id);
-      if (userExists) {
-        throw new UserDuplicateresourceException(
-          'User with this email already exists',
-        );
+      const userExists = await this.userRepository.findById(id);
+      if (!userExists) {
+        throw new UserResourceNotFoundException(`User not found: ${id}`);
       }
       const user = UserMapper.toEntity(dto);
       return await this.userRepository.update(id, user);
-    } catch {
-      throw new UserResourceNotFoundException('User not found');
+    } catch (error) {
+      console.log(error);
+      throw new UserDomainException('Error updating user');
     }
   }
 }

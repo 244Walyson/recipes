@@ -31,6 +31,22 @@ model User {
   comments           Comment[]
   refreshTokens      RefreshToken[]
   passwordRecoveries PasswordRecovery[]
+
+  following Follow[] @relation("FollowingRelation")
+  followers Follow[] @relation("FollowerRelation")
+}
+
+model Follow {
+  id         String @id @default(uuid())
+  followerId String
+  followeeId String
+
+  follower User @relation("FollowingRelation", fields: [followerId], references: [id])
+  followee User @relation("FollowerRelation", fields: [followeeId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([followerId, followeeId])
 }
 
 model RefreshToken {
@@ -59,23 +75,15 @@ model Recipe {
   preparationTime   Int
   imgUrl            String?
   difficultyLevel   String?
-  category          String?
-  tags              String[]
   calories          Int?
   macronutrients    Json?
-  servingSize       String?
   allergens         String[]
-  cookTime          Int?
-  totalTime         Int?
   servingCount      Int?
   viewCount         Int      @default(0)
   favoriteCount     Int      @default(0)
   averageRating     Float?
   costEstimate      Float?
-  experienceLevel   String?
   additionalTips    String?
-  videoUrl          String?
-  sourceUrl         String?
   isPublished       Boolean  @default(true)
   version           Int      @default(1)
   createdAt         DateTime @default(now())
@@ -84,11 +92,11 @@ model Recipe {
   userId            String
   numberOflikes     Int      @default(0)
 
-  user              User                 @relation(fields: [userId], references: [id])
   comments          Comment[]
   recipeIngredients RecipeIngredient[]
   mealTypes         RecipeMealType[]
   cuisineStyles     RecipeCuisineStyle[]
+  user              User                 @relation(fields: [userId], references: [id])
 }
 
 model RecipeIngredient {

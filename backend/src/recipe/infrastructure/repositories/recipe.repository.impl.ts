@@ -127,7 +127,7 @@ export class RecipeRepository implements IRecipeRepository {
         servingCount: filters?.servingSize
           ? { equals: parseInt(filters.servingSize, 10) }
           : undefined,
-        totalTime:
+        preparationTime:
           filters?.totalTime &&
           !isNaN(filters.totalTime[0]) &&
           !isNaN(filters.totalTime[1])
@@ -160,10 +160,8 @@ export class RecipeRepository implements IRecipeRepository {
         name: true,
         imgUrl: true,
         difficultyLevel: true,
-        tags: true,
         calories: true,
         macronutrients: true,
-        totalTime: true,
         servingCount: true,
         viewCount: true,
         favoriteCount: true,
@@ -201,7 +199,7 @@ export class RecipeRepository implements IRecipeRepository {
         servingCount: filters?.servingSize
           ? { equals: parseInt(filters.servingSize, 10) }
           : undefined,
-        totalTime:
+        preparationTime:
           filters?.totalTime &&
           !isNaN(filters.totalTime[0]) &&
           !isNaN(filters.totalTime[1])
@@ -233,6 +231,7 @@ export class RecipeRepository implements IRecipeRepository {
     const data = recipes.map((recipe) => ({
       ...recipe,
       macronutrients: recipe.macronutrients as Record<string, number>,
+      user: { name: recipe.user.name },
     }));
 
     return { total, data };
@@ -260,10 +259,8 @@ export class RecipeRepository implements IRecipeRepository {
         name: true,
         imgUrl: true,
         difficultyLevel: true,
-        tags: true,
         calories: true,
         macronutrients: true,
-        totalTime: true,
         servingCount: true,
         viewCount: true,
         favoriteCount: true,

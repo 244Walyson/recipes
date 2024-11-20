@@ -13,6 +13,8 @@ export class User {
   numberOfFollowings: number;
   createdAt: Date;
   isActive: boolean = true;
+  followers: User[];
+  followings: User[];
 
   constructor(partial: Partial<User>) {
     this.id = partial.id ?? crypto.randomUUID();

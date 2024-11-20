@@ -1,4 +1,6 @@
 import { User } from '../../entities/user.entity';
+import { IFollow } from '../user/follow-interface';
+import { IUserProjection } from '../user/user-projection.interface';
 import { IUserResponse } from '../user/user-response.interface';
 
 export interface IFindAllParams {
@@ -17,4 +19,10 @@ export interface IUserRepository {
   findAll(
     params: IFindAllParams,
   ): Promise<{ total: number; users: IUserResponse[] }>;
+  addFollower(data: IFollow): Promise<void>;
+  removeFollow(data: IFollow): Promise<void>;
+  findFollowingUsers(
+    id: string,
+    { offset, limit }: { offset: number; limit: number },
+  ): Promise<{ total: number; data: IUserProjection[] }>;
 }

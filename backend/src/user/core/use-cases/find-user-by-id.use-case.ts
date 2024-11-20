@@ -6,10 +6,8 @@ export class FindUserByIdlUserUseCase {
   constructor(private readonly userRepository: IUserRepository) {}
 
   async execute(id: string): Promise<IUserResponse> {
-    try {
-      return await this.userRepository.findById(id);
-    } catch {
-      throw new UserResourceNotFoundException('User Not Found');
-    }
+    const user = await this.userRepository.findById(id);
+    if (!user) throw new UserResourceNotFoundException(`User not found: ${id}`);
+    return user;
   }
 }

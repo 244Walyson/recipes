@@ -1,11 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { PrismaService } from 'src/utils/prisma.service';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { CreateAccessTokenUseCase } from './core/use-cases/create-access-token.use-case';
 import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { IJwtService } from './core/interfaces/jwt/jwt.service.interface';
-import { IPasswordEncoder } from 'src/auth/core/interfaces/utils/password-encoder.interface';
+import { IPasswordEncoder } from '@/src/auth/core/interfaces/utils/password-encoder.interface';
 import { CreateRefreshTokenUseCase } from './core/use-cases/create-refresh-token.use-case';
-import { PasswordEncoder } from 'src/auth/infrastructure/utils/password-encoder.service';
+import { PasswordEncoder } from '@/src/auth/infrastructure/utils/password-encoder.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './core/contants/jwt-contants';
 import { JwtServiceImpl } from './infrastructure/utils/jwt.service';
@@ -24,6 +24,8 @@ import { PassportGoogleStrategy } from './infrastructure/utils/oauth2-google-pro
 import { PassportGithubStrategy } from './infrastructure/utils/oauth2-github-provider.impl';
 import { OAuth2AuthenticationUseCase } from './core/use-cases/oauth2-authentication.use-case';
 import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-case';
+import { AuthGuard } from './infrastructure/utils/auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -39,6 +41,11 @@ import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-cas
     PrismaService,
     PassportGoogleStrategy,
     PassportGithubStrategy,
+
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     {
       provide: 'IPasswordEncoder',
       useClass: PasswordEncoder,

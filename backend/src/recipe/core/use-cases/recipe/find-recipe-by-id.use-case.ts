@@ -5,9 +5,9 @@ import { IRecipeRepository } from '../../interfaces/repositories/recipe.reposito
 export class FindRecipeByIdUseCase {
   constructor(private readonly recipeRepository: IRecipeRepository) {}
 
-  async execute(id: string): Promise<IRecipeResponse> {
+  async execute(recipeId: string, userId?: string): Promise<IRecipeResponse> {
     try {
-      const recipe = await this.recipeRepository.findbyId(id);
+      const recipe = await this.recipeRepository.findbyId(recipeId, userId);
       return recipe;
     } catch {
       throw new RecipeResourceNotFoundException('Recipe not found');

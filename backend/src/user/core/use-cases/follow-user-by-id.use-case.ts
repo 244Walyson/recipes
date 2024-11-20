@@ -25,6 +25,7 @@ export class FollowUserByIdUseCase {
   }
 
   private async updateFollowers(dto: IFollow): Promise<void> {
+    console.log('updateFollowers', dto);
     const followerUser = await this.findUserByIdUserCase.execute(
       dto.followerId,
     );

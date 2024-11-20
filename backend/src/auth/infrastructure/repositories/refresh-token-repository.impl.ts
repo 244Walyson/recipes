@@ -1,4 +1,4 @@
-import { PrismaService } from 'src/utils/prisma.service';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { IRefreshTokenRepository } from '../../core/interfaces/repositories/refresh-token.repository.interface';
 import { RefreshToken } from '../../core/entities/refresh-token.entity';
 import { Injectable } from '@nestjs/common';

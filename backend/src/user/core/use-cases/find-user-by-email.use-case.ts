@@ -8,7 +8,7 @@ export class FindUserByEmailUseCase {
   async execute(email: string): Promise<IUserResponse> {
     const userExists = await this.userRepository.findByEmail(email);
     if (!userExists) {
-      throw new UserResourceNotFoundException('User Not Found');
+      throw new UserResourceNotFoundException(`User Not Found ${email}`);
     }
     return userExists;
   }

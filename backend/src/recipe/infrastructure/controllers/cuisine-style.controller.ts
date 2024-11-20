@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ICuisineStyle } from 'src/recipe/core/interfaces/cuisine-style/cousine-styles.interface';
-import { IPaginatedResponse } from 'src/recipe/core/interfaces/shared/paginated-response.interface';
-import { CreateCuisineStyleUseCase } from 'src/recipe/core/use-cases/cuisine-style/create-cuisine-styles.use-case';
-import { FindAllCuisineStyleUseCase } from 'src/recipe/core/use-cases/cuisine-style/find-all-cuisine-style.use-case';
+import { ICuisineStyle } from '@/src/recipe/core/interfaces/cuisine-style/cousine-styles.interface';
+import { IPaginatedResponse } from '@/src/recipe/core/interfaces/shared/paginated-response.interface';
+import { CreateCuisineStyleUseCase } from '@/src/recipe/core/use-cases/cuisine-style/create-cuisine-styles.use-case';
+import { FindAllCuisineStyleUseCase } from '@/src/recipe/core/use-cases/cuisine-style/find-all-cuisine-style.use-case';
 
 @Controller('cuisine-styles')
 export class CuisineStyleController {

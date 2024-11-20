@@ -15,6 +15,7 @@ export class FindAllRecipeUseCase {
       limit: number;
     },
     filters?: IFindAllFilters,
+    userId?: string,
   ): Promise<IPaginatedResponse<IRecipeProjection>> {
     const offset = (page - 1) * limit;
     const numericLimit = parseInt(limit.toString(), 10);
@@ -24,6 +25,7 @@ export class FindAllRecipeUseCase {
     const recipes = await this.recipeRepository.findAll(
       { offset, limit: numericLimit },
       queryParams,
+      userId,
     );
     return {
       data: recipes.data,

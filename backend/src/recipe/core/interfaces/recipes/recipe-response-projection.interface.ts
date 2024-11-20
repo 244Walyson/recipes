@@ -9,5 +9,6 @@ export interface IRecipeProjection {
   favoriteCount: number;
   costEstimate?: number;
   version: number;
+  isFavorite?: boolean;
   user: { name: string };
 }

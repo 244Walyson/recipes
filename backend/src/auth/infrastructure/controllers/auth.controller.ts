@@ -8,18 +8,19 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateAccessTokenUseCase } from 'src/auth/core/use-cases/create-access-token.use-case';
-import { RefreshTokenUseCase } from 'src/auth/core/use-cases/refresh-token.use-case';
+import { CreateAccessTokenUseCase } from '@/src/auth/core/use-cases/create-access-token.use-case';
+import { RefreshTokenUseCase } from '@/src/auth/core/use-cases/refresh-token.use-case';
 import { CredentiaslRequestDto } from '../dtos/creadentials-request.dto';
 import { AccessTokenResponseDto } from '../dtos/access-token-response.dto';
 import { RefreshTokenRequestDto } from '../dtos/refresh-token-request.dto';
-import { CreateRecoverPasswordTokenUseCase } from 'src/auth/core/use-cases/create-recover-password-token.use-case';
+import { CreateRecoverPasswordTokenUseCase } from '@/src/auth/core/use-cases/create-recover-password-token.use-case';
 import { RecovrePassordRequestDto } from '../dtos/recover-password-request.dto';
-import { UpdatePasswordUseCase } from 'src/auth/core/use-cases/update-password.use-case';
+import { UpdatePasswordUseCase } from '@/src/auth/core/use-cases/update-password.use-case';
 import { AuthGuard } from '@nestjs/passport';
-import { OAuth2AuthenticationUseCase } from 'src/auth/core/use-cases/oauth2-authentication.use-case';
+import { OAuth2AuthenticationUseCase } from '@/src/auth/core/use-cases/oauth2-authentication.use-case';
 import { PassportGoogleStrategy } from '../utils/oauth2-google-provider.impl';
 import { PassportGithubStrategy } from '../utils/oauth2-github-provider.impl';
+import { Public } from '../utils/auth.public';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +34,7 @@ export class AuthController {
     private readonly passportGithubStrategy: PassportGithubStrategy,
   ) {}
 
+  @Public()
   @Post('token')
   async AccessToken(
     @Body() credentialDto: CredentiaslRequestDto,
@@ -40,6 +42,7 @@ export class AuthController {
     return await this.createAccessTokenUseCase.execute(credentialDto);
   }
 
+  @Public()
   @Post('refresh-token')
   async refreshToken(
     @Body() refreshTokenDto: RefreshTokenRequestDto,

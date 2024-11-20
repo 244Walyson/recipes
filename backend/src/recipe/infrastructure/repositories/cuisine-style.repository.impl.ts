@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CuisineStyle } from '@/src/recipe/core/entities/cuisine-style.entity';
-import { ICuisineStyleRepository } from 'src/recipe/core/interfaces/repositories/cuisine-style.repository';
-import { PrismaService } from 'src/utils/prisma.service';
+import { ICuisineStyleRepository } from '@/src/recipe/core/interfaces/repositories/cuisine-style.repository';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { ICuisineStyle } from '../../core/interfaces/cuisine-style/cousine-styles.interface';
 
 @Injectable()

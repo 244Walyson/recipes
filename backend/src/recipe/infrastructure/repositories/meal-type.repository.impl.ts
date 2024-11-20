@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MealType } from 'src/recipe/core/entities/meal-type.entity';
-import { IMealTypeRepository } from 'src/recipe/core/interfaces/repositories/meal-type.repository';
-import { PrismaService } from 'src/utils/prisma.service';
+import { MealType } from '@/src/recipe/core/entities/meal-type.entity';
+import { IMealTypeRepository } from '@/src/recipe/core/interfaces/repositories/meal-type.repository';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { IMealType } from '../../core/interfaces/meal-type/meal-type.interface';
 
 @Injectable()

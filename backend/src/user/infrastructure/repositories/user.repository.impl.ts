@@ -7,19 +7,35 @@ import {
 } from '../../core/interfaces/repositories/user-repository.interface';
 import { IFollow } from '../../core/interfaces/user/follow-interface';
 import { IUserProjection } from '../../core/interfaces/user/user-projection.interface';
+import { IUserResponse } from '../../core/interfaces/user/user-response.interface';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(user: User): Promise<User> {
-    return await this.prismaService.user.create({
+  async create(user: User): Promise<IUserResponse> {
+    const createdUser = await this.prismaService.user.create({
       data: user,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        imgUrl: true,
+        numberOfRecipes: true,
+        numberOfFollowers: true,
+        numberOfFollowings: true,
+        createdAt: true,
+        isActive: true,
+        authProvider: false,
+        password: false,
+      },
     });
+
+    return createdUser;
   }
+
   async update(id: string, user: User): Promise<User> {
-    const data = user;
-    delete data.id;
     return await this.prismaService.user.update({
       where: { id },
       data: user,

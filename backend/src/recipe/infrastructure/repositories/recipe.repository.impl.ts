@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { Recipe } from 'src/recipe/core/entities/recipe.entity';
-import { IFindAllFilters } from 'src/recipe/core/interfaces/recipes/find-all-filters.interface';
-import { IRecipeProjection } from 'src/recipe/core/interfaces/recipes/recipe-response-projection.interface';
-import { IRecipeRepository } from 'src/recipe/core/interfaces/repositories/recipe.repository';
-import { PrismaService } from 'src/utils/prisma.service';
+import { Recipe } from '@/src/recipe/core/entities/recipe.entity';
+import { IFindAllFilters } from '@/src/recipe/core/interfaces/recipes/find-all-filters.interface';
+import { IRecipeProjection } from '@/src/recipe/core/interfaces/recipes/recipe-response-projection.interface';
+import { IRecipeRepository } from '@/src/recipe/core/interfaces/repositories/recipe.repository';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.interface';
 
 @Injectable()
@@ -102,7 +102,7 @@ export class RecipeRepository implements IRecipeRepository {
     };
   }
 
-  async findbyId(recipeId: string): Promise<IRecipeResponse> {
+  async findbyId(recipeId: string, userId?: string): Promise<IRecipeResponse> {
     const recipe = await this.prismaService.recipe.findUnique({
       where: { id: recipeId, deleted: false },
       include: {
@@ -121,12 +121,17 @@ export class RecipeRepository implements IRecipeRepository {
       },
     });
 
-    if (!recipe) {
-      throw new Error('Recipe not found');
-    }
+    const isFavorite = userId
+      ? await this.checkIfFavorite(userId, recipe.id)
+      : false;
+    const isViewed = userId
+      ? await this.checkIfViewed(userId, recipe.id)
+      : false;
 
     return {
       ...recipe,
+      isFavorite,
+      isViewed,
       macronutrients: recipe.macronutrients as Record<string, number>,
       mealTypes: recipe.mealTypes.map((item) => item.MealType),
       preparationMethod: recipe.preparationMethod as any,
@@ -140,6 +145,30 @@ export class RecipeRepository implements IRecipeRepository {
     };
   }
 
+  async checkIfFavorite(userId: string, recipeId: string): Promise<boolean> {
+    const favorite = await this.prismaService.favoriteRecipe.findUnique({
+      where: {
+        userId_recipeId: {
+          userId: userId,
+          recipeId: recipeId,
+        },
+      },
+    });
+    return favorite !== null;
+  }
+
+  async checkIfViewed(userId: string, recipeId: string): Promise<boolean> {
+    const view = await this.prismaService.viewRecipe.findUnique({
+      where: {
+        userId_recipeId: {
+          userId: userId,
+          recipeId: recipeId,
+        },
+      },
+    });
+    return view !== null;
+  }
+
   async findAll(
     {
       offset,
@@ -149,6 +178,7 @@ export class RecipeRepository implements IRecipeRepository {
       limit: number;
     },
     filters: IFindAllFilters,
+    userId?: string,
   ): Promise<{ total: number; data: IRecipeProjection[] }> {
     const total = await this.prismaService.recipe.count({
       where: {
@@ -282,11 +312,17 @@ export class RecipeRepository implements IRecipeRepository {
       take: limit,
     });
 
-    const data = recipes.map((recipe) => ({
+    const formatedData = recipes.map(async (recipe) => ({
       ...recipe,
+      isFavorite: userId
+        ? await this.checkIfFavorite(userId, recipe.id)
+        : false,
+      isViewed: userId ? await this.checkIfViewed(userId, recipe.id) : false,
       macronutrients: recipe.macronutrients as Record<string, number>,
       user: { name: recipe.user.name },
     }));
+
+    const data = await Promise.all(formatedData);
 
     return { total, data };
   }
@@ -330,10 +366,15 @@ export class RecipeRepository implements IRecipeRepository {
       take: limit,
     });
 
-    const data = recipes.map((recipe) => ({
+    const formatedData = recipes.map(async (recipe) => ({
       ...recipe,
+      isFavorite: id ? await this.checkIfFavorite(id, recipe.id) : false,
+      isViewed: id ? await this.checkIfViewed(id, recipe.id) : false,
+
       macronutrients: recipe.macronutrients as Record<string, number>,
     }));
+
+    const data = await Promise.all(formatedData);
 
     return { total, data };
   }

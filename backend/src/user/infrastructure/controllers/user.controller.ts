@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
 } from '@nestjs/common';
 import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-case';
 import { UserRequestDto } from '../dto/user-request.dto';
@@ -18,6 +19,7 @@ import { FindAllUseCase } from '@/src/user/core/use-cases/find-all-use-case';
 import { FollowUserByIdUseCase } from '../../core/use-cases/follow-user-by-id.use-case';
 import { UnfollowUserByIdUseCase } from '../../core/use-cases/unfollow-user-by-id.use-case';
 import { FindFollowingUsersUseCase } from '../../core/use-cases/find-following-users.use-case';
+import { Public } from '@/src/auth/infrastructure/utils/auth.public';
 
 @Controller('users')
 export class UserController {
@@ -31,6 +33,7 @@ export class UserController {
     private readonly findFollowingUsersUseCase: FindFollowingUsersUseCase,
   ) {}
 
+  @Public()
   @Post()
   async create(@Body() userDto: UserRequestDto): Promise<UserResponseDto> {
     return await this.createUserUseCase.execute(userDto);
@@ -58,20 +61,29 @@ export class UserController {
     return await this.findAllUseCase.execute({ name, page, limit });
   }
 
-  @Post('follow/:id')
-  async follow(@Param() dto: { id: string }) {
+  @Post('follow/:followeeId')
+  @HttpCode(200)
+  async follow(
+    @Param() { followeeId }: { followeeId: string },
+    @Request() req,
+  ) {
+    const followerId = req.user.sub;
     return this.followUserUseCase.execute({
-      followerId: 'c4c6513e-51af-41d0-b63b-359eb83fbc52',
-      followeeId: dto.id,
+      followerId: followerId,
+      followeeId: followeeId,
     });
   }
 
-  @Delete('unfollow/:id')
+  @Delete('unfollow/:followeeId')
   @HttpCode(204)
-  async unfollow(@Param() dto: { id: string }) {
+  async unfollow(
+    @Param() { followeeId }: { followeeId: string },
+    @Request() req,
+  ) {
+    const followerId = req.user.sub;
     return this.unfollowUserUseCase.execute({
-      followerId: 'c4c6513e-51af-41d0-b63b-359eb83fbc52',
-      followeeId: dto.id,
+      followerId,
+      followeeId,
     });
   }
 

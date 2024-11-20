@@ -5,7 +5,7 @@ import { IRecipeResponse } from '../recipes/recipe-response.interface';
 
 export interface IRecipeRepository {
   create(recipe: Recipe): Promise<IRecipeResponse>;
-  findbyId(recipeId: string): Promise<IRecipeResponse>;
+  findbyId(recipeId: string, userId?: string): Promise<IRecipeResponse>;
   findAll(
     {
       offset,
@@ -15,6 +15,7 @@ export interface IRecipeRepository {
       limit: number;
     },
     filters: IFindAllFilters,
+    userId?: string,
   ): Promise<{ total: number; data: IRecipeProjection[] }>;
   findRecipesByUserId({
     id,

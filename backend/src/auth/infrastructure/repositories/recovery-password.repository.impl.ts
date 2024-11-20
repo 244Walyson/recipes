@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RecoverPassword } from 'src/auth/core/entities/recover-password.entity';
-import { IRecoveryPasswordRepository } from 'src/auth/core/interfaces/repositories/recovery-password.repository';
-import { PrismaService } from 'src/utils/prisma.service';
+import { RecoverPassword } from '@/src/auth/core/entities/recover-password.entity';
+import { IRecoveryPasswordRepository } from '@/src/auth/core/interfaces/repositories/recovery-password.repository';
+import { PrismaService } from '@/src/utils/prisma.service';
 
 @Injectable()
 export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {

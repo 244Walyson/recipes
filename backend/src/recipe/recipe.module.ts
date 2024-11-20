@@ -4,7 +4,7 @@ import { RecipeRepository } from './infrastructure/repositories/recipe.repositor
 import { FindAllRecipeUseCase } from './core/use-cases/recipe/find-all-recipes.use-case';
 import { IRecipeRepository } from './core/interfaces/repositories/recipe.repository';
 import { CreateRecipeUseCase } from './core/use-cases/recipe/create-recipe.use-case';
-import { PrismaService } from 'src/utils/prisma.service';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { FindIngredientByIdUseCase } from './core/use-cases/ingredient/find-ingredient-by-id.use-case';
 import { IngredientRepository } from './infrastructure/repositories/ingredient.repository.impl';
 import { MealTypeRepository } from './infrastructure/repositories/meal-type.repository.impl';

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { IMealType } from 'src/recipe/core/interfaces/meal-type/meal-type.interface';
-import { IPaginatedResponse } from 'src/recipe/core/interfaces/shared/paginated-response.interface';
-import { CreateMealTypeUseCase } from 'src/recipe/core/use-cases/meal-type/create-meal-type.use-case';
-import { FindAllMealTypeUseCase } from 'src/recipe/core/use-cases/meal-type/find-all-meal-type.use-case';
+import { IMealType } from '@/src/recipe/core/interfaces/meal-type/meal-type.interface';
+import { IPaginatedResponse } from '@/src/recipe/core/interfaces/shared/paginated-response.interface';
+import { CreateMealTypeUseCase } from '@/src/recipe/core/use-cases/meal-type/create-meal-type.use-case';
+import { FindAllMealTypeUseCase } from '@/src/recipe/core/use-cases/meal-type/find-all-meal-type.use-case';
 
 @Controller('meal-types')
 export class MealTypeController {

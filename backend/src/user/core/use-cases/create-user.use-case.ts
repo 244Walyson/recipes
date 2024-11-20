@@ -20,7 +20,9 @@ export class CreateUserUseCase {
       user.password = await this.passwordEncoder.encode(dto.password);
     }
 
-    return await this.userRepository.create(user);
+    const data = await this.userRepository.create(user);
+    delete data.password;
+    return data;
   }
 
   private async validateEmail(email: string): Promise<void> {

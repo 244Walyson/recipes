@@ -19,6 +19,8 @@ export interface IRecipeResponse {
   version: number;
   createdAt: Date;
   updatedAt: Date;
+  isFavorite?: boolean;
+  isViewed?: boolean;
   recipeIngredients?: IIngredient[];
   mealTypes?: IMealType[];
   cuisineStyles?: ICuisineStyle[];

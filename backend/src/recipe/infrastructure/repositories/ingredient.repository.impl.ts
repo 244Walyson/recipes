@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Ingredient } from 'src/recipe/core/entities/ingredient.entity';
-import { IIngredientRepository } from 'src/recipe/core/interfaces/repositories/ingredients.repository';
-import { PrismaService } from 'src/utils/prisma.service';
+import { Ingredient } from '@/src/recipe/core/entities/ingredient.entity';
+import { IIngredientRepository } from '@/src/recipe/core/interfaces/repositories/ingredients.repository';
+import { PrismaService } from '@/src/utils/prisma.service';
 import { IIngredient } from '../../core/interfaces/ingredient/ingredient.interface';
 
 @Injectable()

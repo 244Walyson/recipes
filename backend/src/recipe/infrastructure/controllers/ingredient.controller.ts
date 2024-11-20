@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { IIngredient } from 'src/recipe/core/interfaces/ingredient/ingredient.interface';
-import { IPaginatedResponse } from 'src/recipe/core/interfaces/shared/paginated-response.interface';
-import { CreateIngredientUseCase } from 'src/recipe/core/use-cases/ingredient/create-ingredient.use-case';
-import { FindAllIngredientUseCase } from 'src/recipe/core/use-cases/ingredient/find-all-ingredient.use-case';
+import { IIngredient } from '@/src/recipe/core/interfaces/ingredient/ingredient.interface';
+import { IPaginatedResponse } from '@/src/recipe/core/interfaces/shared/paginated-response.interface';
+import { CreateIngredientUseCase } from '@/src/recipe/core/use-cases/ingredient/create-ingredient.use-case';
+import { FindAllIngredientUseCase } from '@/src/recipe/core/use-cases/ingredient/find-all-ingredient.use-case';
 
 @Controller('ingredients')
 export class IngredinetController {

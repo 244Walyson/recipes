@@ -31,6 +31,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.0.5",
     "@prisma/client": "^5.22.0",
+    "@testcontainers/postgresql": "^10.14.0",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "jwk-to-pem": "^2.0.6",
@@ -85,7 +86,8 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "moduleNameMapper": {
-      "^@/src/(.*)$": "<rootDir>/../src/$1"
+      "^@/src/(.*)$": "<rootDir>/../src/$1",
+      "^test/(.*)$": "<rootDir>/$1"
     }
   }
 }

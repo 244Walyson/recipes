@@ -214,6 +214,7 @@ jobs:
 
             # Run the Docker container with the .env file
             docker run -d --name recipes-api -p 80:3000 \
+              --network app-network \
               --env-file .env \
               $DOCKER_IMAGE
           END

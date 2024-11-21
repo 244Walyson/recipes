@@ -167,25 +167,26 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-host: 157.245.86.200
 
-      - name: Setup SSH
+      - name: Set up SSH key
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-host: 157.245.86.200
+
+      - name: Deploy to DigitalOcean
+        env:
+          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ssh_key
-          chmod 600 ssh_key
+          << EOF
+            echo "Pulling Docker image: $DOCKER_IMAGE"
+            docker pull $DOCKER_IMAGE
 
-          - name: Deploy to DigitalOcean
-          env:
-            DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
-          run: |
-            ssh -o StrictHostKeyChecking=no -i ssh_key root@157.245.86.200 << EOF
-              echo "Pulling Docker image: $DOCKER_IMAGE"
-              docker pull $DOCKER_IMAGE
+            echo "Stopping existing container..."
+            docker stop recipes-api || true
 
-              echo "Stopping existing container..."
-              docker stop recipes-api || true
+            echo "Removing existing container..."
+            docker rm recipes-api || true
 
-              echo "Removing existing container..."
-              docker rm recipes-api || true
-
-              echo "Starting new container..."
-              docker run -d --name recipes-api -p 80:3000 $DOCKER_IMAGE
-            EOF
+            echo "Starting new container..."
+            docker run -d --name recipes-api -p 80:3000 $DOCKER_IMAGE
+          EOF

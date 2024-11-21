@@ -184,7 +184,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << END
+          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << 'END'
             echo "Docker image: $DOCKER_IMAGE"
             export DOCKER_IMAGE=$DOCKER_IMAGE
 

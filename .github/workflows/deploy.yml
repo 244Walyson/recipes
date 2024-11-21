@@ -187,7 +187,7 @@ jobs:
           echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
           echo "GOOGLE_CLIENT_ID_ANDROID=${{ secrets.GOOGLE_CLIENT_ID_ANDROID }}" >> .env
 
-          scp .env root@157.245.86.200:~/app/.env
+          scp .env root@157.245.86.200:/app/.env
 
           ssh -o StrictHostKeyChecking=no root@157.245.86.200 << END
             echo docke image $DOCKER_IMAGE
@@ -198,7 +198,7 @@ jobs:
             docker stop recipes-api || true
             docker rm recipes-api || true
 
-            docker run -d --name recipes-api -p 80:3000 --env-file ~/app/.env $DOCKER_IMAGE
+            docker run -d --name recipes-api -p 80:3000 --env-file /app/.env $DOCKER_IMAGE
 
-
+            cd /app && ls -al
           END

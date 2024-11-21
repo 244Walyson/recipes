@@ -167,17 +167,17 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-host: 157.245.86.200
 
-      - name: Set up SSH key
-        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh-host: 157.245.86.200
-
-      - name: Deploy to DigitalOcean
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.2.0
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
-        run: |
-          << EOF
+        with:
+          host: 157.245.86.200
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            whoami
             echo "Pulling Docker image: $DOCKER_IMAGE"
             docker pull $DOCKER_IMAGE
 
@@ -189,4 +189,3 @@ jobs:
 
             echo "Starting new container..."
             docker run -d --name recipes-api -p 80:3000 $DOCKER_IMAGE
-          EOF

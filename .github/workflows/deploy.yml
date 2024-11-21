@@ -173,10 +173,11 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to DigitalOcean
-        env:
-          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} root@157.245.86.200 << EOF
+            export DOCKER_IMAGE="${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}"
+            echo "Using Docker Image: $DOCKER_IMAGE"
+
             docker pull $DOCKER_IMAGE
 
             docker stop recipes-api || true

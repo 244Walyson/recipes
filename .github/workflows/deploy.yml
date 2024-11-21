@@ -167,19 +167,20 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-host: 157.245.86.200
 
-      - name: Set Docker image variable
-        id: docker_image
-        run: echo "DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}" >> $GITHUB_ENV
+      - name: Set up SSH key for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy to DigitalOcean
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} root@157.245.86.200 << 'EOF'
-           docker pull $DOCKER_IMAGE
+          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << 'EOF'
+            docker pull $DOCKER_IMAGE
 
-           docker stop recipes-api || true
-           docker rm recipes-api || true
+            docker stop recipes-api || true
+            docker rm recipes-api || true
 
             docker run -d --name recipes-api -p 80:3000 $DOCKER_IMAGE
           EOF

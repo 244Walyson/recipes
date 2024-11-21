@@ -193,8 +193,8 @@ jobs:
             echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
             echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
             echo "GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL" >> .env
-            echo "GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID" >> .env
-            echo "GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET" >> .env
+            echo "GITHUB_CLIENT_ID=$CLIENT_ID_GITHUB" >> .env
+            echo "GITHUB_CLIENT_SECRET=$CLIENT_SECRET_GITHUB" >> .env
             echo "DATABASE_URL=$DATABASE_URL" >> .env
             echo "EMAIL_USER=$EMAIL_USER" >> .env
             echo "EMAIL_PASS=$EMAIL_PASS" >> .env

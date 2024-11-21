@@ -167,19 +167,16 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh-host: 157.245.86.200
 
-      - name: executing remote ssh commands using password
+      - name: Execute remote SSH commands
         uses: appleboy/ssh-action@v1.2.0
-        env:
-          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         with:
           host: 157.245.86.200
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            whoami
-            echo "Pulling Docker image: $DOCKER_IMAGE"
-            docker pull $DOCKER_IMAGE
+            echo "Pulling Docker image..."
+            docker pull ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}  # Nome da imagem Docker
 
             echo "Stopping existing container..."
             docker stop recipes-api || true
@@ -188,4 +185,4 @@ jobs:
             docker rm recipes-api || true
 
             echo "Starting new container..."
-            docker run -d --name recipes-api -p 80:3000 $DOCKER_IMAGE
+            docker run -d --name recipes-api -p 80:3000 ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}

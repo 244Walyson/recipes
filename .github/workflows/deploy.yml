@@ -162,9 +162,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up SSH key for deployment
-        uses: webfactory/ssh-agent@v0.5.3
+        uses: kielabokkie/ssh-key-and-known-hosts-action@v1
         with:
-          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-host: 157.245.86.200
 
       - name: Set Docker image variable
         id: docker_image
@@ -174,7 +175,7 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.OPEN_SSH_KEY }} root@157.245.86.200 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} root@157.245.86.200 << 'EOF'
            docker pull $DOCKER_IMAGE
 
            docker stop recipes-api || true

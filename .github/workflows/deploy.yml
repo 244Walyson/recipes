@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
 
     steps:
       - name: Checkout repository
@@ -20,8 +22,19 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install dependencies
-        run: cd ./backend && npm install
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (backend)
+        run: |
+          cd ./backend
+          npm install
 
   test:
     runs-on: ubuntu-latest
@@ -36,6 +49,14 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Restore dependencies from cache
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       - name: Run tests (NestJS)
         run: cd ./backend && npm run test
 
@@ -49,7 +70,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd ./backend  # Certifique-se de navegar para o diretório correto
+          cd ./backend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }} .
 
   deploy_docker_image:

@@ -152,7 +152,7 @@ jobs:
           echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker push ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }}
 
-  deploy:
+    deploy:
     runs-on: ubuntu-latest
     needs: build__and_push_backend_docker_image
     environment: production
@@ -184,29 +184,36 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << 'END'
+          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << END
             echo "Docker image: $DOCKER_IMAGE"
             export DOCKER_IMAGE=$DOCKER_IMAGE
 
+            # Criar o arquivo .env dinamicamente
+            echo "DOCKER_IMAGE=$DOCKER_IMAGE" > .env
+            echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+            echo "GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL" >> .env
+            echo "GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID" >> .env
+            echo "GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET" >> .env
+            echo "DATABASE_URL=$DATABASE_URL" >> .env
+            echo "EMAIL_USER=$EMAIL_USER" >> .env
+            echo "EMAIL_PASS=$EMAIL_PASS" >> .env
+            echo "APP_URL=$APP_URL" >> .env
+            echo "FRONTEND_URL=$FRONTEND_URL" >> .env
+            echo "AWS_REGION=$AWS_REGION" >> .env
+            echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
+            echo "AWS_S3_BUCKET=$AWS_S3_BUCKET" >> .env
+
+            # Pull the Docker image
             docker pull $DOCKER_IMAGE
 
+            # Stop and remove any existing containers
             docker stop recipes-api || true
             docker rm recipes-api || true
 
+            # Run the Docker container with the .env file
             docker run -d --name recipes-api -p 80:3000 \
-              -e GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-              -e GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-              -e GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
-              -e GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
-              -e GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET \
-              -e DATABASE_URL=$DATABASE_URL \
-              -e EMAIL_USER=$EMAIL_USER \
-              -e EMAIL_PASS=$EMAIL_PASS \
-              -e APP_URL=$APP_URL \
-              -e FRONTEND_URL=$FRONTEND_URL \
-              -e AWS_REGION=$AWS_REGION \
-              -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-              -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-              -e AWS_S3_BUCKET=$AWS_S3_BUCKET \
+              --env-file .env \
               $DOCKER_IMAGE
           END

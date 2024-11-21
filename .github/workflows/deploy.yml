@@ -186,6 +186,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
           echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
           echo "GOOGLE_CLIENT_ID_ANDROID=${{ secrets.GOOGLE_CLIENT_ID_ANDROID }}" >> .env
+          echo "DATABASE_URL"=${{ secrets.DATABASE_URL }} >> .env
 
           scp .env root@157.245.86.200:/app/.env
 

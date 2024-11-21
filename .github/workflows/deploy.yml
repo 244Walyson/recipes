@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, reopened, closed]
 
 jobs:
-  build:
+  build_backend:
     runs-on: ubuntu-latest
     outputs:
       node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
@@ -36,9 +36,37 @@ jobs:
           cd ./backend
           npm install
 
-  test:
+  build_frontend:
     runs-on: ubuntu-latest
-    needs: build
+    outputs:
+      node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (backend)
+        run: |
+          cd ./frontend
+          npm install
+
+  tests_backend:
+    runs-on: ubuntu-latest
+    needs: build_backend
 
     steps:
       - name: Checkout repository
@@ -57,12 +85,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Run tests (NestJS)
+      - name: Run unit tests (NestJS)
         run: cd ./backend && npm run test
 
-  build__and_push_docker_image:
+      - name: Run e2e tests (NestJS)
+        run: cd ./backend && npm run test:e2e
+
+  build__and_push_backend_docker_image:
     runs-on: ubuntu-latest
-    needs: test
+    needs: tests_backend
 
     steps:
       - name: Checkout repository
@@ -83,6 +114,26 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
           docker push ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
+
+  build__and_push_frontend_docker_image:
+    runs-on: ubuntu-latest
+    needs: tests_backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN }}
+      - name: Build Docker image
+        run: |
+          cd ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }} .
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }}
 
   # deploy:
   #   runs-on: ubuntu-latest

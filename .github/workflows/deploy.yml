@@ -36,7 +36,7 @@ jobs:
           node-version: "20"
 
       - name: Run tests (NestJS)
-        run: npm run test
+        run: cd ./backend && npm run test
 
   build_docker_image:
     runs-on: ubuntu-latest

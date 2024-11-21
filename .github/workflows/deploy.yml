@@ -170,10 +170,9 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
         run: |
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" > .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }}" >> .env
-          echo "GITHUB_CLIENT_ID=${{ secrets.CLIENT_ID_GITHUB }}" >> .env
           echo "GITHUB_CLIENT_SECRET=${{ secrets.CLIENT_SECRET_GITHUB }}" >> .env
           echo "GITHUB_CALLBACK_URL=${{ secrets.CALLBACK_URL_GITHUB }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
@@ -186,6 +185,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
           echo "AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}" >> .env
           echo "GOOGLE_CLIENT_ID_ANDROID=${{ secrets.GOOGLE_CLIENT_ID_ANDROID }}" >> .env
+          echo "GITHUB_CLIENT_ID=${{ secrets.CLIENT_ID_GITHUB }}" >> .env
 
           scp .env root@157.245.86.200:/app/.env
 

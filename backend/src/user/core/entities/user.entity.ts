@@ -7,7 +7,7 @@ export class User {
   username: string;
   password: string;
   imgUrl: string;
-  authProvider: 'local' | 'oauth2';
+  authProvider: string;
   numberOfRecipes: number;
   numberOfFollowers: number;
   numberOfFollowings: number;

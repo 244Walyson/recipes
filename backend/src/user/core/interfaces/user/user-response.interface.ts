@@ -5,6 +5,7 @@ export interface IUserResponse {
   imgUrl: string;
   username: string;
   password?: string;
+  authProvider?: string;
   numberOfRecipes?: number;
   numberOfFollowers?: number;
   numberOfFollowings?: number;

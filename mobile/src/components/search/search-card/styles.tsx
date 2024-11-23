@@ -28,16 +28,18 @@ export const styles = (theme: any) =>
     },
     textTitle: {
       fontSize: 20,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textType: {
       fontSize: 16,
       color: theme.tertiary,
+      fontFamily: "ABeeZee_400Regular",
     },
     textAuthor: {
       fontSize: 18,
       color: theme.tertiary,
+      fontFamily: "ABeeZee_400Regular",
     },
     image: {
       width: 80,

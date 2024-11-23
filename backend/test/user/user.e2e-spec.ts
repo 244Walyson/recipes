@@ -100,6 +100,8 @@ describe('UserController (e2e)', () => {
     expect(response.body).toHaveProperty('name');
     expect(response.body).toHaveProperty('email');
     expect(response.body).toHaveProperty('username');
+    expect(response.body).not.toHaveProperty('password');
+    expect(response.body).not.toHaveProperty('authProvider');
   });
 
   // it('/users/:id (PUT)', async () => {
@@ -133,6 +135,8 @@ describe('UserController (e2e)', () => {
     expect(response.body).toHaveProperty('data');
     expect(response.body.data).toBeInstanceOf(Array);
     expect(response.body.data.length).toBeGreaterThan(0);
+    expect(response.body.data[0]).not.toHaveProperty('password');
+    expect(response.body.data[0]).not.toHaveProperty('authProvider');
   });
 
   it('/users/follow/:followeeId (POST)', async () => {

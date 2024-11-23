@@ -19,6 +19,7 @@ export class CreateRecipeUseCase {
   ) {}
 
   async execute(recipe: IReciperequest): Promise<IRecipeResponse> {
+    console.log('Creating recipe', recipe);
     const recipeEntity = RecipeMapper.toEntity(recipe);
     await this.validateMealTypes(recipe.mealTypes);
     await this.validateCuisineStyles(recipe.cuisineStyles);

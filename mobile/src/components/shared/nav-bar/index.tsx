@@ -1,19 +1,14 @@
 import React from "react";
 import { View, Pressable } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 
-type TabBarProps = BottomTabBarProps;
-
-function TabBar({ state, descriptors, navigation }: TabBarProps) {
+function TabBar({ state, descriptors, navigation }: Readonly<any>) {
   const { theme } = useTheme();
 
-  // Lista de rotas válidas com ícones associados
-  const validRoutes = ["home", "search", "profile", "new-recipe"]; // Liste as rotas válidas aqui
+  const validRoutes = ["home", "search", "profile", "new-recipe"];
 
-  // Função para obter o ícone da rota
   const getIcon = (routeName: string) => {
     switch (routeName) {
       case "home":
@@ -25,72 +20,72 @@ function TabBar({ state, descriptors, navigation }: TabBarProps) {
       case "new-recipe":
         return "plus";
       default:
-        return null; // Não renderiza ícone se não for uma rota válida
+        return null;
     }
   };
 
   return (
     <View style={[styles(theme).tabBarContainer]}>
-      {state.routes.map((route, index) => {
-        const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
+      {state.routes
+        .filter((route: any) => {
+          const { options } = descriptors[route.key];
+          const tabBarStyle: any = options.tabBarStyle;
+          return !tabBarStyle?.display || tabBarStyle.display !== "none";
+        })
+        .map((route: any, index: any) => {
+          const { options } = descriptors[route.key];
 
-        const isFocused = state.index === index;
+          const isFocused = state.index === index;
 
-        const onPress = () => {
-          const event = navigation.emit({
-            type: "tabPress",
-            target: route.key,
-            canPreventDefault: true,
-          });
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: "tabLongPress",
-            target: route.key,
-          });
-        };
+          const onLongPress = () => {
+            navigation.emit({
+              type: "tabLongPress",
+              target: route.key,
+            });
+          };
 
-        const iconName = validRoutes.includes(route.name)
-          ? getIcon(route.name)
-          : null;
+          const iconName = validRoutes.includes(route.name)
+            ? getIcon(route.name)
+            : null;
 
-        return (
-          <Pressable
-            key={route.key}
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={[
-              styles(theme).tabButton,
-              isFocused
-                ? { backgroundColor: theme.foreground }
-                : { backgroundColor: theme.background },
-            ]}
-          >
-            <View style={styles(theme).iconContainer}>
-              {iconName && (
-                <AntDesign
-                  name={iconName}
-                  size={24}
-                  color={isFocused ? theme.background : theme.foreground}
-                />
-              )}
-            </View>
-          </Pressable>
-        );
-      })}
+          return (
+            <Pressable
+              key={route.key}
+              accessibilityState={isFocused ? { selected: true } : {}}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={[
+                styles(theme).tabButton,
+                isFocused
+                  ? { backgroundColor: theme.foreground }
+                  : { backgroundColor: theme.background },
+              ]}
+            >
+              <View style={styles(theme).iconContainer}>
+                {iconName && (
+                  <AntDesign
+                    name={iconName}
+                    size={24}
+                    color={isFocused ? theme.background : theme.foreground}
+                  />
+                )}
+              </View>
+            </Pressable>
+          );
+        })}
     </View>
   );
 }

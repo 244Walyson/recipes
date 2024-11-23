@@ -1,9 +1,11 @@
-import axios from "axios";
+import axiosIntance from "./interceptors";
 import { API_URL } from "../utils/system";
 
 export const getMealTypes = async (name: string) => {
   try {
-    const response = await axios.get(`${API_URL}/meal-types?name=${name}`);
+    const response = await axiosIntance.get(
+      `${API_URL}/meal-types?name=${name}`
+    );
     return response.data;
   } catch (error) {
     console.log(error);
@@ -13,7 +15,7 @@ export const getMealTypes = async (name: string) => {
 
 export const createMealType = async (name: string) => {
   try {
-    const response = await axios.post(`${API_URL}/meal-types`, { name });
+    const response = await axiosIntance.post(`${API_URL}/meal-types`, { name });
     return response.data;
   } catch (error) {
     console.log(error);

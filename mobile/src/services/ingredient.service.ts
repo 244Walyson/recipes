@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosIntance from "./interceptors";
 import { API_URL } from "../utils/system";
 
 export const getIngredients = async (name?: string) => {
@@ -7,7 +7,7 @@ export const getIngredients = async (name?: string) => {
 
     if (name) queryParams.append("name", name);
 
-    const response = await axios.get(
+    const response = await axiosIntance.get(
       `${API_URL}/ingredients?${queryParams.toString()}`
     );
     return response.data;
@@ -19,7 +19,9 @@ export const getIngredients = async (name?: string) => {
 
 export const createIngredient = async (name: string) => {
   try {
-    const response = await axios.post(`${API_URL}/ingredients`, { name });
+    const response = await axiosIntance.post(`${API_URL}/ingredients`, {
+      name,
+    });
     return response.data;
   } catch (error) {
     console.log(error);

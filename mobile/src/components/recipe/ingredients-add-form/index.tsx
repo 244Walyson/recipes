@@ -21,13 +21,12 @@ import ErrorContainer from "../../shared/error-container";
 import LoadingContainer from "../../shared/loading-container";
 import SuccessContainer from "../../shared/error-container copy";
 import SuggestionItem from "../suggestion-item";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
+import useFormFieldsFromContext from "@/src/hooks/use-recipe-form-field";
 
-type IngredisAddFormProps = {
-  onAddIngredient: (ingredient: IIngredient[]) => void;
-};
-
-const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
+const IngredisAddForm = () => {
   const { theme } = useTheme();
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [ingredients, setIngredients] = useState<IIngredient[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -69,11 +68,10 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
   };
 
   useEffect(() => {
-    onAddIngredient(ingredients);
-  }, [ingredients]);
+    setIngredients(recipeRequest.ingredients);
+  }, [recipeRequest]);
 
   const handleSelectedIngredient = (ingredient: IIngredient) => {
-    console.log("ingredient", ingredient);
     const updatedFormData = {
       ...ingredientsFormData,
       id: { ...ingredientsFormData.id, value: ingredient.id },
@@ -142,6 +140,7 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
   useEffect(() => {
     setTimeout(() => {
       setError("");
+      setSuccess(false);
     }, 3000);
   }, [success, error]);
 
@@ -157,7 +156,7 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
   }, [ingredientsFormData.id.value]);
 
   return (
-    <View>
+    <View style={styles(theme).container}>
       {!!error && <ErrorContainer error={error} />}
       {success && (
         <SuccessContainer message="Ingrediente criado com sucesso!" />
@@ -229,14 +228,16 @@ const IngredisAddForm = ({ onAddIngredient }: IngredisAddFormProps) => {
 
       {ingredients.length > 0 &&
         ingredients.map((ingredient, index) => (
-          <IngredintsCard
-            key={`ingredient-${ingredient.name}-${index}`}
-            name={ingredient.name}
-            quantity={ingredient.quantity}
-            unit={ingredient.unit}
-            editing={true}
-            onDelete={() => handleRemoveIngredient(ingredient)}
-          />
+          <View style={{ marginTop: 5 }}>
+            <IngredintsCard
+              key={`ingredient-${ingredient.name}-${index}`}
+              name={ingredient.name}
+              quantity={ingredient.quantity}
+              unit={ingredient.unit}
+              editing={true}
+              onDelete={() => handleRemoveIngredient(ingredient)}
+            />
+          </View>
         ))}
 
       {modalVisible && (

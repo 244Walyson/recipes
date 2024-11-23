@@ -5,7 +5,7 @@ export const styles = (theme: any) =>
     container: {
       flexGrow: 1,
       backgroundColor: theme.background,
-      paddingHorizontal: 10,
+      paddingHorizontal: 20,
       paddingBottom: 70,
     },
     textTrendWrapper: {
@@ -29,11 +29,12 @@ export const styles = (theme: any) =>
     },
     trendingText: {
       fontSize: 24,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textColored: {
       color: theme.primary,
+      fontFamily: "ABeeZee_400Regular",
       fontSize: 18,
     },
     scrollContainer: {

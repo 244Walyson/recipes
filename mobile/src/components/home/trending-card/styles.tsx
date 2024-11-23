@@ -20,12 +20,14 @@ export const styles = (theme: any) =>
       fontSize: 18,
       marginLeft: 10,
       color: theme.tertiary,
+      fontFamily: "ABeeZee_400Regular",
     },
     textTitle: {
-      fontSize: 16,
+      fontSize: 18,
       marginHorizontal: 10,
       marginVertical: 5,
       color: theme.foreground,
+      fontFamily: "ABeeZee_400Regular",
     },
     textDescWrapper: {
       width: "100%",

@@ -4,5 +4,5 @@ export interface IUserRequest {
   imgUrl?: string;
   username: string;
   password?: string;
-  authProvider?: 'local' | 'oauth2';
+  authProvider?: string;
 }

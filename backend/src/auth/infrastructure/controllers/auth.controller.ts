@@ -50,11 +50,13 @@ export class AuthController {
     return await this.refreshTokenUseCase.execute(refreshTokenDto);
   }
 
+  @Public()
   @Post('recover-password/token/:email')
   async recoverPasswordToken(@Param() email: string) {
     return this.createRecoverPasswordTokenUseCase.execute({ email });
   }
 
+  @Public()
   @Post('reset-password')
   @HttpCode(200)
   async updatePassword(@Body() dto: RecovrePassordRequestDto) {
@@ -75,6 +77,7 @@ export class AuthController {
     return this.oAuth2AuthenticationUseCase.execute(req.user);
   }
 
+  @Public()
   @Post('/redirect/github')
   async githubLoginCallback(@Body() { code }: { code: string }) {
     const { user } =
@@ -83,6 +86,7 @@ export class AuthController {
     return this.oAuth2AuthenticationUseCase.execute(user);
   }
 
+  @Public()
   @Post('oauth2/callback/google')
   async googleCallback(@Body() { idToken }: { idToken: string }) {
     const user = await this.passportGoogleStrategy.validateTokenWithGoogle({

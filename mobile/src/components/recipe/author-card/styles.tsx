@@ -7,8 +7,9 @@ export const styles = (theme: any) =>
       width: "100%",
       flexDirection: "row",
       gap: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.tertiary,
+      borderWidth: 0.1,
+      borderColor: theme.quaternary,
+      borderRadius: 12,
       padding: 10,
     },
     text: {

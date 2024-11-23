@@ -46,13 +46,14 @@ const ResetPasswordContent = () => {
 
   return (
     <div className="flex w-full bg-background h-screen justify-center items-center">
-      <div className="w-11/12 h-[400px] p-3 z-40">
-        <h1 className="text-4xl pb-3">Resetar senha</h1>
+      <div className="w-11/12 h-[400px] md:w-[400px] p-3 z-40">
+        <h1 className="text-4xl pb-3 text-foreground">Resetar senha</h1>
         <Input
           placeholder="Nova senha"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="border-primary placeholder:text-primary"
         />
         {error && <p className="text-red-500 pt-2">{error}</p>}
         <div className="flex w-full justify-end pt-3">
@@ -61,11 +62,15 @@ const ResetPasswordContent = () => {
           </Button>
         </div>
       </div>
-      <Image src={topWave} alt="top wave" className="absolute top-0 w-full" />
+      <Image
+        src={topWave}
+        alt="top wave"
+        className="absolute top-0 w-full md:top-[-900px]"
+      />
       <Image
         src={bottomWave}
         alt="bottom wave"
-        className="absolute bottom-0 w-full"
+        className="absolute bottom-0 w-full md:bottom-[-600px]"
       />
     </div>
   );

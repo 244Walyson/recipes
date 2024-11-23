@@ -8,7 +8,7 @@ type MealTypeCardProps = {
 };
 
 const MealTypeCard = ({ name, onDelete }: MealTypeCardProps) => {
-  const theme = useTheme();
+  const { theme } = useTheme();
   return (
     <View style={styles(theme).container}>
       <Text style={styles(theme).text}>{name}</Text>

@@ -1,0 +1,221 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  build_backend:
+    runs-on: ubuntu-latest
+    outputs:
+      node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (backend)
+        run: |
+          cd ./backend
+          npm install
+
+  build_frontend:
+    runs-on: ubuntu-latest
+    outputs:
+      node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (backend)
+        run: |
+          cd ./frontend
+          npm install
+
+  tests_backend:
+    runs-on: ubuntu-latest
+    needs: build_backend
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+      GITHUB_CLIENT_ID: ${{ secrets.CLIENT_ID_GITHUB }}
+      GITHUB_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET_GITHUB }}
+      GITHUB_CALLBACK_URL: ${{ secrets.CALLBACK_URL_GITHUB }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      APP_URL: ${{ secrets.APP_URL }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      GOOGLE_CLIENT_ID_ANDROID: ${{ secrets.GOOGLE_CLIENT_ID_ANDROID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Restore dependencies from cache
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Run unit tests (NestJS)
+        run: cd ./backend && npm run test
+
+      - name: Run e2e tests (NestJS)
+        run: cd ./backend && npm run test:e2e
+
+  build__and_push_backend_docker_image:
+    runs-on: ubuntu-latest
+    needs: tests_backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN }}
+
+      - name: Build Docker image
+        run: |
+          cd ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }} .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
+
+  build__and_push_frontend_docker_image:
+    runs-on: ubuntu-latest
+    needs: build_frontend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN }}
+      - name: Build Docker image
+        run: |
+          cd ./frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }} .
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build__and_push_backend_docker_image
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH key for deployment
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to DigitalOcean
+        env:
+          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+          GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          APP_URL: ${{ secrets.APP_URL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << END
+            echo "Docker image: $DOCKER_IMAGE"
+            export DOCKER_IMAGE=$DOCKER_IMAGE
+
+            # Criar o arquivo .env dinamicamente
+            echo "DOCKER_IMAGE=$DOCKER_IMAGE" > .env
+            echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+            echo "GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL" >> .env
+            echo "GITHUB_CLIENT_ID=$CLIENT_ID_GITHUB" >> .env
+            echo "GITHUB_CLIENT_SECRET=$CLIENT_SECRET_GITHUB" >> .env
+            echo "GITHUB_CALLBACK_URL=$CALLBACK_URL_GITHUB" >> .env
+            echo "DATABASE_URL=$DATABASE_URL" >> .env
+            echo "EMAIL_USER=$EMAIL_USER" >> .env
+            echo "EMAIL_PASS=$EMAIL_PASS" >> .env
+            echo "APP_URL=$APP_URL" >> .env
+            echo "FRONTEND_URL=$FRONTEND_URL" >> .env
+            echo "AWS_REGION=$AWS_REGION" >> .env
+            echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
+            echo "AWS_S3_BUCKET=$AWS_S3_BUCKET" >> .env
+
+            # Pull the Docker image
+            docker pull $DOCKER_IMAGE
+
+            # Stop and remove any existing containers
+            docker stop recipes-api || true
+            docker rm recipes-api || true
+
+            # Run the Docker container with the .env file
+            docker run -d --name recipes-api -p 80:3000 \
+              --network app-network \
+              --env-file .env \
+              $DOCKER_IMAGE
+          END

@@ -83,7 +83,7 @@ const Home = () => {
               key={recipe.id}
               imgUrl={recipe.imgUrl}
               title={recipe.name}
-              time={recipe.totalTime?.toString()}
+              time={recipe.preparationTime?.toString()}
               onLikePress={() => console.log("Like")}
               onPress={() => router.push(`/recipes/${recipe.id}`)}
             />
@@ -130,7 +130,7 @@ const Home = () => {
               key={item.id}
               imgUrl={item.imgUrl}
               name={item.name}
-              time={item.totalTime?.toString()}
+              time={item.preparationTime?.toString()}
               onLikePress={() => console.log("Like")}
               onPress={() => router.push(`/recipes/${item.id}`)}
               author={item.user.name}

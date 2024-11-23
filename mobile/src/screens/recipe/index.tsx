@@ -14,12 +14,14 @@ import { styles } from "./styles";
 import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
 import DescriptionContainer from "@/src/components/recipe/description-container";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
-import { getRecipeById } from "@/src/services/recipe.service";
+import { getRecipeById, viewRecipe } from "@/src/services/recipe.service";
 import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 import { useLocalSearchParams } from "expo-router";
 import { getStoredUserID } from "@/src/services/user.service";
 import AuthorCard from "@/src/components/recipe/author-card";
+import { useRouter } from "expo-router";
+import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
 
 type InstructionStep = {
   step: number;
@@ -34,6 +36,7 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 const Recipe = () => {
   const [focusedBtn, setFocusedBtn] = React.useState("ingredients");
   const { theme } = useTheme();
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isRecipeOwner, setIsRecipeOwner] = useState(false);
   const [recipe, setRecipe] = React.useState<IRecipeResponse>();
@@ -64,7 +67,17 @@ const Recipe = () => {
         setIsRecipeOwner(true);
       }
     });
-  }, [refreshing]);
+  }, [refreshing, id]);
+
+  useEffect(() => {
+    if (recipe && !recipe?.isViewed) {
+      viewRecipe(recipe.id);
+    }
+  }, [recipe]);
+
+  const handleEditRecipe = () => {
+    router.push(`/(tabs)/recipes/edit/${recipe?.id}`);
+  };
 
   return (
     <View style={styles(theme).container}>
@@ -87,10 +100,12 @@ const Recipe = () => {
           style={[styles(theme).image, { height: H_MAX_HEIGHT }]}
         >
           <HeaderSecondary
-            title="Nova receita"
+            title="Receita"
             ioniconLeftName="arrow-left"
             ioniconRightName={isRecipeOwner ? "square-edit-outline" : ""}
-            colorEmphasis="#fff"
+            colorEmphasis={recipe?.imgUrl ? "#fff" : theme.foreground}
+            onPressLeft={() => router.back()}
+            onPressRight={() => handleEditRecipe()}
           />
         </ImageBackground>
       </Animated.View>
@@ -116,33 +131,35 @@ const Recipe = () => {
         }
       >
         {recipe && (
-          <>
+          <View style={{ gap: 16 }}>
             <DescriptionContainer
               title={recipe.name}
               time={recipe.preparationTime?.toString()}
-              likes={recipe.favoriteCount}
               mealType={
                 recipe.mealTypes && recipe.mealTypes.length > 0
                   ? recipe.mealTypes[0].name
                   : undefined
               }
-              liked={recipe.isFavorite}
+              favourite={recipe.isFavorite || false}
+              recipeId={recipe.id}
+              favouriteCount={recipe.favoriteCount || 0}
             />
             <AuthorCard
               name={recipe.user.name}
               avatarUrl={recipe.user.imgUrl}
               recipeCount={recipe.user.numberOfRecipes}
+              userId={recipe.user.id}
             />
-          </>
+          </View>
         )}
 
         <View style={styles(theme).btnWrapper}>
-          <PrimaryButton
+          <PrimaryButtonSlim
             text="Ingredientes"
             onPress={() => setFocusedBtn("ingredients")}
             isActive={focusedBtn === "ingredients"}
           />
-          <PrimaryButton
+          <PrimaryButtonSlim
             text="modo de preparo"
             onPress={() => setFocusedBtn("modo de preparo")}
             isActive={focusedBtn != "ingredients"}

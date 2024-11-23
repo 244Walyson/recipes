@@ -8,6 +8,7 @@ import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import ErrorContainer from "../../shared/error-container";
 import LoadingContainer from "../../shared/loading-container";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 
 type ImageUploadFormProps = {
   onImageUpladed: (imgUrl: string) => void;
@@ -15,6 +16,7 @@ type ImageUploadFormProps = {
 
 const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
   const { theme } = useTheme();
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [imageUrl, setImageUrl] = useState<string>();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,7 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
             const { url } = imgUrl;
             onImageUpladed(url);
             setImageUrl(url);
+            updateRecipeRequest({ ...recipeRequest, imgUrl: url });
           }
           setLoading(false);
         })

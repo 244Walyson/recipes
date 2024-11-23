@@ -12,6 +12,7 @@ export class UserMapper {
       password: dto.password,
       username: dto.username,
       imgUrl: dto.imgUrl,
+      authProvider: dto.authProvider ?? 'local',
     });
     return user;
   }

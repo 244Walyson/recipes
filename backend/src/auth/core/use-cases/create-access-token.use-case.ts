@@ -15,16 +15,14 @@ export class CreateAccessTokenUseCase {
     private readonly createRefreshTokenUseCase: CreateRefreshTokenUseCase,
   ) {}
 
-  async execute(
-    credentials: ICreadentials,
-    withPassword: boolean = true,
-  ): Promise<IAccessToken> {
+  async execute(credentials: ICreadentials): Promise<IAccessToken> {
     const { email, password } = credentials;
 
     try {
       const user = await this.findUserByEmail.execute(email);
 
-      if (withPassword) {
+      if (user.authProvider === 'local') {
+        console.log('Local user');
         await this.validatePassword(password, user.password);
       }
 

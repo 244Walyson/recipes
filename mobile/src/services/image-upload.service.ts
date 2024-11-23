@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosIntance from "./interceptors";
 import { API_URL } from "../utils/system";
 
 export const uploadImage = async (uri: string) => {
@@ -22,11 +22,15 @@ export const uploadImage = async (uri: string) => {
   formData.append("file", fileToUpload as any);
 
   try {
-    const response = await axios.postForm(`${API_URL}/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axiosIntance.postForm(
+      `${API_URL}/upload`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
     console.log("Upload bem-sucedido!", response.data);
     return response.data;

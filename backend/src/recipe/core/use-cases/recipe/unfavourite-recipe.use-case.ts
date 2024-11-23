@@ -16,7 +16,7 @@ export class UnfavouriteRecipeUseCase {
       await this.recipeRepository.unfavouriteRecipe(dto.recipeId, dto.userId);
     } catch (error) {
       console.log(error);
-      throw new RecipeDomainException('Error adding view count');
+      throw new RecipeDomainException('Error unfavourite recipe');
     }
   }
 

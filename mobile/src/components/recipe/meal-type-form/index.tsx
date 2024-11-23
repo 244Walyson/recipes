@@ -12,14 +12,14 @@ import { styles } from "./styles";
 import CustomModal from "../../shared/modal";
 import MealTypeCard from "../meal-type-card";
 import SuggestionItem from "../suggestion-item";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 
-type MealTypeFormProps = {
-  onAddMealType: (mealTypes: IMealType[]) => void;
-};
-
-const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
+const MealTypeForm = () => {
   const { theme } = useTheme();
-  const [mealTypes, setMealTypes] = useState<IMealType[]>([]);
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
+  const [mealTypes, setMealTypes] = useState<IMealType[]>(
+    recipeRequest.mealTypes
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -52,7 +52,6 @@ const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
       id: { ...id, value: "" },
       name: { ...name, value: "" },
     });
-    onAddMealType(mealTypes);
     setMealTypeSuggestions([]);
   };
 
@@ -112,10 +111,12 @@ const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
   };
 
   useEffect(() => {
-    if (mealTypesFormData.id.value) {
-      addMealType();
-    }
-  }, [mealTypesFormData.id.value]);
+    updateRecipeRequest({ mealTypes });
+  }, [mealTypes]);
+
+  useEffect(() => {
+    setMealTypes(recipeRequest.mealTypes);
+  }, [recipeRequest]);
 
   return (
     <View>

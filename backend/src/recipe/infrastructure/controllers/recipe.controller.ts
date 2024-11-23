@@ -81,6 +81,11 @@ export class RecipeController {
     return this.createRecipeUseCase.execute(dto);
   }
 
+  @Get('favourites/:userId')
+  async getFavouritesbyUserId(@Param('userId') recipeId: string) {
+    return 'hello: ' + recipeId;
+  }
+
   @Post('favourite/:recipeId')
   async favouriteRecipe(@Param('recipeId') recipeId: string, @Request() req) {
     const userId = req.user.sub;

@@ -8,6 +8,7 @@ export const styles = (theme: any) =>
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
       gap: 10,
+      paddingHorizontal: 10,
     },
     textTitle: {
       fontSize: 20,

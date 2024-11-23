@@ -27,9 +27,6 @@ export class RefreshTokenUseCase {
     await this.refreshTokenRepository.revoke(refreshTokenRecovered.id);
 
     const { email } = refreshTokenRecovered;
-    return await this.createAccessToken.execute(
-      { email, password: undefined },
-      false,
-    );
+    return await this.createAccessToken.execute({ email, password: undefined });
   }
 }

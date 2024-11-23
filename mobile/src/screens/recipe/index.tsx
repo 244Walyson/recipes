@@ -21,6 +21,7 @@ import { useLocalSearchParams } from "expo-router";
 import { getStoredUserID } from "@/src/services/user.service";
 import AuthorCard from "@/src/components/recipe/author-card";
 import { useRouter } from "expo-router";
+import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
 
 type InstructionStep = {
   step: number;
@@ -153,12 +154,12 @@ const Recipe = () => {
         )}
 
         <View style={styles(theme).btnWrapper}>
-          <PrimaryButton
+          <PrimaryButtonSlim
             text="Ingredientes"
             onPress={() => setFocusedBtn("ingredients")}
             isActive={focusedBtn === "ingredients"}
           />
-          <PrimaryButton
+          <PrimaryButtonSlim
             text="modo de preparo"
             onPress={() => setFocusedBtn("modo de preparo")}
             isActive={focusedBtn != "ingredients"}

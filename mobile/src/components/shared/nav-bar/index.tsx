@@ -1,16 +1,10 @@
 import React from "react";
 import { View, Pressable } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
-import {
-  BottomTabBarProps,
-  BottomTabNavigationOptions as TabBarOptions,
-} from "@react-navigation/bottom-tabs";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 
-type TabBarProps = BottomTabBarProps;
-
-function TabBar({ state, descriptors, navigation }: Readonly<TabBarProps>) {
+function TabBar({ state, descriptors, navigation }: Readonly<any>) {
   const { theme } = useTheme();
 
   const validRoutes = ["home", "search", "profile", "new-recipe"];
@@ -33,12 +27,12 @@ function TabBar({ state, descriptors, navigation }: Readonly<TabBarProps>) {
   return (
     <View style={[styles(theme).tabBarContainer]}>
       {state.routes
-        .filter((route) => {
+        .filter((route: any) => {
           const { options } = descriptors[route.key];
           const tabBarStyle: any = options.tabBarStyle;
           return !tabBarStyle?.display || tabBarStyle.display !== "none";
         })
-        .map((route, index) => {
+        .map((route: any, index: any) => {
           const { options } = descriptors[route.key];
 
           const isFocused = state.index === index;

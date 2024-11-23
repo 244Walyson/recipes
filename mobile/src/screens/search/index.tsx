@@ -37,7 +37,7 @@ type ModalData = {
   data: {
     key: string;
     title: string;
-    data: { id: number; name: string }[];
+    data: { id: string; name: string }[];
   };
 };
 
@@ -87,7 +87,7 @@ const Search = () => {
     data,
     multipleSelection = false,
   }: {
-    data: { title: string; key: string; data: { id: number; name: string }[] };
+    data: { title: string; key: string; data: { id: string; name: string }[] };
     multipleSelection?: boolean;
   }) => {
     if (data.key === "ingredients") {
@@ -176,7 +176,9 @@ const Search = () => {
           },
         ]}
       >
-        <Header />
+        <View style={styles(theme).header}>
+          <Header />
+        </View>
         <View style={{ paddingHorizontal: 10 }}>
           <CustomSearchBar
             onSearch={handleSearch}
@@ -263,7 +265,14 @@ const Search = () => {
         </View>
         <View style={{ alignItems: "flex-end" }}>
           <TouchableOpacity style={{}} onPress={() => setSearchFilters({})}>
-            <Text style={{ width: 100, color: theme.tertiary }}>
+            <Text
+              style={{
+                width: 120,
+                paddingHorizontal: 10,
+                color: theme.tertiary,
+                fontFamily: "ABeeZee_400Regular",
+              }}
+            >
               Limpar Filtros
             </Text>
           </TouchableOpacity>
@@ -305,7 +314,7 @@ const Search = () => {
             title={recipe.name}
             author={recipe.user.name}
             imgUrl={recipe.imgUrl}
-            time={recipe.totalTime?.toString()}
+            time={recipe.preparationTime?.toString()}
             mealType={recipe.mealTypes}
             onPress={() => router.push(`/recipes/${recipe.id}`)}
           />

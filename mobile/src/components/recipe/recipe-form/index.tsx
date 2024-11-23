@@ -27,7 +27,7 @@ import MealTypeForm from "../meal-type-form";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
 import ErrorContainer from "../../shared/error-container";
 import { IReciperequest } from "@/src/interfaces/recipe/recipe-request.interface";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 import GenericRecipeForm from "../generic-form";
@@ -83,6 +83,9 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
         : [],
       userId: userId,
     };
+
+    console.log("data to req", data);
+
     return data;
   };
 
@@ -141,10 +144,10 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       preparationTime: response.preparationTime,
       imgUrl: response.imgUrl,
       additionalTips: response.additionalTips,
-      macronutrients: response.macronutrients && {
-        carbs: response.macronutrients.carbs,
-        protein: response.macronutrients.protein,
-        fat: response.macronutrients.fat,
+      macronutrients: {
+        carbs: response.macronutrients?.carbs ?? 0,
+        protein: response.macronutrients?.protein ?? 0,
+        fat: response.macronutrients?.fat ?? 0,
       },
       servingCount: response.servingCount || undefined,
       isPublished: response.isPublished,
@@ -155,10 +158,37 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       cuisineStyles: response.cuisineStyles,
     };
 
+    console.log("response", response);
     console.log("updatedRecipeRequest", updatedRecipeRequest);
 
     updateRecipeRequest(updatedRecipeRequest);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        updateRecipeRequest({
+          name: "",
+          preparationMethod: [],
+          preparationTime: 0,
+          imgUrl: "",
+          additionalTips: "",
+          macronutrients: {
+            carbs: 0,
+            protein: 0,
+            fat: 0,
+          },
+          servingCount: undefined,
+          isPublished: false,
+          costEstimate: undefined,
+          allergens: [],
+          ingredients: [],
+          mealTypes: [],
+          cuisineStyles: [],
+        });
+      };
+    }, [])
+  );
 
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>

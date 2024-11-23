@@ -6,6 +6,7 @@ export const styles = (theme: any) =>
       fontSize: 16,
       marginVertical: 10,
       color: theme.quaternary,
+      fontFamily: "ABeeZee_400Regular",
     },
     input: {
       width: "100%",
@@ -16,6 +17,7 @@ export const styles = (theme: any) =>
       paddingLeft: 10,
       backgroundColor: theme.opacityBg,
       color: theme.foreground,
+      fontFamily: "ABeeZee_400Regular",
     },
     invalid: {
       borderColor: theme.error,

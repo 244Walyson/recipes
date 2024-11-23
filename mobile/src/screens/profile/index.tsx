@@ -29,7 +29,6 @@ import {
 } from "@/src/services/recipe.service";
 import { removeAllTokens } from "@/src/services/auth.service";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const H_MAX_HEIGHT = 320;
 const H_MIN_HEIGHT = 60;

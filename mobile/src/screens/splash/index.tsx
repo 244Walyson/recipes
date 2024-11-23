@@ -9,11 +9,33 @@ import {
   refreshToken,
 } from "@/src/services/auth.service";
 import { useRouter } from "expo-router";
+import * as Font from "expo-font";
+import {
+  PlayfairDisplay_400Regular,
+  PlayfairDisplay_800ExtraBold,
+} from "@expo-google-fonts/playfair-display";
 
 const SplashScreen = () => {
   const { theme } = useTheme();
   const router = useRouter();
+  const [isFontLoaded, setIsFontLoaded] = useState(false);
   const [animationFinished, setAnimationFinished] = useState(false);
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      try {
+        await Font.loadAsync({
+          PlayfairDisplay_400Regular,
+          PlayfairDisplay_800ExtraBold,
+        });
+        setIsFontLoaded(true);
+      } catch (e) {
+        console.log("Erro ao carregar fontes:", e);
+      }
+    };
+
+    loadFonts();
+  }, []);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -28,17 +50,17 @@ const SplashScreen = () => {
         return;
       }
       const expirationDate = new Date(expiresIn);
-      if (expirationDate >= new Date()) {
+      if (expirationDate < new Date()) {
         await getNewTokenWithRefreshToken();
         return;
       }
       router.replace("/(tabs)/home");
     };
 
-    if (animationFinished) {
+    if (isFontLoaded && animationFinished) {
       checkToken();
     }
-  }, [animationFinished]);
+  }, [isFontLoaded, animationFinished]);
 
   const getNewTokenWithRefreshToken = async () => {
     const refresh_token = await getStoredRefreshToken();

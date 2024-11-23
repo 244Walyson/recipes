@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import SearchBar from "../search-bar";
+import { View, Text } from "react-native";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 

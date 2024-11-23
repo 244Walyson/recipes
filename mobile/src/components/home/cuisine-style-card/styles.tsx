@@ -9,7 +9,7 @@ export const styles = (theme: any) =>
       alignItems: "center",
       justifyContent: "center",
       marginRight: 10,
-      backgroundColor: theme.quaternary,
+      backgroundColor: theme.background,
       padding: 10,
       marginTop: 40,
       gap: 5,
@@ -18,6 +18,7 @@ export const styles = (theme: any) =>
     textBy: {
       fontSize: 12,
       color: theme.secondaryText,
+      fontFamily: "ABeeZee_400Regular",
     },
     textDescWrapper: {
       width: "100%",
@@ -33,16 +34,18 @@ export const styles = (theme: any) =>
     timeText: {
       fontSize: 18,
       color: theme.tertiary,
+      fontFamily: "ABeeZee_400Regular",
     },
     textTitle: {
       fontSize: 18,
       textAlign: "center",
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textAuthor: {
       color: theme.secondaryText,
       fontSize: 14,
+      fontFamily: "ABeeZee_400Regular",
     },
     image: {
       borderRadius: 40,

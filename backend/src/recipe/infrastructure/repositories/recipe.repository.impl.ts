@@ -127,6 +127,8 @@ export class RecipeRepository implements IRecipeRepository {
       ? await this.checkIfViewed(userId, recipe.id)
       : false;
 
+    console.log('RecipeRepository.findbyId', recipe);
+
     return {
       ...recipe,
       isFavorite,

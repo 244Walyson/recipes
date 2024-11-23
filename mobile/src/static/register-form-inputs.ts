@@ -56,7 +56,7 @@ export const genericInputs = {
     validation: (value: string) => true,
     message: "",
   },
-  adictionalTips: {
+  additionalTips: {
     value: "",
     id: "adictionalTips",
     name: "adictionalTips",

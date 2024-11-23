@@ -20,7 +20,18 @@ const GenericRecipeForm = () => {
       ...prevGeneric,
       [fieldName]: value,
     }));
+    setGeneric((prevGeneric) => ({
+      ...prevGeneric,
+      [fieldName]: value,
+    }));
   };
+
+  useEffect(() => {
+    updateRecipeRequest({
+      ...recipeRequest,
+      ...generic,
+    });
+  }, [generic]);
 
   return (
     <View>

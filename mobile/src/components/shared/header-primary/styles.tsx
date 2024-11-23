@@ -6,8 +6,6 @@ const statusBarHeight = Constants.statusBarHeight;
 export const styles = (theme: any) =>
   StyleSheet.create({
     container: {
-      paddingVertical: 20,
-      paddingHorizontal: 20,
       justifyContent: "center",
       marginTop: statusBarHeight,
     },
@@ -20,12 +18,12 @@ export const styles = (theme: any) =>
     },
     headerText: {
       fontSize: 30,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     recipetext: {
       fontSize: 36,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textColored: {

@@ -86,7 +86,7 @@ ingress:
         - path: /
           pathType: ImplementationSpecific
   tls:
-    - secretName: recipes-backend-tls
+    - secretName: letsencrypt-prod
       hosts:
         - api.recipes.waly.dev.br
 

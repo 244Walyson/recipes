@@ -14,22 +14,6 @@ image:
   tag: "latest"
 
 
-  env:
-    GOOGLE_CLIENT_ID: "{{ .Secrets.GOOGLE_CLIENT_ID }}"
-    GOOGLE_CLIENT_SECRET: "{{ .Secrets.GOOGLE_CLIENT_SECRET }}"
-    GOOGLE_CALLBACK_URL: "{{ .Secrets.GOOGLE_CALLBACK_URL }}"
-    GITHUB_CLIENT_ID: "{{ .Secrets.GITHUB_CLIENT_ID }}"
-    GITHUB_CLIENT_SECRET: "{{ .Secrets.GITHUB_CLIENT_SECRET }}"
-    DATABASE_URL: "{{ .Secrets.DATABASE_URL }}"
-    EMAIL_USER: "{{ .Secrets.EMAIL_USER }}"
-    EMAIL_PASS: "{{ .Secrets.EMAIL_PASS }}"
-    APP_URL: "{{ .Secrets.APP_URL }}"
-    FRONTEND_URL: "{{ .Secrets.FRONTEND_URL }}"
-    AWS_REGION: "{{ .Secrets.AWS_REGION }}"
-    AWS_ACCESS_KEY_ID: "{{ .Secrets.AWS_ACCESS_KEY_ID }}"
-    AWS_SECRET_ACCESS_KEY: "{{ .Secrets.AWS_SECRET_ACCESS_KEY }}"
-    AWS_S3_BUCKET: "{{ .Secrets.AWS_S3_BUCKET }}"
-
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 # This is to override the chart name.

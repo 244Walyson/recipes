@@ -9,28 +9,29 @@ import { toValues, updateAndValidate } from "@/src/utils/forms";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 import useFormFieldsFromContext from "@/src/hooks/use-recipe-form-field";
 
-type Macronutrients = {
-  carbs: number;
-  protein: number;
-  fat: number;
-};
-
 const MacronutrientsForm = () => {
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const formFields = useFormFieldsFromContext(macronutrientsInputs);
+
+  console.log("formFields", formFields);
+
   const [macronutrientsFormData, setMacronutrientsFormData] =
     useState<Record<string, FormField>>(formFields);
-
-  useEffect(() => {
-    const macronutrients = toValues(macronutrientsFormData);
-    updateRecipeRequest({ macronutrients });
-  }, [macronutrientsFormData]);
 
   const handleInputChange = (value: string, fieldName: string) => {
     setMacronutrientsFormData(
       updateAndValidate(macronutrientsFormData, fieldName, value)
     );
   };
+
+  useEffect(() => {
+    const formValues = toValues(macronutrientsFormData);
+    console.log("formValuessMacro", formValues);
+    updateRecipeRequest({
+      ...recipeRequest,
+      ...formValues,
+    });
+  }, [macronutrientsFormData]);
 
   return (
     <View

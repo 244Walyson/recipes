@@ -11,6 +11,7 @@ import {
   Animated,
   FlatList,
   RefreshControl,
+  StatusBar,
 } from "react-native";
 import { styles } from "./styles";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
@@ -42,7 +43,7 @@ type ModalData = {
 };
 
 const H_MAX_HEIGHT = 200;
-const H_MIN_HEIGHT = 60;
+const H_MIN_HEIGHT = 80;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Search = () => {
@@ -163,6 +164,7 @@ const Search = () => {
 
   return (
     <View style={styles(theme).container}>
+      <StatusBar translucent={false} backgroundColor={theme.background} />
       <Animated.View
         style={[
           {
@@ -177,7 +179,11 @@ const Search = () => {
         ]}
       >
         <View style={styles(theme).header}>
-          <Header />
+          <Header
+            smallText="Encontre"
+            coloredText="as melhores"
+            bigText="Receitas"
+          />
         </View>
         <View style={{ paddingHorizontal: 10 }}>
           <CustomSearchBar
@@ -263,7 +269,9 @@ const Search = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ alignItems: "flex-end" }}>
+        <View
+          style={{ alignItems: "flex-end", backgroundColor: theme.background }}
+        >
           <TouchableOpacity style={{}} onPress={() => setSearchFilters({})}>
             <Text
               style={{
@@ -277,35 +285,15 @@ const Search = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        {/* <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles(theme).filtersContainer}
-        >
-          {categories.map((category, index) => (
-            <Text
-              key={index}
-              style={[
-                styles(theme).categoryText,
-                focused === category.name ? { color: theme.foreground } : {},
-              ]}
-              onPress={() =>
-                focused === category.name
-                  ? setFocused("")
-                  : setFocused(category.name)
-              }
-            >
-              {category.name}
-            </Text>
-          ))}
-        </ScrollView> */}
       </Animated.View>
 
       <FlatList
-        style={[
-          styles(theme).cardsContainer,
-          { paddingTop: H_MAX_HEIGHT + 100 },
-        ]}
+        showsVerticalScrollIndicator={false}
+        style={[styles(theme).cardsContainer]}
+        contentContainerStyle={{
+          paddingTop: H_MAX_HEIGHT + 60,
+          paddingBottom: H_MIN_HEIGHT + 20,
+        }}
         data={recipes?.data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item: recipe }) => (
@@ -331,7 +319,7 @@ const Search = () => {
             colors={[theme.foreground]}
             tintColor="transparent"
             progressBackgroundColor="transparent"
-            style={{ zIndex: 1000 }}
+            style={{ zIndex: 100 }}
           />
         }
       />

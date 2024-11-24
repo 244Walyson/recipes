@@ -53,7 +53,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
 
   const handleSaveRecipe = async () => {
     console.log("recipeRequest", recipeRequest);
-    const data = await getRecipeData();
+    const data = await getRecipeDataFormated();
     console.log("data", data);
     if (!data) return;
     if (recipeId) {
@@ -63,7 +63,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
     createNewRecipe(data);
   };
 
-  const getRecipeData = async () => {
+  const getRecipeDataFormated = async () => {
     const userId = await getStoredUserID();
     if (!userId) {
       router.replace("/register");
@@ -71,6 +71,21 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
     }
     const data: IReciperequest = {
       ...recipeRequest,
+      macronutrients: recipeRequest.macronutrients
+        ? {
+            carbs: +recipeRequest.macronutrients.carbs,
+            protein: +recipeRequest.macronutrients.protein,
+            fat: +recipeRequest.macronutrients.fat,
+          }
+        : undefined,
+      ingredients: recipeRequest.ingredients.map((ingredient) => {
+        return {
+          id: ingredient.id,
+          name: ingredient.name,
+          quantity: +(ingredient.quantity ?? 0),
+          unit: ingredient.unit,
+        };
+      }),
       preparationTime: +recipeRequest.preparationTime,
       servingCount: recipeRequest.servingCount
         ? +recipeRequest.servingCount
@@ -120,9 +135,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       });
   };
 
-  useEffect(() => {
-    console.log("recipeRequest", recipeRequest);
-  }, [recipeRequest]);
+  useEffect(() => {}, [recipeRequest]);
 
   useEffect(() => {
     console.log("recipeId", recipeId);
@@ -138,17 +151,20 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
   }, [recipeId]);
 
   const updateRecipeRequestFromResponse = (response: IRecipeResponse) => {
+    const macronutrients: Macronnutrients = {
+      carbs: response.macronutrients?.carbs ?? 0,
+      protein: response.macronutrients?.protein ?? 0,
+      fat: response.macronutrients?.fat ?? 0,
+    };
+
+    console.log("responsemarconutrients", macronutrients);
     const updatedRecipeRequest = {
       name: response.name,
       preparationMethod: response.preparationMethod,
       preparationTime: response.preparationTime,
       imgUrl: response.imgUrl,
       additionalTips: response.additionalTips,
-      macronutrients: {
-        carbs: response.macronutrients?.carbs ?? 0,
-        protein: response.macronutrients?.protein ?? 0,
-        fat: response.macronutrients?.fat ?? 0,
-      },
+      macronutrients: macronutrients,
       servingCount: response.servingCount || undefined,
       isPublished: response.isPublished,
       costEstimate: response.costEstimate,
@@ -173,11 +189,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
           preparationTime: 0,
           imgUrl: "",
           additionalTips: "",
-          macronutrients: {
-            carbs: 0,
-            protein: 0,
-            fat: 0,
-          },
+          macronutrients: undefined,
           servingCount: undefined,
           isPublished: false,
           costEstimate: undefined,

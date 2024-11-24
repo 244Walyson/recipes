@@ -60,23 +60,28 @@ const Recipe = () => {
       .catch((error) => {
         console.log("Error:", error);
       });
-
-    getStoredUserID().then((userId) => {
-      if (recipe?.user.id === userId) {
-        console.log("ids", recipe?.user.id, userId);
-        setIsRecipeOwner(true);
-      }
-    });
-  }, [refreshing, id]);
+  }, [refreshing, id, recipe?.user.id]);
 
   useEffect(() => {
+    if (recipe) {
+      getStoredUserID().then((userId) => {
+        if (recipe.user.id === userId) {
+          setIsRecipeOwner(true);
+          return;
+        }
+        setIsRecipeOwner(false);
+      });
+    }
+
     if (recipe && !recipe?.isViewed) {
       viewRecipe(recipe.id);
     }
   }, [recipe]);
 
   const handleEditRecipe = () => {
-    router.push(`/(tabs)/recipes/edit/${recipe?.id}`);
+    if (isRecipeOwner) {
+      router.push(`/(tabs)/recipes/edit/${recipe?.id}`);
+    }
   };
 
   return (
@@ -142,7 +147,7 @@ const Recipe = () => {
               }
               favourite={recipe.isFavorite || false}
               recipeId={recipe.id}
-              favouriteCount={recipe.favoriteCount || 0}
+              favouriteCount={recipe.favoriteCount}
             />
             <AuthorCard
               name={recipe.user.name}

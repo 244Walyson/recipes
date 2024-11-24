@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
@@ -29,28 +29,30 @@ const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
   const [favourited, setFavourited] = useState(favourite);
   const [favourites, setFavourites] = useState(favouriteCount);
 
+  useEffect(() => {
+    console.log(favourite, favouriteCount);
+    setFavourited(favourite);
+    setFavourites(favouriteCount);
+  }, [favourite, favouriteCount]);
+
   const handleFavourite = () => {
-    console.log("favourite", favourite);
-    if (favourited) {
-      console.log("unfavourite");
-      unfavouriteRecipe(recipeId).then(() => {
-        console.log("unfavourite");
-        setFavourited(false);
-        setFavourites(favourites - 1);
-      });
-      return;
-    }
-    if (!favourited) {
-      console.log("favourite");
+    const newFavourited = !favourited;
+    const newFavourites = newFavourited ? favourites + 1 : favourites - 1;
+
+    setFavourited(newFavourited);
+    setFavourites(newFavourites);
+
+    // Faz a requisição para favoritar ou desfavoritar
+    if (newFavourited) {
       favouriteRecipe(recipeId).then(() => {
-        console.log("favourite");
-        setFavourited(true);
-        setFavourites(favourites + 1);
+        // Sucesso em favoritar, nenhuma atualização adicional necessária
+      });
+    } else {
+      unfavouriteRecipe(recipeId).then(() => {
+        // Sucesso em desfavoritar, nenhuma atualização adicional necessária
       });
     }
   };
-
-  console.log(favourite);
 
   const getPreparationTime = () => {
     if (Number(time) < 60) {

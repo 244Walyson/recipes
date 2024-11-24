@@ -11,7 +11,7 @@ export default {
   septenary: "#ccc",
   octonary: "#3a3a3a",
   nonary: "#0d0d0d",
-  denary: "#F1C27D", // Dourado claro
+  denary: "#000000",
   undernary: "#BC7A12", // Marrom terroso
   error: "#ff0033",
   success: "#00cc00",

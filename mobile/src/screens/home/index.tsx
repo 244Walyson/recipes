@@ -14,6 +14,8 @@ import {
 } from "@/src/services/recipe.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import CuisineStyleCard from "@/src/components/home/cuisine-style-card";
+import { getStoredUserID, getUser } from "@/src/services/user.service";
+import { IUserResponse } from "@/src/interfaces/user/user-response.interface";
 
 const Home = () => {
   const { theme } = useTheme();
@@ -25,13 +27,9 @@ const Home = () => {
     useState<IPaginatedResponse<IRecipeResponse>>();
   const [cuisineStyleFocused, setCuisineStyleFocused] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState<IUserResponse>();
 
   const router = useRouter();
-
-  const handleInputFocus = () => {
-    console.log("Input focused");
-    router.push("/search");
-  };
 
   useEffect(() => {
     getCuisineStyles().then((data) => {
@@ -42,6 +40,13 @@ const Home = () => {
     });
     getRecipesByCuisineStyle(cuisineStyleFocused).then((data) => {
       setRecipeByCuisineStyle(data);
+    });
+    getStoredUserID().then((userId) => {
+      if (userId) {
+        getUser(userId).then((data) => {
+          setUser(data);
+        });
+      }
     });
     setRefreshing(false);
   }, [refreshing]);
@@ -66,7 +71,7 @@ const Home = () => {
         />
       }
     >
-      <Header onFocus={handleInputFocus} />
+      <Header smallText="ola," bigText={user?.name} imgUrl={user?.imgUrl} />
 
       <View style={styles(theme).trendingContainer}>
         <View style={styles(theme).textTrendWrapper}>

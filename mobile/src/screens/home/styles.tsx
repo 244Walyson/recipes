@@ -7,6 +7,7 @@ export const styles = (theme: any) =>
       backgroundColor: theme.background,
       paddingHorizontal: 20,
       paddingBottom: 70,
+      gap: 20,
     },
     textTrendWrapper: {
       flexDirection: "row",
@@ -18,7 +19,7 @@ export const styles = (theme: any) =>
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center",
-      marginVertical: 10,
+      marginVertical: 20,
       height: 220,
     },
     categoryContainerwrapper: {

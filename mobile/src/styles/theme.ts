@@ -4,6 +4,7 @@ import colors from "./colors";
 export const lightTheme = {
   background: colors.white, // Fundo principal claro
   foreground: colors.black,
+  backgroundSecondary: colors.denary,
   cardBackground: colors.tertiary, // Fundo dos cartões ou seções
   text: colors.black, // Texto principal em preto
   primary: colors.primary, // Cores de destaque principal (botões, links)
@@ -22,6 +23,7 @@ export const lightTheme = {
 export const darkTheme = {
   background: colors.dark, // Fundo principal escuro
   foreground: colors.white,
+  backgroundSecondary: colors.denary,
   cardBackground: colors.quinary, // Fundo dos cartões ou seções
   text: colors.white, // Texto principal em branco
   primary: colors.primary, // Cor de destaque principal (botões, links)

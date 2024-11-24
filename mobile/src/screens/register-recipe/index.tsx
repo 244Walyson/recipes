@@ -49,7 +49,7 @@ const RegisterRecipe = () => {
       <ScrollView
         contentContainerStyle={[
           styles(theme).formContainer,
-          { paddingTop: H_MAX_HEIGHT + 100 },
+          { paddingTop: H_MAX_HEIGHT + 60 },
         ]}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],

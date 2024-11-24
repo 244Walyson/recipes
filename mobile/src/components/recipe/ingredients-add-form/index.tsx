@@ -11,7 +11,7 @@ import {
   FormField,
   ingredientsInputs,
 } from "@/src/static/register-form-inputs";
-import { updateAndValidate } from "@/src/utils/forms";
+import { toValues, updateAndValidate } from "@/src/utils/forms";
 import CustomPicker from "../../custom-picker";
 import CustomInput from "../../shared/custom-input";
 import PrimaryButtonSlim from "../../shared/primary-button-slim";
@@ -22,12 +22,10 @@ import LoadingContainer from "../../shared/loading-container";
 import SuccessContainer from "../../shared/error-container copy";
 import SuggestionItem from "../suggestion-item";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
-import useFormFieldsFromContext from "@/src/hooks/use-recipe-form-field";
 
 const IngredisAddForm = () => {
   const { theme } = useTheme();
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
-  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -43,33 +41,25 @@ const IngredisAddForm = () => {
     useState<Record<string, FormField>>(ingredientsInputs);
 
   const addIngredient = () => {
-    const { id, ingredient, quantity, unit } = ingredientsFormData;
+    const { id, name, quantity, unit } = ingredientsFormData;
     if (!id.value) {
       setModalVisible(true);
-      console.log("modal");
       return;
     }
-    setIngredients((prevIngredients) => [
-      ...prevIngredients,
-      {
-        id: id.value,
-        name: ingredient.value,
-        quantity: parseFloat(quantity.value),
-        unit: unit.value,
-      },
-    ]);
+
+    const updatedIngredients = [
+      ...recipeRequest.ingredients,
+      toValues(ingredientsFormData),
+    ];
+    updateRecipeRequest({ ...recipeRequest, ingredients: updatedIngredients });
     setIngredientsFormData({
       ...ingredientsFormData,
       id: { ...id, value: "" },
-      ingredient: { ...ingredient, value: "" },
+      name: { ...name, value: "" },
       quantity: { ...quantity, value: "" },
       unit: { ...unit, value: "ml" },
     });
   };
-
-  useEffect(() => {
-    setIngredients(recipeRequest.ingredients);
-  }, [recipeRequest]);
 
   const handleSelectedIngredient = (ingredient: IIngredient) => {
     const updatedFormData = {
@@ -86,7 +76,7 @@ const IngredisAddForm = () => {
     setIngredientsFormData({
       ...updateAndValidate(ingredientsFormData, fieldName, value),
     });
-    if (fieldName === "ingredient") {
+    if (fieldName === "name") {
       handleSearch(value);
     }
     if (value === "") {
@@ -113,9 +103,10 @@ const IngredisAddForm = () => {
   };
 
   const handleRemoveIngredient = (ingredient: IIngredient) => {
-    setIngredients((prevIngredients) =>
-      prevIngredients.filter((item) => item.id !== ingredient.id)
-    );
+    const updatedIngredients = recipeRequest.ingredients.filter((item) => {
+      return item.id !== ingredient.id;
+    });
+    updateRecipeRequest({ ...recipeRequest, ingredients: updatedIngredients });
   };
 
   const createNewIngredient = (name: string) => {
@@ -147,7 +138,7 @@ const IngredisAddForm = () => {
   useEffect(() => {
     if (
       ingredientsFormData.id.value &&
-      ingredientsFormData.ingredient.value &&
+      ingredientsFormData.name.value &&
       ingredientsFormData.quantity.value &&
       ingredientsFormData.unit.value
     ) {
@@ -161,16 +152,12 @@ const IngredisAddForm = () => {
       {success && (
         <SuccessContainer message="Ingrediente criado com sucesso!" />
       )}
-      {loading && <LoadingContainer />}
 
       {Object.entries(ingredientsFormData).map(([key, field]) =>
-        key === "ingredient" ? (
-          <View
-            style={{ marginTop: 20 }}
-            key={`ingredient-key-${field.placeholder}`}
-          >
+        key === "name" ? (
+          <View style={{ marginTop: 20 }} key={key}>
             <CustomInput
-              key={`field.name-${field.name}`}
+              key={field.name}
               placeholder={field.placeholder}
               keyboardType={field.type}
               label={field.placeholder}
@@ -183,7 +170,7 @@ const IngredisAddForm = () => {
             {ingredientsSuggestions.length > 0 &&
               ingredientsSuggestions.map((ingredient) => (
                 <SuggestionItem
-                  key={`ingredient-${ingredient.name}`}
+                  key={ingredient.id}
                   data={{ id: ingredient.id, text: ingredient.name }}
                   onPress={() => handleSelectedIngredient(ingredient)}
                 />
@@ -226,11 +213,11 @@ const IngredisAddForm = () => {
         isActive={false}
       />
 
-      {ingredients.length > 0 &&
-        ingredients.map((ingredient, index) => (
-          <View style={{ marginTop: 5 }}>
+      {recipeRequest.ingredients.length > 0 &&
+        recipeRequest.ingredients.map((ingredient, index) => (
+          <View key={ingredient.id} style={{ marginTop: 5 }}>
             <IngredintsCard
-              key={`ingredient-${ingredient.name}-${index}`}
+              key={ingredient.id}
               name={ingredient.name}
               quantity={ingredient.quantity}
               unit={ingredient.unit}
@@ -246,7 +233,7 @@ const IngredisAddForm = () => {
           onClose={() => setModalVisible(false)}
           data={[
             {
-              name: ingredientsFormData.ingredient.value,
+              name: ingredientsFormData.name.value,
               id: "",
             },
           ]}
@@ -256,7 +243,7 @@ const IngredisAddForm = () => {
           selectItemsOnOpen={true}
           loading={loading}
           btnApplyAction={() =>
-            createNewIngredient(ingredientsFormData.ingredient.value)
+            createNewIngredient(ingredientsFormData.name.value)
           }
         />
       )}

@@ -7,7 +7,14 @@ export const styles = (theme: any) =>
   StyleSheet.create({
     container: {
       justifyContent: "center",
+      flexDirection: "row",
       marginTop: statusBarHeight,
+      width: "100%",
+      alignItems: "center",
+    },
+    textContainer: {
+      flex: 1,
+      justifyContent: "center",
     },
     headerWrapper: {
       flexDirection: "row",

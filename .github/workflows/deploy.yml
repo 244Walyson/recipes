@@ -199,8 +199,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          cd ./helm-charts/backend & ls\
-          & helm upgrade --install recipes-api . -f values.yaml \
+          cd helm-charts/backend/
+          ls
+          helm upgrade --install recipes-api . -f values.yaml \
             --namespace api --create-namespace \
             --set image.repository=${{ secrets.DOCKER_USERNAME }}/recipes-backend \
             --set image.tag=${{ github.sha }} \

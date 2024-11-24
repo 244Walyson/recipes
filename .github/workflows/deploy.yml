@@ -202,20 +202,4 @@ jobs:
           cd helm-charts/backend/
           ls
           helm upgrade --install recipes-api . -f values.yaml \
-            --namespace api --create-namespace \
-            --set image.repository=${{ secrets.DOCKER_USERNAME }}/recipes-backend \
-            --set image.tag=${{ github.sha }} \
-            --set env.GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
-            --set env.GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
-            --set env.GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
-            --set env.GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
-            --set env.GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET \
-            --set env.DATABASE_URL=$DATABASE_URL \
-            --set env.EMAIL_USER=$EMAIL_USER \
-            --set env.EMAIL_PASS=$EMAIL_PASS \
-            --set env.APP_URL=$APP_URL \
-            --set env.FRONTEND_URL=$FRONTEND_URL \
-            --set env.AWS_REGION=$AWS_REGION \
-            --set env.AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-            --set env.AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-            --set env.AWS_S3_BUCKET=$AWS_S3_BUCKET
+            --namespace api --create-namespace

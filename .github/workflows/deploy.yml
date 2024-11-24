@@ -194,12 +194,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          kubectl create secret generic recipes-secrets \
+          kubectl create secret generic recipes-secrets -n api\
             --from-literal=google-client-id=${{ secrets.GOOGLE_CLIENT_ID }} \
             --from-literal=google-client-secret=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             --from-literal=google-callback-url=${{ secrets.GOOGLE_CALLBACK_URL }} \
-            --from-literal=github-client-id=${{ secrets.GITHUB_CLIENT_ID }} \
-            --from-literal=github-client-secret=${{ secrets.GITHUB_CLIENT_SECRET }} \
+            --from-literal=github-client-id=${{ secrets.CLIENT_ID_GITHUB}} \
+            --from-literal=github-client-secret=${{ secrets.CLIENT_SECRET_GITHUB }} \
             --from-literal=database-url=${{ secrets.DATABASE_URL }} \
             --from-literal=email-user=${{ secrets.EMAIL_USER }} \
             --from-literal=email-pass=${{ secrets.EMAIL_PASS }} \

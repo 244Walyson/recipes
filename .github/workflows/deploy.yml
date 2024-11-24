@@ -195,9 +195,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          # Atualiza os valores do Helm Chart com os secrets
           helm upgrade --install recipes-api ./helm-charts/backend \
-            --namespace api \
+            --namespace api --create-namespace \
             --set image.repository=${{ secrets.DOCKER_USERNAME }}/recipes-backend \
             --set image.tag=${{ github.sha }} \
             --set env.GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \

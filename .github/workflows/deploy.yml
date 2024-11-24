@@ -202,4 +202,20 @@ jobs:
           cd helm-charts/backend/
           ls
           helm upgrade --install recipes-api . -f values.yaml \
-            --namespace api --create-namespace
+            --namespace api --create-namespace \
+            --set image.repository=walymb/recipes-backend \
+            --set image.tag=latest \
+            --set env.GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
+            --set env.GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
+            --set env.GOOGLE_CALLBACK_URL=${{ secrets.GOOGLE_CALLBACK_URL }} \
+            --set env.GITHUB_CLIENT_ID=${{ secrets.CLIENT_ID_GITHUB }} \
+            --set env.GITHUB_CLIENT_SECRET=${{ secrets.CLIENT_SECRET_GITHUB }} \
+            --set env.DATABASE_URL=${{ secrets.DATABASE_URL }} \
+            --set env.EMAIL_USER=${{ secrets.EMAIL_USER }} \
+            --set env.EMAIL_PASS=${{ secrets.EMAIL_PASS }} \
+            --set env.APP_URL=${{ secrets.APP_URL }} \
+            --set env.FRONTEND_URL=${{ secrets.FRONTEND_URL }} \
+            --set env.AWS_REGION=${{ secrets.AWS_REGION }} \
+            --set env.AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --set env.AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            --set env.AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}

@@ -159,16 +159,26 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up SSH key for deployment
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          version: "latest"
 
-      - name: Deploy to DigitalOcean
+      - name: Authenticate with Kubernetes
         env:
-          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }}
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          echo "$KUBE_CONFIG_DATA" | base64 -d > ~/.kube/config
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "latest"
+
+      - name: Deploy with Helm
+        env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
@@ -184,38 +194,22 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@157.245.86.200 << END
-            echo "Docker image: $DOCKER_IMAGE"
-            export DOCKER_IMAGE=$DOCKER_IMAGE
-
-            # Criar o arquivo .env dinamicamente
-            echo "DOCKER_IMAGE=$DOCKER_IMAGE" > .env
-            echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
-            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
-            echo "GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL" >> .env
-            echo "GITHUB_CLIENT_ID=$CLIENT_ID_GITHUB" >> .env
-            echo "GITHUB_CLIENT_SECRET=$CLIENT_SECRET_GITHUB" >> .env
-            echo "GITHUB_CALLBACK_URL=$CALLBACK_URL_GITHUB" >> .env
-            echo "DATABASE_URL=$DATABASE_URL" >> .env
-            echo "EMAIL_USER=$EMAIL_USER" >> .env
-            echo "EMAIL_PASS=$EMAIL_PASS" >> .env
-            echo "APP_URL=$APP_URL" >> .env
-            echo "FRONTEND_URL=$FRONTEND_URL" >> .env
-            echo "AWS_REGION=$AWS_REGION" >> .env
-            echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
-            echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
-            echo "AWS_S3_BUCKET=$AWS_S3_BUCKET" >> .env
-
-            # Pull the Docker image
-            docker pull $DOCKER_IMAGE
-
-            # Stop and remove any existing containers
-            docker stop recipes-api || true
-            docker rm recipes-api || true
-
-            # Run the Docker container with the .env file
-            docker run -d --name recipes-api -p 80:3000 \
-              --network app-network \
-              --env-file .env \
-              $DOCKER_IMAGE
-          END
+          # Atualiza os valores do Helm Chart com os secrets
+          helm upgrade --install recipes-api ./helm-charts/backend \
+            --namespace api \
+            --set image.repository=${{ secrets.DOCKER_USERNAME }}/recipes-backend \
+            --set image.tag=${{ github.sha }} \
+            --set env.GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID \
+            --set env.GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET \
+            --set env.GOOGLE_CALLBACK_URL=$GOOGLE_CALLBACK_URL \
+            --set env.GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
+            --set env.GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET \
+            --set env.DATABASE_URL=$DATABASE_URL \
+            --set env.EMAIL_USER=$EMAIL_USER \
+            --set env.EMAIL_PASS=$EMAIL_PASS \
+            --set env.APP_URL=$APP_URL \
+            --set env.FRONTEND_URL=$FRONTEND_URL \
+            --set env.AWS_REGION=$AWS_REGION \
+            --set env.AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+            --set env.AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+            --set env.AWS_S3_BUCKET=$AWS_S3_BUCKET

@@ -43,7 +43,7 @@ type ModalData = {
 };
 
 const H_MAX_HEIGHT = 200;
-const H_MIN_HEIGHT = 80;
+const H_MIN_HEIGHT = 60;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Search = () => {
@@ -52,7 +52,8 @@ const Search = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [btnApplyModal, setBtnApplyModal] = useState(false);
   const [searchFilters, setSearchFilters] = useState<IFindAllFilters>({});
-  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -77,12 +78,30 @@ const Search = () => {
 
   useEffect(() => {
     console.log(searchFilters);
-    getRecipes(searchFilters).then((response) => {
+    getRecipes(searchFilters, page).then((response) => {
       console.log(response);
-      setRecipes(response);
-      setRefreshing(false);
+      if (page == 1) {
+        setRecipes(response);
+        return;
+      }
+      setRecipes((prev) => ({
+        ...response,
+        data: [...(prev?.data ?? []), ...response.data],
+      }));
     });
-  }, [searchFilters, refreshing]);
+    setLoading(false);
+  }, [searchFilters, loading, page]);
+
+  const handleLoadMore = () => {
+    if (!loading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setPage(1);
+  };
 
   const openModal = ({
     data,
@@ -312,10 +331,12 @@ const Search = () => {
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => setRefreshing(true)}
+            refreshing={loading}
+            onRefresh={handleRefresh}
             colors={[theme.foreground]}
             tintColor="transparent"
             progressBackgroundColor="transparent"

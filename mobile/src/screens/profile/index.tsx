@@ -71,10 +71,9 @@ const Profile = () => {
     getUser(profileId).then((data) => {
       setUser(data);
     });
-    getRecipesByUserId(profileId).then((data) => {
-      setRecipes(data);
-    });
-  }, [profileId]);
+    isFocused === "grid" ? handlegridPress() : handleFavouritePress();
+    setRefreshing(false);
+  }, [profileId, refreshing]);
 
   const logout = () => {
     removeAllTokens();
@@ -113,14 +112,14 @@ const Profile = () => {
 
   const handleFavouritePress = () => {
     getRecipesFavouritedByUserId(profileId).then((data) => {
-      console.log(data);
+      setRecipes(data);
       handleFocusChange("heart");
     });
   };
 
   const handlegridPress = () => {
     getRecipesByUserId(profileId).then((data) => {
-      console.log(data);
+      setRecipes(data);
       handleFocusChange("grid");
     });
   };

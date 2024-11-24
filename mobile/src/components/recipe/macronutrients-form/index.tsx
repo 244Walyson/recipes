@@ -13,8 +13,6 @@ const MacronutrientsForm = () => {
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const formFields = useFormFieldsFromContext(macronutrientsInputs);
 
-  console.log("formFields", formFields);
-
   const [macronutrientsFormData, setMacronutrientsFormData] =
     useState<Record<string, FormField>>(formFields);
 
@@ -23,6 +21,8 @@ const MacronutrientsForm = () => {
       updateAndValidate(macronutrientsFormData, fieldName, value)
     );
   };
+
+  console.log("macronutrientsFormData");
 
   useEffect(() => {
     const formValues = toValues(macronutrientsFormData);

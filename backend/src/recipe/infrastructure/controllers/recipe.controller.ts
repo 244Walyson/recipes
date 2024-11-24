@@ -21,6 +21,7 @@ import { FindRecipesByUserIdUseCase } from '../../core/use-cases/recipe/find-rec
 import { UnfavouriteRecipeUseCase } from '../../core/use-cases/recipe/unfavourite-recipe.use-case';
 import { FavouriteRecipeUseCase } from '../../core/use-cases/recipe/favourite-recipe.use-case';
 import { ViewCountAddUseCase } from '../../core/use-cases/recipe/view-count-add.use-case';
+import { FindFavouritesByUserIdUseCase } from '../../core/use-cases/recipe/find-favourites-by-user-id.use-case';
 
 @Controller('recipes')
 export class RecipeController {
@@ -34,6 +35,7 @@ export class RecipeController {
     private readonly favouriteRecipeUseCase: FavouriteRecipeUseCase,
     private readonly unfavouriteRecipeUseCase: UnfavouriteRecipeUseCase,
     private readonly viewCountAddUseCase: ViewCountAddUseCase,
+    private readonly findFavouritesByUserIdUseCase: FindFavouritesByUserIdUseCase,
   ) {}
 
   @Get()
@@ -82,8 +84,16 @@ export class RecipeController {
   }
 
   @Get('favourites/:userId')
-  async getFavouritesbyUserId(@Param('userId') recipeId: string) {
-    return 'hello: ' + recipeId;
+  async getFavouritesbyUserId(
+    @Param('userId') userId: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.findFavouritesByUserIdUseCase.execute({
+      id: userId,
+      page,
+      limit,
+    });
   }
 
   @Post('favourite/:recipeId')

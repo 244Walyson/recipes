@@ -41,9 +41,7 @@ const RegisterRecipe = () => {
           },
         ]}
       >
-        <ImageUploadForm
-          onImageUpladed={(imgUrl: string) => setImgUrl(imgUrl)}
-        />
+        <ImageUploadForm />
       </Animated.View>
 
       <ScrollView

@@ -112,7 +112,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       .then((response) => {
         console.log(response);
         router.push(`/recipes/${response.id}`);
-        resetRecipeRequest();
+        //resetRecipeRequest();
         setLoading(false);
       })
       .catch((error) => {
@@ -126,7 +126,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       .then((response) => {
         console.log(response);
         router.push(`/recipes/${response.id}`);
-        resetRecipeRequest();
+        ///resetRecipeRequest();
         setLoading(false);
       })
       .catch((error) => {
@@ -134,8 +134,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
         setLoading(false);
       });
   };
-
-  useEffect(() => {}, [recipeRequest]);
 
   useEffect(() => {
     console.log("recipeId", recipeId);
@@ -180,27 +178,27 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
     updateRecipeRequest(updatedRecipeRequest);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {
-        updateRecipeRequest({
-          name: "",
-          preparationMethod: [],
-          preparationTime: 0,
-          imgUrl: "",
-          additionalTips: "",
-          macronutrients: undefined,
-          servingCount: undefined,
-          isPublished: false,
-          costEstimate: undefined,
-          allergens: [],
-          ingredients: [],
-          mealTypes: [],
-          cuisineStyles: [],
-        });
-      };
-    }, [])
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     return () => {
+  //       updateRecipeRequest({
+  //         name: "",
+  //         preparationMethod: [],
+  //         preparationTime: 0,
+  //         imgUrl: "",
+  //         additionalTips: "",
+  //         macronutrients: undefined,
+  //         servingCount: undefined,
+  //         isPublished: false,
+  //         costEstimate: undefined,
+  //         allergens: [],
+  //         ingredients: [],
+  //         mealTypes: [],
+  //         cuisineStyles: [],
+  //       });
+  //     };
+  //   }, [])
+  // );
 
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>

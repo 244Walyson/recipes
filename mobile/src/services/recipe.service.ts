@@ -13,9 +13,16 @@ export const getRecipeById = async (id: string) => {
   }
 };
 
-export const getRecipes = async (params: IFindAllFilters) => {
+export const getRecipes = async (
+  params: IFindAllFilters,
+  page?: number,
+  limit?: number
+) => {
   try {
     const queryParams = new URLSearchParams();
+
+    if (page) queryParams.append("page", page.toString());
+    if (limit) queryParams.append("limit", limit.toString());
 
     if (params.name) queryParams.append("name", params.name);
     if (params.ingredients)

@@ -10,6 +10,8 @@ const useFormFieldsFromContext = (formFields: Record<string, FormField>) => {
   useEffect(() => {
     const updatedFormData = { ...formData };
 
+    console.log("here");
+
     Object.entries(updatedFormData).forEach(([key, field]) => {
       if (recipeRequest.macronutrients && key in recipeRequest.macronutrients) {
         const macronutrientValue =

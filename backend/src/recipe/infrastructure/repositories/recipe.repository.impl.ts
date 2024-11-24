@@ -10,6 +10,71 @@ import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.i
 export class RecipeRepository implements IRecipeRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findFavouritesByUserId({
+    id,
+    offset,
+    limit,
+  }: {
+    id: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: IRecipeProjection[] }> {
+    const favorites = await this.prismaService.favoriteRecipe.findMany({
+      where: { userId: id },
+      skip: offset,
+      take: limit,
+      include: {
+        recipe: {
+          include: {
+            recipeIngredients: {
+              include: { ingredient: true },
+            },
+            mealTypes: {
+              select: { MealType: { select: { id: true, name: true } } },
+            },
+            cuisineStyles: {
+              select: { CuisineStyle: { select: { id: true, name: true } } },
+            },
+            user: {
+              select: {
+                id: true,
+                name: true,
+                imgUrl: true,
+                numberOfRecipes: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const filteredFavorites = favorites.filter(
+      (favorite) => favorite.recipe.deleted === false,
+    );
+
+    const total = await this.prismaService.favoriteRecipe.count({
+      where: { userId: id },
+    });
+
+    const data = filteredFavorites.map((favorite) => {
+      const recipe = favorite.recipe;
+      return {
+        ...recipe,
+        macronutrients: recipe.macronutrients as Record<string, number>,
+        mealTypes: recipe.mealTypes.map((item) => item.MealType),
+        preparationMethod: recipe.preparationMethod as any,
+        cuisineStyles: recipe.cuisineStyles.map((item) => item.CuisineStyle),
+        recipeIngredients: recipe.recipeIngredients.map((item) => ({
+          id: item.ingredient.id,
+          name: item.ingredient.name,
+          quantity: item.quantity,
+        })),
+      };
+    });
+
+    return { total, data };
+  }
+
   async favouriteRecipe(recipeId: string, userId: string): Promise<void> {
     await this.prismaService.favoriteRecipe.create({
       data: {

@@ -30,6 +30,7 @@ import { FindRecipesByUserIdUseCase } from './core/use-cases/recipe/find-recipes
 import { FavouriteRecipeUseCase } from './core/use-cases/recipe/favourite-recipe.use-case';
 import { UnfavouriteRecipeUseCase } from './core/use-cases/recipe/unfavourite-recipe.use-case';
 import { ViewCountAddUseCase } from './core/use-cases/recipe/view-count-add.use-case';
+import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favourites-by-user-id.use-case';
 
 @Module({
   imports: [],
@@ -215,6 +216,13 @@ import { ViewCountAddUseCase } from './core/use-cases/recipe/view-count-add.use-
         return new ViewCountAddUseCase(recipeRepository, findRecipeByIdUseCase);
       },
       inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+    },
+    {
+      provide: FindFavouritesByUserIdUseCase,
+      useFactory: (recipeRepository: IRecipeRepository) => {
+        return new FindFavouritesByUserIdUseCase(recipeRepository);
+      },
+      inject: ['IRecipeRepository'],
     },
   ],
   exports: [],

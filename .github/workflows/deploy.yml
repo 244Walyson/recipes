@@ -160,6 +160,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: "k8s"
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3

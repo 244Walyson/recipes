@@ -162,21 +162,6 @@ const Search = () => {
   };
 
   const handleModalApply = (selected: string[] | string, key: string) => {
-    if (key === "totalTime") {
-      if (selected === "Até 30 minutos") {
-        setSearchFilters({ ...searchFilters, [key]: [0, 30] });
-      }
-      if (selected === "De 30 a 60 minutos") {
-        setSearchFilters({ ...searchFilters, [key]: [30, 60] });
-      }
-      if (selected === "De 60 a 90 minutos") {
-        setSearchFilters({ ...searchFilters, [key]: [60, 90] });
-      }
-      if (selected === "Mais de 90 minutos") {
-        setSearchFilters({ ...searchFilters, [key]: [90, 9999] });
-      }
-      return closeModal();
-    }
     setSearchFilters({ ...searchFilters, [key]: selected });
     closeModal();
   };
@@ -269,7 +254,7 @@ const Search = () => {
             <TouchableOpacity
               onPress={() =>
                 openModal({
-                  data: { key: "trending", ...trendingData },
+                  data: { key: "orderBy", ...trendingData },
                   multipleSelection: false,
                 })
               }
@@ -279,7 +264,7 @@ const Search = () => {
             <TouchableOpacity
               onPress={() =>
                 openModal({
-                  data: { key: "totalTime", ...timeData },
+                  data: { key: "preparationTime", ...timeData },
                   multipleSelection: false,
                 })
               }

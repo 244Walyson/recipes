@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { useTheme } from "@/src/context/theme-context";
-import PrimaryButton from "@/src/components/shared/primary-button";
 import { styles } from "./styles";
 import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
 import DescriptionContainer from "@/src/components/recipe/description-container";
@@ -17,10 +16,9 @@ import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interfa
 import { getRecipeById, viewRecipe } from "@/src/services/recipe.service";
 import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { getStoredUserID } from "@/src/services/user.service";
 import AuthorCard from "@/src/components/recipe/author-card";
-import { useRouter } from "expo-router";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
 
 type InstructionStep = {
@@ -174,16 +172,18 @@ const Recipe = () => {
           {focusedBtn !== "ingredients" ? (
             <RecipeInstructions data={recipe?.preparationMethod} />
           ) : (
-            recipe?.recipeIngredients?.map((ingredient: IIngredient) => (
-              <IngredientsCard
-                key={ingredient.id}
-                name={ingredient.name}
-                quantity={ingredient.quantity}
-                unit={ingredient.unit}
-                editing={false}
-                onDelete={() => {}}
-              />
-            ))
+            <View style={{ gap: 5 }}>
+              {recipe?.recipeIngredients?.map((ingredient: IIngredient) => (
+                <IngredientsCard
+                  key={ingredient.id}
+                  name={ingredient.name}
+                  quantity={ingredient.quantity}
+                  unit={ingredient.unit}
+                  editing={false}
+                  onDelete={() => {}}
+                />
+              ))}
+            </View>
           )}
         </View>
       </ScrollView>

@@ -11,9 +11,11 @@ export const styles = (theme: any) =>
       marginRight: 10,
       backgroundColor: theme.background,
       padding: 10,
-      marginTop: 40,
+      marginTop: 10,
       gap: 5,
       paddingBottom: 20,
+      borderWidth: 0.1,
+      borderColor: theme.tertiary,
     },
     textBy: {
       fontSize: 12,

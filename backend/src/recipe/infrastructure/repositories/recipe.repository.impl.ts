@@ -456,13 +456,9 @@ export class RecipeRepository implements IRecipeRepository {
         macronutrients: recipe.macronutrients,
         allergens: recipe.allergens,
         servingCount: recipe.servingCount,
-        viewCount: recipe.viewCount,
-        favoriteCount: recipe.favoriteCount,
-        averageRating: recipe.averageRating,
         costEstimate: recipe.costEstimate,
         additionalTips: recipe.additionalTips,
         isPublished: recipe.isPublished,
-        version: recipe.version,
         updatedAt: new Date(),
         recipeIngredients: {
           connect: recipe.recipeIngredients.map((ingredient) => ({
@@ -488,6 +484,7 @@ export class RecipeRepository implements IRecipeRepository {
             },
           })),
         },
+        version: { increment: 1 },
       },
     });
 

@@ -2,18 +2,10 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import LottieView from "lottie-react-native";
 import { useTheme } from "@/src/context/theme-context";
-import {
-  getStoredAccessToken,
-  getStoredExpiresIn,
-  getStoredRefreshToken,
-  refreshToken,
-} from "@/src/services/auth.service";
 import { useRouter } from "expo-router";
 import * as Font from "expo-font";
-import {
-  PlayfairDisplay_400Regular,
-  PlayfairDisplay_800ExtraBold,
-} from "@expo-google-fonts/playfair-display";
+import { ABeeZee_400Regular } from "@expo-google-fonts/abeezee";
+import { getStoredToken } from "@/src/services/token.service";
 
 const SplashScreen = () => {
   const { theme } = useTheme();
@@ -25,8 +17,7 @@ const SplashScreen = () => {
     const loadFonts = async () => {
       try {
         await Font.loadAsync({
-          PlayfairDisplay_400Regular,
-          PlayfairDisplay_800ExtraBold,
+          ABeeZee_400Regular,
         });
         setIsFontLoaded(true);
       } catch (e) {
@@ -38,44 +29,19 @@ const SplashScreen = () => {
   }, []);
 
   useEffect(() => {
-    const checkToken = async () => {
-      const token = await getStoredAccessToken();
+    if (isFontLoaded && animationFinished) {
+      verifyTokens();
+    }
+  }, [isFontLoaded, animationFinished]);
+
+  const verifyTokens = () => {
+    getStoredToken().then((token) => {
       if (!token) {
         router.replace("/register");
         return;
       }
-      const expiresIn = await getStoredExpiresIn();
-      if (!expiresIn) {
-        router.replace("/register");
-        return;
-      }
-      const expirationDate = new Date(expiresIn);
-      if (expirationDate < new Date()) {
-        await getNewTokenWithRefreshToken();
-        return;
-      }
       router.replace("/(tabs)/home");
-    };
-
-    if (isFontLoaded && animationFinished) {
-      checkToken();
-    }
-  }, [isFontLoaded, animationFinished]);
-
-  const getNewTokenWithRefreshToken = async () => {
-    const refresh_token = await getStoredRefreshToken();
-    if (!refresh_token) {
-      router.replace("/register");
-      return;
-    }
-    const accessToken = await refreshToken(refresh_token).catch(() => {
-      router.replace("/register");
     });
-    if (!accessToken) {
-      router.replace("/register");
-      return;
-    }
-    router.replace("/(tabs)/home");
   };
 
   return (

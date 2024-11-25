@@ -40,14 +40,9 @@ export const styles = (theme: any) =>
     },
     scrollContainer: {
       flexDirection: "row",
-    },
-    categoryText: {
-      fontSize: 20,
-      marginRight: 20,
-      color: theme.secondaryText,
+      marginVertical: 10,
     },
     trendingContainer: {
       width: "100%",
-      marginVertical: 10,
     },
   });

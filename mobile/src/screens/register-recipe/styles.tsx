@@ -6,7 +6,7 @@ export const styles = (theme: any) =>
       flex: 1,
     },
     formContainer: {
-      paddingBottom: 80,
+      paddingBottom: 60,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       backgroundColor: theme.backgroundSecondary,

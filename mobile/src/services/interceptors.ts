@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { API_URL } from "../utils/system";
-import { storeAllTokens } from "./auth.service";
+import { removeTokens, storeToken } from "./token.service";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
 
           const accessToken = response.data;
 
-          await storeAllTokens(accessToken);
+          await storeToken(accessToken);
 
           error.config.headers[
             "Authorization"
@@ -48,6 +48,7 @@ axiosInstance.interceptors.response.use(
           console.error("Erro ao tentar atualizar o token:", refreshError);
         }
       }
+      await removeTokens();
     }
 
     return Promise.reject(error);

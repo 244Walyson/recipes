@@ -20,6 +20,7 @@ import {
   getStoredUserID,
   getUser,
   removeStoredUserID,
+  updateUser,
 } from "@/src/services/user.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import { IRecipeProjection } from "@/src/interfaces/recipe/recipe-response-projection.interface";
@@ -27,8 +28,11 @@ import {
   getRecipesByUserId,
   getRecipesFavouritedByUserId,
 } from "@/src/services/recipe.service";
-import { removeAllTokens } from "@/src/services/auth.service";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "@/src/services/image-upload.service";
+import { removeTokens } from "@/src/services/token.service";
+import { IUserRequest } from "@/src/interfaces/user/user-request.interface";
 
 const H_MAX_HEIGHT = 320;
 const H_MIN_HEIGHT = 60;
@@ -76,7 +80,7 @@ const Profile = () => {
   }, [profileId, refreshing]);
 
   const logout = () => {
-    removeAllTokens();
+    removeTokens();
     removeStoredUserID();
     router.replace("/register");
   };
@@ -124,6 +128,44 @@ const Profile = () => {
     });
   };
 
+  const openGallery = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 0.3,
+    });
+
+    if (!result.canceled) {
+      setRefreshing(true);
+      const fileUri = result.assets[0].uri;
+      uploadImage(fileUri)
+        .then((imgUrl) => {
+          if (imgUrl && user) {
+            updateUserImg(user, imgUrl);
+          }
+          setRefreshing(true);
+        })
+        .catch((error) => {
+          console.log("Error uploading image", error);
+        });
+    }
+  };
+
+  const updateUserImg = (data: IUserResponse, imgUrl: string) => {
+    const userRequest: IUserRequest = {
+      name: data.name,
+      username: data.username,
+      imgUrl: imgUrl,
+      email: data.email,
+      password: "",
+    };
+
+    updateUser(profileId, userRequest).then((data) => {
+      console.log(data);
+      setUser(data);
+    });
+  };
+
   return (
     <View style={styles(theme).container}>
       <StatusBar translucent={false} backgroundColor={theme.background} />
@@ -153,10 +195,12 @@ const Profile = () => {
         </View>
         <View style={styles(theme).middleContainer}>
           <View style={styles(theme).profileInfo}>
-            <Image
-              source={{ uri: user?.imgUrl }}
-              style={styles(theme).imageAvatar}
-            />
+            <TouchableOpacity onPress={openGallery}>
+              <Image
+                source={{ uri: user?.imgUrl }}
+                style={styles(theme).imageAvatar}
+              />
+            </TouchableOpacity>
             <Text style={styles(theme).textInfo}>{user?.name}</Text>
             <Text style={styles(theme).textInfoLight}>{user?.username}</Text>
             <View style={styles(theme).btnWrapper}>

@@ -27,18 +27,18 @@ export const getRecipes = async (
     if (params.name) queryParams.append("name", params.name);
     if (params.ingredients)
       queryParams.append("ingredients", params.ingredients.join(","));
-    if (params.cuisineStyles)
-      queryParams.append("cuisineStyles", params.cuisineStyles.join(","));
+    if (params.mealType)
+      queryParams.append("cuisineStyles", params.mealType.join(","));
+    if (params.price) queryParams.append("price", params.price.join(","));
     if (params.servingCount)
       queryParams.append("servingCount", params.servingCount);
     if (params.allergens)
       queryParams.append("allergens", params.allergens.join(","));
-    if (params.totalTime)
-      queryParams.append("totalTime", params.totalTime.toString());
-    if (params.viewCount)
-      queryParams.append("viewCount", params.viewCount.toString());
-    if (params.likeCount)
-      queryParams.append("likeCount", params.likeCount.toString());
+    if (params.preparationTime)
+      queryParams.append("preparationTime", params.preparationTime.toString());
+    if (params.orderBy) queryParams.append("orderBy", params.orderBy);
+
+    console.log("queryParams", queryParams.toString());
 
     const response = await axiosIntance.get(
       `${API_URL}/recipes?${queryParams.toString()}`
@@ -63,16 +63,6 @@ export const getRecipesByUserId = async (userId: string) => {
 };
 
 export const getTrendingecipes = async () => {
-  try {
-    const response = await axiosIntance.get(`${API_URL}/recipes`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-export const getRecipesByCuisineStyle = async (cuisineStyles: string) => {
   try {
     const response = await axiosIntance.get(`${API_URL}/recipes`);
     return response.data;

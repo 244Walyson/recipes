@@ -23,6 +23,16 @@ export const getUser = async (id: string) => {
   }
 };
 
+export const updateUser = async (id: string, user: IUserRequest) => {
+  try {
+    const response = await axiosIntance.put(`${API_URL}/users/${id}`, user);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const storeUserID = async (id: string) => {
   await SecureStore.setItemAsync("userID", id);
 };

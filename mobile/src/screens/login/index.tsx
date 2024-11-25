@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import SvgTopWaves from "@/src/assets/waves/wave_top";
 import SvgBottomWaves from "@/src/assets/waves/wave_botton";
 import SvgGoggleIcon from "@/src/assets/icons/google_icon";
@@ -137,6 +137,7 @@ const Register = () => {
 
   return (
     <View style={styles(theme).container}>
+      <StatusBar translucent backgroundColor="transparent" />
       <SvgTopWaves style={[styles(theme).svg, styles(theme).svgTop]} />
       <SvgBottomWaves style={[styles(theme).svg, styles(theme).svgBottom]} />
       <View style={styles(theme).loginContainer}>

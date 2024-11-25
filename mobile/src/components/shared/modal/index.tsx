@@ -12,6 +12,7 @@ import PrimaryButton from "../primary-button";
 type ModalItems = {
   id: string;
   name: string;
+  values?: any;
 };
 
 type CustomModalProps = {
@@ -87,7 +88,9 @@ const CustomModal = ({
                   selected.includes(item.name) && styles.selectedOption,
                 ]}
                 key={item.id}
-                onPress={() => handleSelect(item.name)}
+                onPress={() =>
+                  handleSelect(item.values ? item.values : item.name)
+                }
               >
                 <Text style={styles.btnOptText}>{item.name}</Text>
               </TouchableOpacity>

@@ -46,8 +46,7 @@ type RecipeFormProps = {
 const RecipeForm = ({ recipeId }: RecipeFormProps) => {
   const { theme } = useTheme();
   const router = useRouter();
-  const { recipeRequest, updateRecipeRequest, resetRecipeRequest } =
-    useRecipeRequestContext();
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 

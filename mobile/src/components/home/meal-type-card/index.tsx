@@ -1,28 +1,21 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 
-type cuisineStyleProps = {
+type MealTypeProps = {
   name: string;
   author: string;
-  time?: string;
   imgUrl?: string;
-  onLikePress?: () => void;
   onPress?: () => void;
 };
 
-const CuisineStyleCard = ({
-  name,
-  author,
-  time,
-  imgUrl,
-}: cuisineStyleProps) => {
+const MealTypeCard = ({ name, author, imgUrl, onPress }: MealTypeProps) => {
   const { theme } = useTheme();
 
   return (
-    <View style={styles(theme).trendingContainer}>
+    <TouchableOpacity onPress={onPress} style={styles(theme).trendingContainer}>
       <Image source={{ uri: imgUrl }} style={styles(theme).image} />
       <View style={styles(theme).textDescWrapper}>
         <Text style={[styles(theme).textTitle]}>{name}</Text>
@@ -37,11 +30,11 @@ const CuisineStyleCard = ({
         </View>
       </View>
       <View style={styles(theme).textWrapper}>
-        <Text style={styles(theme).timeText}>{time}</Text>
+        <Text style={styles(theme).timeText}></Text>
         <Ionicons name="heart-outline" size={20} color={theme.tertiary} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
-export default CuisineStyleCard;
+export default MealTypeCard;

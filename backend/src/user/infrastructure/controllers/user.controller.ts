@@ -46,10 +46,10 @@ export class UserController {
 
   @Put(':id')
   async update(
-    @Param() id: string,
+    @Param() id: { id: string },
     @Body() userDto: UserRequestDto,
   ): Promise<UserResponseDto> {
-    return await this.updateUserUseCase.execute(id, userDto);
+    return await this.updateUserUseCase.execute(id.id, userDto);
   }
 
   @Get()

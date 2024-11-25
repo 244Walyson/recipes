@@ -16,7 +16,7 @@ export class FavouriteRecipeUseCase {
       await this.recipeRepository.favouriteRecipe(dto.recipeId, dto.userId);
     } catch (error) {
       console.log(error);
-      throw new RecipeDomainException('Error adding view count');
+      throw new RecipeDomainException('Error adding favorite recipe');
     }
   }
 

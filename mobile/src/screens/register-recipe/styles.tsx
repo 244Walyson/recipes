@@ -4,14 +4,12 @@ export const styles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.background,
     },
     formContainer: {
-      padding: 20,
       paddingBottom: 80,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      backgroundColor: theme.background,
+      backgroundColor: theme.backgroundSecondary,
       overflow: "hidden",
     },
     label: {

@@ -1,4 +1,4 @@
-export const API_URL = "http://192.168.100.208:3000";
+export const API_URL = "http://192.168.100.208:3000"; //"http://157.245.86.200:80"; //
 export const GITHUB_CLIENT_ID = "Ov23liUYlBuWhFrqDKRP";
 export const GITHUB_CALLBACK_URL = "http://137.184.139.136/oauth-redirect";
 

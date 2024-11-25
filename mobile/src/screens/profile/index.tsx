@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   StatusBar,
   Image,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
@@ -24,9 +23,11 @@ import {
 } from "@/src/services/user.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import { IRecipeProjection } from "@/src/interfaces/recipe/recipe-response-projection.interface";
-import { getRecipesByUserId } from "@/src/services/recipe.service";
+import {
+  getRecipesByUserId,
+  getRecipesFavouritedByUserId,
+} from "@/src/services/recipe.service";
 import { removeAllTokens } from "@/src/services/auth.service";
-import PrimaryButton from "@/src/components/shared/primary-button";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
 
 const H_MAX_HEIGHT = 320;
@@ -35,10 +36,12 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Profile = () => {
   const { theme } = useTheme();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [user, setUser] = useState<IUserResponse>();
   const [isFocused, setIsFocused] = useState("grid");
   const [following, setFollowing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [profileId, setProfileId] = useState<string>(id);
   const [recipes, setRecipes] =
     useState<IPaginatedResponse<IRecipeProjection>>();
 
@@ -51,21 +54,26 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    getStoredUserID().then((userId) => {
-      if (!userId) {
-        router.push("/register");
-        return;
-      }
-      getUser(userId).then((data) => {
-        setUser(data);
+    if (!profileId) {
+      getStoredUserID().then((userId) => {
+        if (userId) {
+          setProfileId(userId);
+          return;
+        }
+        router.replace("/register");
       });
-      getRecipesByUserId(userId).then((data) => {
-        console.log(data);
-        setRecipes(data);
-      });
-      setRefreshing(false);
+    }
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    if (!profileId) return;
+    getUser(profileId).then((data) => {
+      setUser(data);
     });
-  }, [refreshing]);
+    isFocused === "grid" ? handlegridPress() : handleFavouritePress();
+    setRefreshing(false);
+  }, [profileId, refreshing]);
 
   const logout = () => {
     removeAllTokens();
@@ -73,19 +81,21 @@ const Profile = () => {
     router.replace("/register");
   };
 
-  const isProfileOwner = () => {
-    return true;
+  const isProfileOwner = async () => {
+    const userId = await getStoredUserID();
+    return userId === profileId;
   };
-
   const getBtnText = () => {
-    if (isProfileOwner()) {
-      return "Editar";
-    }
+    isProfileOwner().then((data) => {
+      if (data) {
+        return "Editar";
+      }
+    });
     return following ? "Seguindo" : "Seguir";
   };
 
-  const handleBtnPress = () => {
-    if (!isProfileOwner()) {
+  const handleBtnPress = async () => {
+    if (!(await isProfileOwner())) {
       setFollowing((prevState) => !prevState);
       return;
     }
@@ -98,6 +108,20 @@ const Profile = () => {
 
   const handleRecipePress = (id: string) => {
     router.push(`/recipes/${id}`);
+  };
+
+  const handleFavouritePress = () => {
+    getRecipesFavouritedByUserId(profileId).then((data) => {
+      setRecipes(data);
+      handleFocusChange("heart");
+    });
+  };
+
+  const handlegridPress = () => {
+    getRecipesByUserId(profileId).then((data) => {
+      setRecipes(data);
+      handleFocusChange("grid");
+    });
   };
 
   return (
@@ -149,7 +173,7 @@ const Profile = () => {
                 styles(theme).btnNav,
                 isFocused === "grid" && styles(theme).btnNavFocused,
               ]}
-              onPress={() => handleFocusChange("grid")}
+              onPress={() => handlegridPress()}
             >
               <MaterialCommunityIcons
                 name="grid"
@@ -162,7 +186,7 @@ const Profile = () => {
                 styles(theme).btnNav,
                 isFocused === "heart" && styles(theme).btnNavFocused,
               ]}
-              onPress={() => handleFocusChange("heart")}
+              onPress={() => handleFavouritePress()}
             >
               <Ionicons
                 name="heart-outline"

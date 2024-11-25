@@ -5,8 +5,9 @@ export const styles = (theme: any) =>
     container: {
       flexGrow: 1,
       backgroundColor: theme.background,
-      paddingHorizontal: 10,
+      paddingHorizontal: 20,
       paddingBottom: 70,
+      gap: 20,
     },
     textTrendWrapper: {
       flexDirection: "row",
@@ -18,7 +19,7 @@ export const styles = (theme: any) =>
       flexDirection: "row",
       justifyContent: "flex-start",
       alignItems: "center",
-      marginVertical: 10,
+      marginVertical: 20,
       height: 220,
     },
     categoryContainerwrapper: {
@@ -29,11 +30,12 @@ export const styles = (theme: any) =>
     },
     trendingText: {
       fontSize: 24,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textColored: {
       color: theme.primary,
+      fontFamily: "ABeeZee_400Regular",
       fontSize: 18,
     },
     scrollContainer: {

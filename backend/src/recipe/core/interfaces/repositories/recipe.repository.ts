@@ -26,6 +26,15 @@ export interface IRecipeRepository {
     offset: number;
     limit: number;
   }): Promise<{ total: number; data: IRecipeProjection[] }>;
+  findFavouritesByUserId({
+    id,
+    offset,
+    limit,
+  }: {
+    id: string;
+    offset: number;
+    limit: number;
+  }): Promise<{ total: number; data: IRecipeProjection[] }>;
   update(id: string, recipe: Recipe): Promise<IRecipeResponse>;
   delete(recipeId: string): Promise<void>;
   favouriteRecipe(recipeId: string, userId: string): Promise<void>;

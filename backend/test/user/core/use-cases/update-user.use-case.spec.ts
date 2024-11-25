@@ -71,7 +71,6 @@ describe('UpdateUserUseCase', () => {
       imgUrl: undefined,
       isActive: true,
       name: 'new name',
-      password: 'oldHashesdPassword',
       username: 'newUsername',
     });
     expect(result).toEqual(updatedUser);

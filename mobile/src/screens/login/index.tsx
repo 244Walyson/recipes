@@ -12,10 +12,10 @@ import {
   getAccessToken,
   getRecoverPasswordToken,
 } from "@/src/services/auth.service";
-import { createUser, storeUserID } from "@/src/services/user.service";
+import { createUser } from "@/src/services/user.service";
 import { useRouter, useNavigation } from "expo-router";
-import { CommonActions } from "@react-navigation/native";
 import { loginInputs } from "@/src/static/login-ipunts.";
+import { CommonActions } from "@react-navigation/native";
 
 const Register = () => {
   const { theme } = useTheme();
@@ -75,7 +75,6 @@ const Register = () => {
     })
       .then((user) => {
         getToken();
-        storeUserID(user.id);
         console.log(user);
       })
       .catch((error) => {

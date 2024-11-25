@@ -56,10 +56,10 @@ export const genericInputs = {
     validation: (value: string) => true,
     message: "",
   },
-  adictionalTips: {
+  additionalTips: {
     value: "",
-    id: "adictionalTips",
-    name: "adictionalTips",
+    id: "additionalTips",
+    name: "additionalTips",
     type: "default",
     placeholder: "Dicas Adicionais",
     validation: (value: string) => true,
@@ -137,10 +137,10 @@ export const ingredientsInputs = {
     validation: (value: string) => value.length > 0,
     message: "O id não pode ser vazio",
   },
-  ingredient: {
+  name: {
     value: "",
-    id: "ingredient",
-    name: "ingredient",
+    id: "name",
+    name: "name",
     type: "default",
     placeholder: "Ingrediente",
     validation: (value: string) => value.length > 0,

@@ -23,7 +23,8 @@ export interface IRecipeResponse {
   version: number;
   createdAt: Date;
   updatedAt: Date;
-    isFavorite?: boolean;
+  isFavorite?: boolean;
+  isViewed?: boolean;
   deleted: boolean;
   user: { id: string; name: string; imgUrl: string; numberOfRecipes: number };
   recipeIngredients?: IIngredient[];

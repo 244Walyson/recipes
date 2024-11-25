@@ -4,10 +4,11 @@ import { PrismaService } from './utils/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { S3Module } from './s3/s3.module';
+import { HealthCheckController } from './health-chek.controller';
 
 @Module({
+  controllers: [HealthCheckController],
   imports: [UserModule, AuthModule, RecipeModule, S3Module],
-  controllers: [],
   providers: [PrismaService],
   exports: [PrismaService],
 })

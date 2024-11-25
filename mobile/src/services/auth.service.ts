@@ -4,6 +4,7 @@ import { API_URL } from "../utils/system";
 import * as SecureStore from "expo-secure-store";
 import { IAccessToken } from "../interfaces/auth/access-token/acces-token.interface";
 import { jwtDecode } from "jwt-decode";
+import { storeUserID } from "./user.service";
 
 export const getAccessToken = async (credentials: ICreadentials) => {
   try {
@@ -21,7 +22,11 @@ const storeTokenAndExpiration = async (accessToken: IAccessToken) => {
   await storeAccessToken(accessToken.access_token);
   await storeRefreshToken(accessToken.refresh_token);
   const decoded = decodeAccessToken(accessToken.access_token);
+  console.log("Decoded:", decoded);
+  console.log("Access token:", await getStoredAccessToken());
   await storeTokenExpiration(decoded?.exp ?? 0);
+  await storeUserID(decoded?.sub ?? "");
+  console.log("Expires in:", await getStoredExpiresIn());
 };
 
 export const refreshToken = async (refreshToken: string) => {

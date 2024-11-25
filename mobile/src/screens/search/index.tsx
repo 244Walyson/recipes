@@ -11,6 +11,7 @@ import {
   Animated,
   FlatList,
   RefreshControl,
+  StatusBar,
 } from "react-native";
 import { styles } from "./styles";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
@@ -37,7 +38,7 @@ type ModalData = {
   data: {
     key: string;
     title: string;
-    data: { id: number; name: string }[];
+    data: { id: string; name: string }[];
   };
 };
 
@@ -51,7 +52,8 @@ const Search = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [btnApplyModal, setBtnApplyModal] = useState(false);
   const [searchFilters, setSearchFilters] = useState<IFindAllFilters>({});
-  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
   const [debounceTimeout, setDebounceTimeout] = useState<NodeJS.Timeout | null>(
     null
   );
@@ -76,18 +78,36 @@ const Search = () => {
 
   useEffect(() => {
     console.log(searchFilters);
-    getRecipes(searchFilters).then((response) => {
+    getRecipes(searchFilters, page).then((response) => {
       console.log(response);
-      setRecipes(response);
-      setRefreshing(false);
+      if (page == 1) {
+        setRecipes(response);
+        return;
+      }
+      setRecipes((prev) => ({
+        ...response,
+        data: [...(prev?.data ?? []), ...response.data],
+      }));
     });
-  }, [searchFilters, refreshing]);
+    setLoading(false);
+  }, [searchFilters, loading, page]);
+
+  const handleLoadMore = () => {
+    if (!loading) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setPage(1);
+  };
 
   const openModal = ({
     data,
     multipleSelection = false,
   }: {
-    data: { title: string; key: string; data: { id: number; name: string }[] };
+    data: { title: string; key: string; data: { id: string; name: string }[] };
     multipleSelection?: boolean;
   }) => {
     if (data.key === "ingredients") {
@@ -163,6 +183,7 @@ const Search = () => {
 
   return (
     <View style={styles(theme).container}>
+      <StatusBar translucent={false} backgroundColor={theme.background} />
       <Animated.View
         style={[
           {
@@ -176,7 +197,13 @@ const Search = () => {
           },
         ]}
       >
-        <Header />
+        <View style={styles(theme).header}>
+          <Header
+            smallText="Encontre"
+            coloredText="as melhores"
+            bigText="Receitas"
+          />
+        </View>
         <View style={{ paddingHorizontal: 10 }}>
           <CustomSearchBar
             onSearch={handleSearch}
@@ -261,42 +288,31 @@ const Search = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ alignItems: "flex-end" }}>
+        <View
+          style={{ alignItems: "flex-end", backgroundColor: theme.background }}
+        >
           <TouchableOpacity style={{}} onPress={() => setSearchFilters({})}>
-            <Text style={{ width: 100, color: theme.tertiary }}>
+            <Text
+              style={{
+                width: 120,
+                paddingHorizontal: 10,
+                color: theme.tertiary,
+                fontFamily: "ABeeZee_400Regular",
+              }}
+            >
               Limpar Filtros
             </Text>
           </TouchableOpacity>
         </View>
-        {/* <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles(theme).filtersContainer}
-        >
-          {categories.map((category, index) => (
-            <Text
-              key={index}
-              style={[
-                styles(theme).categoryText,
-                focused === category.name ? { color: theme.foreground } : {},
-              ]}
-              onPress={() =>
-                focused === category.name
-                  ? setFocused("")
-                  : setFocused(category.name)
-              }
-            >
-              {category.name}
-            </Text>
-          ))}
-        </ScrollView> */}
       </Animated.View>
 
       <FlatList
-        style={[
-          styles(theme).cardsContainer,
-          { paddingTop: H_MAX_HEIGHT + 100 },
-        ]}
+        showsVerticalScrollIndicator={false}
+        style={[styles(theme).cardsContainer]}
+        contentContainerStyle={{
+          paddingTop: H_MAX_HEIGHT + 60,
+          paddingBottom: H_MIN_HEIGHT + 20,
+        }}
         data={recipes?.data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item: recipe }) => (
@@ -305,7 +321,7 @@ const Search = () => {
             title={recipe.name}
             author={recipe.user.name}
             imgUrl={recipe.imgUrl}
-            time={recipe.totalTime?.toString()}
+            time={recipe.preparationTime?.toString()}
             mealType={recipe.mealTypes}
             onPress={() => router.push(`/recipes/${recipe.id}`)}
           />
@@ -315,14 +331,16 @@ const Search = () => {
           { useNativeDriver: false }
         )}
         scrollEventThrottle={16}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
         refreshControl={
           <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => setRefreshing(true)}
+            refreshing={loading}
+            onRefresh={handleRefresh}
             colors={[theme.foreground]}
             tintColor="transparent"
             progressBackgroundColor="transparent"
-            style={{ zIndex: 1000 }}
+            style={{ zIndex: 100 }}
           />
         }
       />

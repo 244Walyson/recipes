@@ -6,10 +6,15 @@ const statusBarHeight = Constants.statusBarHeight;
 export const styles = (theme: any) =>
   StyleSheet.create({
     container: {
-      paddingVertical: 20,
-      paddingHorizontal: 20,
       justifyContent: "center",
+      flexDirection: "row",
       marginTop: statusBarHeight,
+      width: "100%",
+      alignItems: "center",
+    },
+    textContainer: {
+      flex: 1,
+      justifyContent: "center",
     },
     headerWrapper: {
       flexDirection: "row",
@@ -20,12 +25,12 @@ export const styles = (theme: any) =>
     },
     headerText: {
       fontSize: 30,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     recipetext: {
       fontSize: 36,
-      fontWeight: "bold",
+      fontFamily: "ABeeZee_400Regular",
       color: theme.foreground,
     },
     textColored: {

@@ -71,10 +71,12 @@ export class PassportGithubStrategy extends PassportStrategy(
       const profile = userResponse.data;
 
       const user = new UserRequestDto({
-        email: profile.email ?? profile.username ?? profile.login,
+        email:
+          profile.email ?? `${profile.username ?? profile.login}@github.com`,
         name: profile.name ?? profile.login,
         imgUrl: profile.avatar_url ?? '',
         username: profile.login,
+        authProvider: 'oauth2',
       });
 
       return { access_token, user };

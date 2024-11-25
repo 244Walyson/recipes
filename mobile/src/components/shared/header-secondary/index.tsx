@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "ABeeZee_400Regular",
   },
 });
 

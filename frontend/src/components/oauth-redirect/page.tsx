@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+import mixer from "@/assets/mixer.svg";
 
 const OauthRedirect = () => {
   // const [loading, setLoading] = useState(true);
@@ -36,9 +38,22 @@ const OauthRedirect = () => {
   // }, [searchParams, router]);
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-4xl">Redirecting...</h1>{" "}
+    <div className="dark w-full bg-background">
+      <div className="flex flex-col items-center h-screen">
+        <div className="items-center justify-center w-ful h-40">
+          <div className="items-center">
+            <Image
+              src={mixer}
+              alt="Logo"
+              width={150}
+              height={150}
+              className="rotate-45 ml-8"
+            />
+            <h2 className="text-foreground">
+              Você está sendo redirecionado...
+            </h2>
+          </div>
+        </div>
       </div>
     </div>
   );

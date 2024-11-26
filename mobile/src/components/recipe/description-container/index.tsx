@@ -7,6 +7,7 @@ import {
   favouriteRecipe,
   unfavouriteRecipe,
 } from "@/src/services/recipe.service";
+import MealTypeCard from "../meal-type-card";
 
 interface DescriptionContainerProps {
   title: string;
@@ -85,8 +86,8 @@ const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
           </View>
         </View>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textLight}>{mealType}</Text>
           <Text style={styles(theme).textLight}>{getPreparationTime()}</Text>
+          {mealType && <MealTypeCard name={mealType} />}
         </View>
       </View>
     </View>

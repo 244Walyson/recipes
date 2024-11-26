@@ -4,7 +4,7 @@ import CustomInput from "../../shared/custom-input";
 import { useTheme } from "@/src/context/theme-context";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
 import { FormField, mealTypesInputs } from "@/src/static/register-form-inputs";
-import { updateAndValidate } from "@/src/utils/forms";
+import { toValues, updateAndValidate } from "@/src/utils/forms";
 import { createMealType, getMealTypes } from "@/src/services/meal-type.service";
 import ErrorContainer from "../../shared/error-container";
 import Feather from "react-native-vector-icons/Feather";
@@ -40,13 +40,10 @@ const MealTypeForm = () => {
       setModalVisible(true);
       return;
     }
-    setMealTypes((prevMealTypes) => [
-      ...prevMealTypes,
-      {
-        id: id.value,
-        name: name.value,
-      },
-    ]);
+    updateRecipeRequest({
+      ...recipeRequest,
+      mealTypes: [...mealTypes, toValues(mealTypesFormData)],
+    });
     setMealTypesFormData({
       ...mealTypesFormData,
       id: { ...id, value: "" },
@@ -109,10 +106,6 @@ const MealTypeForm = () => {
 
     setDebounceTimeout(newTimeout);
   };
-
-  useEffect(() => {
-    updateRecipeRequest({ mealTypes });
-  }, [mealTypes]);
 
   useEffect(() => {
     setMealTypes(recipeRequest.mealTypes);

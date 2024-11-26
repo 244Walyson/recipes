@@ -87,7 +87,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('oauth2/callback/google')
+  @Post('/redirect/google')
   async googleCallback(@Body() { idToken }: { idToken: string }) {
     const user = await this.passportGoogleStrategy.validateTokenWithGoogle({
       idToken,

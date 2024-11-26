@@ -96,7 +96,7 @@ export class RecipeController {
     });
   }
 
-  @Post('favourite/:recipeId')
+  @Post('favourites/:recipeId')
   async favouriteRecipe(@Param('recipeId') recipeId: string, @Request() req) {
     const userId = req.user.sub;
     console.log(userId);
@@ -107,7 +107,7 @@ export class RecipeController {
     });
   }
 
-  @Delete('unfavourite/:recipeId')
+  @Delete('favourites/:recipeId')
   @HttpCode(204)
   async unfavouriteRecipe(@Param('recipeId') recipeId: string, @Request() req) {
     const userId = req.user.sub;
@@ -117,7 +117,7 @@ export class RecipeController {
     });
   }
 
-  @Post('view/:recipeId')
+  @Post('views/:recipeId')
   async addViewCount(@Param('recipeId') recipeId: string, @Request() req) {
     const userId = req.user.sub;
     return this.viewCountAddUseCase.execute({

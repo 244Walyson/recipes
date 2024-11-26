@@ -101,7 +101,7 @@ export const updateRecipe = async (
 export const viewRecipe = async (recipeId: string) => {
   try {
     const response = await axiosIntance.post(
-      `${API_URL}/recipes/view/${recipeId}`
+      `${API_URL}/recipes/views/${recipeId}`
     );
     return response.data;
   } catch (error) {
@@ -113,7 +113,7 @@ export const viewRecipe = async (recipeId: string) => {
 export const favouriteRecipe = async (recipeId: string) => {
   try {
     const response = await axiosIntance.post(
-      `${API_URL}/recipes/favourite/${recipeId}`
+      `${API_URL}/recipes/favourites/${recipeId}`
     );
     return response.data;
   } catch (error) {
@@ -125,7 +125,7 @@ export const favouriteRecipe = async (recipeId: string) => {
 export const unfavouriteRecipe = async (recipeId: string) => {
   try {
     const response = await axiosIntance.delete(
-      `${API_URL}/recipes/unfavourite/${recipeId}`
+      `${API_URL}/recipes/favourites/${recipeId}`
     );
     return response.data;
   } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, Text, TouchableOpacity } from "react-native";
 import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
@@ -39,7 +39,6 @@ type Macronnutrients = {
 };
 
 type RecipeFormProps = {
-  imgUrl?: string;
   recipeId?: string;
 };
 
@@ -68,15 +67,16 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       router.replace("/register");
       return;
     }
+
+    console.log("recipeMealTypes", recipeRequest.mealTypes);
+
     const data: IReciperequest = {
       ...recipeRequest,
-      macronutrients: recipeRequest.macronutrients
-        ? {
-            carbs: +recipeRequest.macronutrients.carbs,
-            protein: +recipeRequest.macronutrients.protein,
-            fat: +recipeRequest.macronutrients.fat,
-          }
-        : undefined,
+      macronutrients: {
+        carbs: Number(recipeRequest.macronutrients?.carbs),
+        protein: Number(recipeRequest.macronutrients?.protein),
+        fat: Number(recipeRequest.macronutrients?.fat),
+      },
       ingredients: recipeRequest.ingredients.map((ingredient) => {
         return {
           id: ingredient.id,
@@ -85,6 +85,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
           unit: ingredient.unit,
         };
       }),
+      mealTypes: recipeRequest.mealTypes,
       preparationTime: +recipeRequest.preparationTime,
       servingCount: recipeRequest.servingCount
         ? +recipeRequest.servingCount
@@ -144,6 +145,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
         .catch((error) => {
           console.log("Error:", error);
         });
+      return;
     }
   }, [recipeId]);
 
@@ -177,30 +179,15 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
     updateRecipeRequest(updatedRecipeRequest);
   };
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     return () => {
-  //       updateRecipeRequest({
-  //         name: "",
-  //         preparationMethod: [],
-  //         preparationTime: 0,
-  //         imgUrl: "",
-  //         additionalTips: "",
-  //         macronutrients: undefined,
-  //         servingCount: undefined,
-  //         isPublished: false,
-  //         costEstimate: undefined,
-  //         allergens: [],
-  //         ingredients: [],
-  //         mealTypes: [],
-  //         cuisineStyles: [],
-  //       });
-  //     };
-  //   }, [])
-  // );
+  const handleClean = () => {
+    console.log("clean");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
+      <TouchableOpacity onPress={handleClean}>
+        <Text style={styles(theme).clear}>Limpar formulario</Text>
+      </TouchableOpacity>
       <GenericRecipeForm />
 
       <MealTypeForm />

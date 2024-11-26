@@ -18,6 +18,7 @@ const useFormFieldsFromContext = (formFields: Record<string, FormField>) => {
           recipeRequest.macronutrients[
             key as keyof typeof recipeRequest.macronutrients
           ];
+        console.log("macronutrientValue", macronutrientValue);
         if (macronutrientValue !== undefined) {
           updatedFormData[key].value = String(macronutrientValue);
         }

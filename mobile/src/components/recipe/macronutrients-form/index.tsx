@@ -11,7 +11,8 @@ import useFormFieldsFromContext from "@/src/hooks/use-recipe-form-field";
 
 const MacronutrientsForm = () => {
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
-  const formFields = useFormFieldsFromContext(macronutrientsInputs);
+  const formFields: Record<string, FormField> =
+    useFormFieldsFromContext(macronutrientsInputs);
 
   const [macronutrientsFormData, setMacronutrientsFormData] =
     useState<Record<string, FormField>>(formFields);
@@ -22,14 +23,17 @@ const MacronutrientsForm = () => {
     );
   };
 
-  console.log("macronutrientsFormData");
+  console.log(recipeRequest.macronutrients);
 
   useEffect(() => {
     const formValues = toValues(macronutrientsFormData);
     console.log("formValuessMacro", formValues);
     updateRecipeRequest({
       ...recipeRequest,
-      ...formValues,
+      macronutrients: {
+        ...recipeRequest.macronutrients,
+        ...formValues,
+      },
     });
   }, [macronutrientsFormData]);
 

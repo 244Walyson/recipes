@@ -106,4 +106,9 @@ export const styles = (theme: any) =>
       borderRadius: 8,
       marginBottom: 10,
     },
+    clear: {
+      width: "100%",
+      textAlign: "right",
+      color: theme.tertiary,
+    },
   });

@@ -24,7 +24,7 @@ const initialRecipeRequest: IReciperequest = {
   additionalTips: "",
   allergens: [],
   imgUrl: "",
-  macronutrients: { carbs: 0, protein: 0, fat: 0 },
+  macronutrients: {},
   servingCount: 0,
 };
 

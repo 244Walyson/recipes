@@ -251,3 +251,37 @@ jobs:
             --namespace frontend --create-namespace \
             --set image.repository=walymb/recipes-frontend \
             --set image.tag=latest
+
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          build-tools: 33.0.2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build APK
+        run: ./mobile/android/gradlew assembleRelease
+        working-directory: android
+
+      - name: Upload APK to GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: mobile/android/app/build/outputs/apk/release/app-release.apk
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: "APK Release - ${{ github.ref_name }}"
+          body: "Build automático do APK."

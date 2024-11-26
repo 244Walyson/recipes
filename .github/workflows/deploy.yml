@@ -277,8 +277,9 @@ jobs:
 
       - name: Build APK
         run: |
-          cd mobile/android
-          ./gradlew assembleRelease
+          ls
+          cd mobile
+          ./android/gradlew assembleRelease
 
       - name: Upload APK to GitHub Release
         uses: ncipollo/release-action@v1

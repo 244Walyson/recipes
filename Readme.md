@@ -6,7 +6,9 @@
 ---
 
 ### API
-swagger doc: https://api.recipes.waly.dev.br/swagger-ui#/
+[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://god.gw.postman.com/run-collection/27306189-713dd47d-27ac-4b55-b8ee-7eca8519f601?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D27306189-713dd47d-27ac-4b55-b8ee-7eca8519f601%26entityType%3Dcollection%26workspaceId%3De4ebd9f6-d6ee-4a8d-9f04-709c9d79265f)  
+**swagger doc**: https://api.recipes.waly.dev.br/swagger-ui#/
+
 ### **Endpoints Principais**
 
 #### **Autenticação**

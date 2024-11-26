@@ -274,9 +274,11 @@ jobs:
         run: |
           cd mobile
           npm install
+          npx expo prebuild
 
       - name: Build APK
-        run: ./mobile/android/gradlew assembleRelease
+        run: ./gradlew assembleRelease
+        working-directory: mobile/android
 
       - name: Upload APK to GitHub Release
         uses: ncipollo/release-action@v1

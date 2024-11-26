@@ -276,8 +276,9 @@ jobs:
           npm install
 
       - name: Build APK
-        run: ./mobile/android/gradlew assembleRelease
-        working-directory: android
+        run: |
+          cd mobile/android
+          ./gradlew assembleRelease
 
       - name: Upload APK to GitHub Release
         uses: ncipollo/release-action@v1

@@ -271,7 +271,9 @@ jobs:
           build-tools: 33.0.2
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd mobile
+          npm install
 
       - name: Build APK
         run: ./mobile/android/gradlew assembleRelease

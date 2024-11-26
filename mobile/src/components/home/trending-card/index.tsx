@@ -31,10 +31,14 @@ const TrendinCard: React.FC<TrendinCardProps> = ({
 
   return (
     <TouchableOpacity onPress={onPress} style={styles(theme).trendingContainer}>
-      <Image source={{ uri: imgUrl }} style={styles(theme).image} />
+      <Image
+        source={{ uri: imgUrl }}
+        style={styles(theme).image}
+        resizeMode="cover"
+      />
       <View style={[styles(theme).textDescWrapper, { gap: 5 }]}>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textTitle}>{title}</Text>
+          <Text style={styles(theme).textTitle} ellipsizeMode="tail" numberOfLines={1}>{title}</Text>
           <Ionicons
             name={favourite ? "heart" : "heart-outline"}
             size={30}

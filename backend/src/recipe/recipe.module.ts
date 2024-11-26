@@ -140,10 +140,25 @@ import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favo
       useFactory: (
         recipeRepository: IRecipeRepository,
         findRecipeByIdUseCase: FindRecipeByIdUseCase,
+        findMealTypeByidUseCase: FindMealTypeByIdUseCase,
+        findIngredientByIdUseCase: FindIngredientByIdUseCase,
+        findCuisineStyleByIdUseCase: FindCuisineStyleByIdUseCase,
       ) => {
-        return new UpdateRecipeUseCase(recipeRepository, findRecipeByIdUseCase);
+        return new UpdateRecipeUseCase(
+          recipeRepository,
+          findRecipeByIdUseCase,
+          findMealTypeByidUseCase,
+          findCuisineStyleByIdUseCase,
+          findIngredientByIdUseCase,
+        );
       },
-      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+      inject: [
+        'IRecipeRepository',
+        FindRecipeByIdUseCase,
+        FindMealTypeByIdUseCase,
+        FindIngredientByIdUseCase,
+        FindCuisineStyleByIdUseCase,
+      ],
     },
     {
       provide: DeleteRecipeUseCase,

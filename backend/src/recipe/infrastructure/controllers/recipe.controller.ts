@@ -40,10 +40,10 @@ export class RecipeController {
 
   @Get()
   async findAllRecipes(
+    @Request() req,
+    @Query() query: QueryParamsDto,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query() query: QueryParamsDto,
-    @Request() req,
   ) {
     const userId = req.user.sub;
     return this.findALlrecipesUseCase.execute({ page, limit }, query, userId);
@@ -74,7 +74,8 @@ export class RecipeController {
 
   @Delete(':recipeId')
   @HttpCode(204)
-  async deleteRecipe(@Param('id') recipeId: string) {
+  async deleteRecipe(@Param('recipeId') recipeId: string) {
+    console.log(recipeId);
     return this.deleteRecipeUseCase.execute(recipeId);
   }
 

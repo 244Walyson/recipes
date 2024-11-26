@@ -18,7 +18,13 @@ const MealTypeCard = ({ name, author, imgUrl, onPress }: MealTypeProps) => {
     <TouchableOpacity onPress={onPress} style={styles(theme).trendingContainer}>
       <Image source={{ uri: imgUrl }} style={styles(theme).image} />
       <View style={styles(theme).textDescWrapper}>
-        <Text style={[styles(theme).textTitle]}>{name}</Text>
+        <Text
+          style={[styles(theme).textTitle]}
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {name}
+        </Text>
       </View>
       <View>
         <View style={styles(theme).textWrapper}>

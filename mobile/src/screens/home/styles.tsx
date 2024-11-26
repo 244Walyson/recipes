@@ -21,6 +21,7 @@ export const styles = (theme: any) =>
       alignItems: "center",
       marginVertical: 20,
       height: 220,
+      gap: 10,
     },
     categoryContainerwrapper: {
       flexDirection: "row",
@@ -41,6 +42,7 @@ export const styles = (theme: any) =>
     scrollContainer: {
       flexDirection: "row",
       marginVertical: 10,
+      gap: 10,
     },
     trendingContainer: {
       width: "100%",

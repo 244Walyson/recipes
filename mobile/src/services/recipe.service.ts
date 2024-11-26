@@ -28,7 +28,7 @@ export const getRecipes = async (
     if (params.ingredients)
       queryParams.append("ingredients", params.ingredients.join(","));
     if (params.mealType)
-      queryParams.append("cuisineStyles", params.mealType.join(","));
+      queryParams.append("mealTypes", params.mealType.join(","));
     if (params.price) queryParams.append("price", params.price.join(","));
     if (params.servingCount)
       queryParams.append("servingCount", params.servingCount);
@@ -142,6 +142,18 @@ export const getRecipesFavouritedByUserId = async (userId: string) => {
     return response.data;
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+};
+
+export const deleteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axiosIntance.delete(
+      `${API_URL}/recipes/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 };

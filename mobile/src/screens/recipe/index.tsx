@@ -6,6 +6,7 @@ import {
   ScrollView,
   Animated,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { useTheme } from "@/src/context/theme-context";
@@ -13,13 +14,19 @@ import { styles } from "./styles";
 import RecipeInstructions from "@/src/components/recipe/recipe-instructions";
 import DescriptionContainer from "@/src/components/recipe/description-container";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
-import { getRecipeById, viewRecipe } from "@/src/services/recipe.service";
+import {
+  deleteRecipe,
+  getRecipeById,
+  viewRecipe,
+} from "@/src/services/recipe.service";
 import IngredientsCard from "@/src/components/recipe/ingredients-card";
 import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getStoredUserID } from "@/src/services/user.service";
 import AuthorCard from "@/src/components/recipe/author-card";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
+import MaterialComunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import CustomModal from "@/src/components/shared/modal";
 
 type InstructionStep = {
   step: number;
@@ -39,6 +46,7 @@ const Recipe = () => {
   const [isRecipeOwner, setIsRecipeOwner] = useState(false);
   const [recipe, setRecipe] = React.useState<IRecipeResponse>();
   const [refreshing, setRefreshing] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -82,6 +90,15 @@ const Recipe = () => {
     }
   };
 
+  const handleDeleteRecipe = () => {
+    if (isRecipeOwner && recipe) {
+      deleteRecipe(recipe?.id).then(() => {
+        setModalVisible(false);
+        router.replace(`/(tabs)/home`);
+      });
+    }
+  };
+
   return (
     <View style={styles(theme).container}>
       <StatusBar translucent backgroundColor="transparent" />
@@ -112,7 +129,6 @@ const Recipe = () => {
           />
         </ImageBackground>
       </Animated.View>
-
       <ScrollView
         style={[
           styles(theme).instructionsContainer,
@@ -168,6 +184,7 @@ const Recipe = () => {
             isActive={focusedBtn != "ingredients"}
           />
         </View>
+
         <View style={{ marginBottom: H_MAX_HEIGHT + 130 }}>
           {focusedBtn !== "ingredients" ? (
             <RecipeInstructions data={recipe?.preparationMethod} />
@@ -187,6 +204,26 @@ const Recipe = () => {
           )}
         </View>
       </ScrollView>
+      {isRecipeOwner && (
+        <>
+          <TouchableOpacity
+            style={styles(theme).delete}
+            onPress={() => setModalVisible(true)}
+          >
+            <MaterialComunityIcons name="delete" size={30} color={"#fff"} />
+          </TouchableOpacity>
+          <CustomModal
+            title="Tem Certeza que deseja excluir essa receita?"
+            data={[]}
+            btnApplyActive={true}
+            btnApplyText="Confirmar"
+            btnApplyAwaysActive={true}
+            btnApplyAction={() => handleDeleteRecipe()}
+            onClose={() => setModalVisible(false)}
+            visible={modalVisible}
+          />
+        </>
+      )}
     </View>
   );
 };

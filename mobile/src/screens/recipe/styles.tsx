@@ -61,4 +61,12 @@ export const styles = (theme: any) =>
       flexDirection: "row",
       justifyContent: "space-between",
     },
+    delete: {
+      position: "absolute",
+      borderRadius: 20,
+      right: 20,
+      bottom: 80,
+      padding: 5,
+      backgroundColor: theme.error,
+    },
   });

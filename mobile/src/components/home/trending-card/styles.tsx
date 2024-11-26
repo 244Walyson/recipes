@@ -4,7 +4,7 @@ export const styles = (theme: any) =>
   StyleSheet.create({
     trendingContainer: {
       width: 180,
-      height: 140,
+      height: 210,
       borderRadius: 12,
       alignItems: "center",
       justifyContent: "center",
@@ -28,6 +28,7 @@ export const styles = (theme: any) =>
       marginVertical: 5,
       color: theme.foreground,
       fontFamily: "ABeeZee_400Regular",
+      width: "60%",
     },
     textDescWrapper: {
       width: "100%",
@@ -36,8 +37,9 @@ export const styles = (theme: any) =>
     },
     image: {
       borderRadius: 20,
+      overflow: "hidden",
       width: "100%",
-      height: "100%",
+      height: 130,
       marginBottom: 10,
     },
   });

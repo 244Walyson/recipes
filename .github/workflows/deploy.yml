@@ -121,6 +121,7 @@ jobs:
           cd ./backend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }} .
           echo "BACKEND_IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          echo "BACKEND_IMAGE_TAG=${{ env.BACKEND_IMAGE_TAG }}"
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -146,6 +147,7 @@ jobs:
           cd ./frontend
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }} .
           echo "FRONTEND_IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+          echo "FRONTEND_IMAGE_TAG=${{ env.FRONTEND_IMAGE_TAG }}"
 
       - name: Push Docker image to Docker Hub
         run: |

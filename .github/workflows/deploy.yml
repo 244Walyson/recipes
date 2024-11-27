@@ -106,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: tests_backend
     outputs:
-      backend_image_tag: ${{ steps.build_backend.outputs.backend_image_tag }}
+      backend_image_tag: ${{ steps.set_backend_image_tag.outputs.backend_image_tag }}
 
     steps:
       - name: Checkout repository
@@ -124,7 +124,7 @@ jobs:
           image_tag=$(echo "${{ github.sha }}" | cut -c1-12)
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${image_tag} .
           echo "backend_image_tag=${image_tag}" >> $GITHUB_ENV
-          echo "backend_image_tag=${image_tag}"
+          echo "::set-output name=backend_image_tag::${image_tag}"
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -135,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_frontend
     outputs:
-      frontend_image_tag: ${{ steps.build_frontend.outputs.frontend_image_tag }}
+      frontend_image_tag: ${{ steps.set_frontend_image_tag.outputs.frontend_image_tag }}
 
     steps:
       - name: Checkout repository
@@ -152,8 +152,8 @@ jobs:
           cd ./frontend
           image_tag=$(echo "${{ github.sha }}" | cut -c1-12)
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
-           echo "frontend_image_tag=${image_tag}" >> $GITHUB_ENV
-          echo "frontend_image_tag=${image_tag}"
+          echo "backend_image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "::set-output name=backend_image_tag::${image_tag}"
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -206,7 +206,8 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          echo "backend_image_tag=${{ env.backend_image_tag }}"
+          image_tag=${{ needs.build_and_push_backend_docker_image.outputs.backend_image_tag }}
+          echo "backend_image_tag=${image_tag}"
           cd helm-charts/backend/
           helm upgrade --install recipes-api . -f values.yaml \
             --namespace api --create-namespace \
@@ -240,7 +241,8 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          echo "frontend_image_tag=${{ env.frontend_image_tag }}"
+          image_tag=${{ needs.build_and_push_frontend_docker_image.outputs.frontend_image_tag }}
+          echo "frontend_image_tag=${image_tag}"
           cd helm-charts/frontend/
           helm upgrade --install recipes-frontend . -f values.yaml \
             --namespace frontend --create-namespace \

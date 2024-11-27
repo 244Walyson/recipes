@@ -166,7 +166,9 @@ jobs:
       - name: Build Docker image
         run: |
           cd ./frontend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ steps.set-output.outputs.frontend_image_tag }} .
+          image_tag=${{ steps.set-output.outputs.frontend_image_tag }}
+          echo "FRONTEND_IMAGE_TAG=${image_tag}"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
 
       - name: Push Docker image to Docker Hub
         run: |

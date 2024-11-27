@@ -162,6 +162,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push_backend_docker_image
     environment: production
+    env:
+      backend_image_tag: ${{ needs.build_and_push_backend_docker_image.outputs.backend_image_tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -204,8 +206,8 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          image_tag=${{ needs.build_and_push_backend_docker_image.outputs.backend_image_tag }}
-          echo "backend_image_tag=${image_tag}"
+          image_tag=${{ env.backend_image_tag }}
+          echo "backend_image_tag=${env.backend_image_tag}"
           cd helm-charts/backend/
           helm upgrade --install recipes-api . -f values.yaml \
             --namespace api --create-namespace \
@@ -216,6 +218,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push_frontend_docker_image
     environment: production
+    env:
+      frontend_image_tag: ${{ needs.build_and_push_frontend_docker_image.outputs.frontend_image_tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -239,23 +243,14 @@ jobs:
 
       - name: Deploy with Helm
         run: |
-          image_tag=${{ needs.build_and_push_frontend_docker_image.outputs.frontend_image_tag }}
+          image_tag=${{ env.frontend_image_tag }}
+          echo "frontend_image_tag=${env.frontend_image_tag}"
           echo "frontend_image_tag=${image_tag}"
           cd helm-charts/frontend/
           helm upgrade --install recipes-frontend . -f values.yaml \
             --namespace frontend --create-namespace \
             --set image.repository=walymb/recipes-frontend \
             --set image.tag=${{ env.frontend_image_tag }}
-
-  send_discord_notification:
-    runs-on: ubuntu-latest
-    needs: [deploy_backend, deploy_frontend]
-    steps:
-      - name: Send Discord notification
-        run: |
-          curl -X POST -H "Content-Type: application/json" -d '{
-            "content": "Deployment completed successfully!"
-          }' ${{ secrets.DISCORD_WEBHOOK_URL }}
 
   build-apk:
     runs-on: ubuntu-latest

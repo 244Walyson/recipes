@@ -105,6 +105,9 @@ jobs:
   build_and_push_backend_docker_image:
     runs-on: ubuntu-latest
     needs: tests_backend
+    outputs:
+      backend_image_tag: ${{ steps.build_backend.outputs.backend_image_tag }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -118,9 +121,9 @@ jobs:
       - name: Build Docker image
         run: |
           cd ./backend
-          image_tag="${{ github.sha }}"
+          image_tag=$(echo "${{ github.sha }}" | cut -c1-12)
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${image_tag} .
-          echo "::set-output name=backend_image_tag::${image_tag}"
+          echo "backend_image_tag=${image_tag}" >> $GITHUB_ENV
           echo "backend_image_tag=${image_tag}"
 
       - name: Push Docker image to Docker Hub
@@ -131,6 +134,9 @@ jobs:
   build_and_push_frontend_docker_image:
     runs-on: ubuntu-latest
     needs: build_frontend
+    outputs:
+      frontend_image_tag: ${{ steps.build_frontend.outputs.frontend_image_tag }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -144,9 +150,9 @@ jobs:
       - name: Build Docker image
         run: |
           cd ./frontend
-          image_tag="${{ github.sha }}"
+          image_tag=$(echo "${{ github.sha }}" | cut -c1-12)
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
-          echo "::set-output name=frontend_image_tag::${image_tag}"
+           echo "frontend_image_tag=${image_tag}" >> $GITHUB_ENV
           echo "frontend_image_tag=${image_tag}"
 
       - name: Push Docker image to Docker Hub

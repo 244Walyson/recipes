@@ -10,7 +10,7 @@ on:
 jobs:
   build_backend:
     runs-on: ubuntu-latest
-    if: contains(github.event.commits.*.modified, 'backend/')
+    # if: contains(github.event.commits.*.modified, 'backend/')
     outputs:
       node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
 
@@ -39,7 +39,7 @@ jobs:
 
   build_frontend:
     runs-on: ubuntu-latest
-    if: contains(github.event.commits.*.modified, 'frontend/')
+    # if: contains(github.event.commits.*.modified, 'frontend/')
     outputs:
       node_modules_cache: ${{ steps.cache-node-modules.outputs.cache-hit }}
 

@@ -118,11 +118,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_LOGIN }}
 
+      - name: Set output
+        id: set-output
+        run: |
+          echo "backend_image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Access output
+        run: |
+          echo "backend_image_tag=${{ steps.set-output.outputs.backend_image_tag }}"
+
       - name: Build Docker image
         run: |
           cd ./backend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ github.sha }} .
-          echo "backend_image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ steps.set-output.outputs.backend_image_tag }} .
           echo "BACKEND_IMAGE_TAG=${{ env.backend_image_tag }}"
 
       - name: Push Docker image to Docker Hub
@@ -133,6 +141,8 @@ jobs:
   build_and_push_frontend_docker_image:
     runs-on: ubuntu-latest
     needs: build_frontend
+    outputs:
+      frontend_image_tag: ${{ steps.set-output.outputs.frontend_image_tag }}
 
     steps:
       - name: Checkout repository
@@ -144,12 +154,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_LOGIN }}
 
+      - name: Set output
+        id: set-output
+        run: |
+          echo "frontend_image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Access output
+        run: |
+          echo "frontend_image_tag=${{ steps.set-output.outputs.frontend_image_tag }}"
+
       - name: Build Docker image
         run: |
           cd ./frontend
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ github.sha }} .
-          echo "FRONTEND_IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
-          echo "FRONTEND_IMAGE_TAG=${{ env.FRONTEND_IMAGE_TAG }}"
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ steps.set-output.outputs.frontend_image_tag }} .
 
       - name: Push Docker image to Docker Hub
         run: |

@@ -20,7 +20,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432/recipesdb
+      - DATABASE_URL=
       - EMAIL_USER=
       - EMAIL_PASS=
       - APP_URL=

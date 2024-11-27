@@ -5,6 +5,7 @@ import { IRecipeProjection } from '@/src/recipe/core/interfaces/recipes/recipe-r
 import { IRecipeRepository } from '@/src/recipe/core/interfaces/repositories/recipe.repository';
 import { PrismaService } from '@/src/utils/prisma.service';
 import { IRecipeResponse } from '../../core/interfaces/recipes/recipe-response.interface';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RecipeRepository implements IRecipeRepository {
@@ -62,7 +63,7 @@ export class RecipeRepository implements IRecipeRepository {
         ...recipe,
         macronutrients: recipe.macronutrients as Record<string, number>,
         mealTypes: recipe.mealTypes.map((item) => item.MealType),
-        preparationMethod: recipe.preparationMethod as any,
+        preparationMethod: recipe.preparationMethod,
         cuisineStyles: recipe.cuisineStyles.map((item) => item.CuisineStyle),
         recipeIngredients: recipe.recipeIngredients.map((item) => ({
           id: item.ingredient.id,
@@ -246,64 +247,9 @@ export class RecipeRepository implements IRecipeRepository {
     filters: IFindAllFilters,
     userId?: string,
   ): Promise<{ total: number; data: IRecipeProjection[] }> {
+    const whereCondition = this.buildWhereCondition(filters);
     const total = await this.prismaService.recipe.count({
-      where: {
-        name: {
-          contains: filters?.name ? filters.name : '',
-          mode: 'insensitive',
-        },
-
-        recipeIngredients:
-          filters?.ingredients && filters.ingredients.length > 0
-            ? {
-                some: {
-                  ingredient: {
-                    name: { in: filters.ingredients, mode: 'insensitive' },
-                  },
-                },
-              }
-            : undefined,
-
-        preparationTime:
-          filters?.preparationTime &&
-          !isNaN(filters.preparationTime[0]) &&
-          !isNaN(filters.preparationTime[1])
-            ? {
-                gte: filters.preparationTime[0],
-                lte: filters.preparationTime[1],
-              }
-            : undefined,
-        costEstimate:
-          filters?.price && !isNaN(filters.price[0]) && !isNaN(filters.price[1])
-            ? {
-                gte: filters.price[0],
-                lte: filters.price[1],
-              }
-            : undefined,
-        NOT: {
-          allergens: filters?.allergens
-            ? {
-                hasSome: filters?.allergens.map((allergen) =>
-                  allergen
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, ''),
-                ),
-              }
-            : undefined,
-        },
-        mealTypes:
-          filters?.mealTypes && filters.mealTypes.length > 0
-            ? {
-                some: {
-                  MealType: {
-                    name: { in: filters.mealTypes, mode: 'insensitive' },
-                  },
-                },
-              }
-            : undefined,
-        deleted: false,
-      },
+      where: whereCondition,
       orderBy: {
         viewCount: filters?.orderBy === 'viewCount' ? 'desc' : undefined,
         favoriteCount:
@@ -326,63 +272,7 @@ export class RecipeRepository implements IRecipeRepository {
         version: true,
         user: { select: { name: true } },
       },
-      where: {
-        name: {
-          contains: filters?.name ? filters.name : '',
-          mode: 'insensitive',
-        },
-
-        recipeIngredients:
-          filters?.ingredients && filters.ingredients.length > 0
-            ? {
-                some: {
-                  ingredient: {
-                    name: { in: filters.ingredients, mode: 'insensitive' },
-                  },
-                },
-              }
-            : undefined,
-
-        preparationTime:
-          filters?.preparationTime &&
-          !isNaN(filters.preparationTime[0]) &&
-          !isNaN(filters.preparationTime[1])
-            ? {
-                gte: filters.preparationTime[0],
-                lte: filters.preparationTime[1],
-              }
-            : undefined,
-        costEstimate:
-          filters?.price && !isNaN(filters.price[0]) && !isNaN(filters.price[1])
-            ? {
-                gte: filters.price[0],
-                lte: filters.price[1],
-              }
-            : undefined,
-        NOT: {
-          allergens: filters?.allergens
-            ? {
-                hasSome: filters?.allergens.map((allergen) =>
-                  allergen
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, ''),
-                ),
-              }
-            : undefined,
-        },
-        mealTypes:
-          filters?.mealTypes && filters.mealTypes.length > 0
-            ? {
-                some: {
-                  MealType: {
-                    name: { in: filters.mealTypes, mode: 'insensitive' },
-                  },
-                },
-              }
-            : undefined,
-        deleted: false,
-      },
+      where: whereCondition,
       orderBy: {
         viewCount: filters?.orderBy === 'viewCount' ? 'desc' : undefined,
         favoriteCount:
@@ -406,6 +296,72 @@ export class RecipeRepository implements IRecipeRepository {
 
     return { total, data };
   }
+
+  private readonly buildWhereCondition = (filters: IFindAllFilters) => {
+    return {
+      name: {
+        contains: filters?.name ? filters.name : '',
+        mode: Prisma.QueryMode.insensitive,
+      },
+
+      recipeIngredients:
+        filters?.ingredients && filters.ingredients.length > 0
+          ? {
+              some: {
+                ingredient: {
+                  name: {
+                    in: filters.ingredients,
+                    mode: Prisma.QueryMode.insensitive,
+                  },
+                },
+              },
+            }
+          : undefined,
+
+      preparationTime:
+        filters?.preparationTime &&
+        !isNaN(filters.preparationTime[0]) &&
+        !isNaN(filters.preparationTime[1])
+          ? {
+              gte: filters.preparationTime[0],
+              lte: filters.preparationTime[1],
+            }
+          : undefined,
+      costEstimate:
+        filters?.price && !isNaN(filters.price[0]) && !isNaN(filters.price[1])
+          ? {
+              gte: filters.price[0],
+              lte: filters.price[1],
+            }
+          : undefined,
+      NOT: {
+        allergens: filters?.allergens
+          ? {
+              hasSome: filters?.allergens.map((allergen) =>
+                allergen
+                  .toLowerCase()
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, ''),
+              ),
+            }
+          : undefined,
+      },
+      mealTypes:
+        filters?.mealTypes && filters.mealTypes.length > 0
+          ? {
+              some: {
+                MealType: {
+                  name: {
+                    in: filters.mealTypes,
+                    mode: Prisma.QueryMode.insensitive,
+                  },
+                },
+              },
+            }
+          : undefined,
+      deleted: false,
+    };
+  };
 
   async findRecipesByUserId({
     id,

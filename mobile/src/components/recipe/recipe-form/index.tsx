@@ -1,36 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
-import CustomInput from "../../shared/custom-input";
-import {
-  hasAnyInvalid,
-  toDirtyAll,
-  update,
-  updateAndValidate,
-  validateAll,
-} from "@/src/utils/forms";
 import {
   createRecipe,
   getRecipeById,
   updateRecipe,
 } from "@/src/services/recipe.service";
-import { FormField, genericInputs } from "@/src/static/register-form-inputs";
-import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 import { getStoredUserID } from "@/src/services/user.service";
 import IngredisAddForm from "../ingredients-add-form";
 import DirectionsForm from "../directions-form";
-import { IDirections } from "@/src/interfaces/recipe/directions.interface";
 import MacronutrientsForm from "../macronutrients-form";
 import MealTypeForm from "../meal-type-form";
-import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
-import ErrorContainer from "../../shared/error-container";
 import { IReciperequest } from "@/src/interfaces/recipe/recipe-request.interface";
-import { useFocusEffect, useRouter } from "expo-router";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 import GenericRecipeForm from "../generic-form";
+import { useRouter } from "expo-router";
 
 type Macronnutrients = {
   carbs: number;
@@ -47,7 +34,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
   const router = useRouter();
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
   const handleSaveRecipe = async () => {
     console.log("recipeRequest", recipeRequest);
@@ -68,7 +54,12 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       return;
     }
 
-    console.log("recipeMealTypes", recipeRequest.mealTypes);
+    const getFormatedAllergens = () => {
+      if (!recipeRequest.allergens) return [];
+      return Array.isArray(recipeRequest.allergens)
+        ? recipeRequest.allergens
+        : [recipeRequest.allergens];
+    };
 
     const data: IReciperequest = {
       ...recipeRequest,
@@ -91,11 +82,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
         ? +recipeRequest.servingCount
         : undefined,
       costEstimate: +recipeRequest.costEstimate,
-      allergens: Array.isArray(recipeRequest.allergens)
-        ? recipeRequest.allergens
-        : recipeRequest.allergens
-        ? [recipeRequest.allergens]
-        : [],
+      allergens: getFormatedAllergens(),
       userId: userId,
     };
 
@@ -112,7 +99,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       .then((response) => {
         console.log(response);
         router.push(`/recipes/${response.id}`);
-        //resetRecipeRequest();
         setLoading(false);
       })
       .catch((error) => {
@@ -126,7 +112,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       .then((response) => {
         console.log(response);
         router.push(`/recipes/${response.id}`);
-        ///resetRecipeRequest();
         setLoading(false);
       })
       .catch((error) => {
@@ -145,7 +130,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
         .catch((error) => {
           console.log("Error:", error);
         });
-      return;
     }
   }, [recipeId]);
 
@@ -164,7 +148,7 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       imgUrl: response.imgUrl,
       additionalTips: response.additionalTips,
       macronutrients: macronutrients,
-      servingCount: response.servingCount || undefined,
+      servingCount: response.servingCount ?? undefined,
       isPublished: response.isPublished,
       costEstimate: response.costEstimate,
       allergens: response.allergens,
@@ -172,9 +156,6 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
       mealTypes: response.mealTypes,
       cuisineStyles: response.cuisineStyles,
     };
-
-    console.log("response", response);
-    console.log("updatedRecipeRequest", updatedRecipeRequest);
 
     updateRecipeRequest(updatedRecipeRequest);
   };

@@ -5,7 +5,6 @@ import { useTheme } from "@/src/context/theme-context";
 import React, { useEffect, useRef, useState } from "react";
 import {
   View,
-  ScrollView,
   Text,
   TouchableOpacity,
   Animated,

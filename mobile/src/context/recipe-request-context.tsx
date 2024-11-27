@@ -45,10 +45,13 @@ export const RecipeRequestProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
+  const value = React.useMemo(
+    () => ({ recipeRequest, updateRecipeRequest, resetRecipeRequest }),
+    [recipeRequest]
+  );
+
   return (
-    <RecipeRequestContext.Provider
-      value={{ recipeRequest, updateRecipeRequest, resetRecipeRequest }}
-    >
+    <RecipeRequestContext.Provider value={value}>
       {children}
     </RecipeRequestContext.Provider>
   );

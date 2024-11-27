@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";

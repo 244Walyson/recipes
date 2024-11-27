@@ -8,7 +8,6 @@ import React, {
 import { useColorScheme } from "react-native";
 import { darkTheme, lightTheme } from "../styles/theme";
 
-// Definir tipo para o contexto de tema
 type ThemeContextType = {
   theme: typeof lightTheme;
   setTheme: React.Dispatch<React.SetStateAction<typeof lightTheme>>;
@@ -30,8 +29,10 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTheme(scheme === "dark" ? darkTheme : lightTheme);
   }, [scheme]);
 
+  const value = React.useMemo(() => ({ theme, setTheme }), [theme, setTheme]);
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

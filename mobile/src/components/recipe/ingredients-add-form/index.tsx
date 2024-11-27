@@ -10,6 +10,7 @@ import {
 import {
   FormField,
   ingredientsInputs,
+  unitInputs,
 } from "@/src/static/register-form-inputs";
 import { toValues, updateAndValidate } from "@/src/utils/forms";
 import CustomPicker from "../../custom-picker";
@@ -18,7 +19,6 @@ import PrimaryButtonSlim from "../../shared/primary-button-slim";
 import IngredintsCard from "../ingredients-card";
 import CustomModal from "../../shared/modal";
 import ErrorContainer from "../../shared/error-container";
-import LoadingContainer from "../../shared/loading-container";
 import SuccessContainer from "../../shared/error-container copy";
 import SuggestionItem from "../suggestion-item";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
@@ -196,7 +196,7 @@ const IngredisAddForm = () => {
               <View style={styles(theme).selectWrapper}>
                 <CustomPicker
                   key="unit-picker"
-                  values={["ml", "litros", "xícaras"]}
+                  values={unitInputs}
                   onChange={(value) =>
                     handleIngredientsInputChange(value, "unit")
                   }

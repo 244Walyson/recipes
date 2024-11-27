@@ -31,7 +31,6 @@ const useFormFieldsFromContext = (formFields: Record<string, FormField>) => {
           recipeRequest[key as keyof typeof recipeRequest] || ""
         );
         setFormData(updatedFormData);
-        return;
       }
     });
   }, [recipeRequest]);

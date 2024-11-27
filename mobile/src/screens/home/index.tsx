@@ -13,7 +13,7 @@ import { useRouter } from "expo-router";
 import TrendinCard from "@/src/components/home/trending-card";
 import { ICuisineStyle } from "@/src/interfaces/cuisine-style/cousine-styles.interface";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
-import { getRecipes, getTrendingecipes } from "@/src/services/recipe.service";
+import { getRecipes } from "@/src/services/recipe.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import CuisineStyleCard from "@/src/components/home/meal-type-card";
 import { getStoredUserID, getUser } from "@/src/services/user.service";

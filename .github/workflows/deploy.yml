@@ -273,18 +273,21 @@ jobs:
       - name: Install dependencies
         run: |
           cd mobile
-          npm install
-          npx expo prebuild
+      #     npm install
+      #     npm install -g eas-cli
 
-      - name: Build APK
-        run: ./gradlew assembleRelease
-        working-directory: mobile/android
+      # - name: Expo Login
+      #   run: eas login --token ${{ secrets.EAS_TOKEN }}
 
-      - name: Upload APK to GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: mobile/android/app/build/outputs/apk/release/app-release.apk
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
-          name: "APK Release - ${{ github.ref_name }}"
-          body: "Build automático do APK."
+      # - name: Build APK with EAS
+      #   run: eas build --platform android --profile release --non-interactive
+      #   working-directory: mobile
+
+      # - name: Upload APK to GitHub Release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: mobile/android/app/build/outputs/apk/release/app-release.apk
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ github.ref_name }}
+      #     name: "APK Release - ${{ github.ref_name }}"
+      #     body: "Build automático do APK."

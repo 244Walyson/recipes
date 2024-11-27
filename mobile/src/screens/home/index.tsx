@@ -13,10 +13,7 @@ import { useRouter } from "expo-router";
 import TrendinCard from "@/src/components/home/trending-card";
 import { ICuisineStyle } from "@/src/interfaces/cuisine-style/cousine-styles.interface";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
-import {
-  getRecipes,
-  getTrendingecipes,
-} from "@/src/services/recipe.service";
+import { getRecipes, getTrendingecipes } from "@/src/services/recipe.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import CuisineStyleCard from "@/src/components/home/meal-type-card";
 import { getStoredUserID, getUser } from "@/src/services/user.service";
@@ -33,23 +30,23 @@ const Home = () => {
     useState<IPaginatedResponse<IRecipeResponse>>();
   const [recipeByMealType, setRecipeByMealType] =
     useState<IPaginatedResponse<IRecipeResponse>>();
-  const [mealTypeFocused, setMealTypeFocused] = useState("");
+  const [mealTypeFocused, setMealTypeFocused] = useState<string | undefined>(
+    undefined
+  );
   const [refreshing, setRefreshing] = useState(false);
   const [user, setUser] = useState<IUserResponse>();
 
   const router = useRouter();
 
   useEffect(() => {
-    getMealTypes('').then((data) => {
+    getMealTypes("").then((data) => {
       setCuisineStyles(data);
     });
-    getTrendingecipes().then((data) => {
+    const trendingFilter: IFindAllFilters = { orderBy: "favouriteCount" };
+    getRecipes(trendingFilter).then((data) => {
       setTrending(data);
     });
-    const mealType: IFindAllFilters = { mealType: [mealTypeFocused] };
-    getRecipes(mealType).then((data) => {
-      setRecipeByMealType(data);
-    });
+    setMealTypeFocused(undefined);
     getStoredUserID().then((userId) => {
       if (userId) {
         getUser(userId).then((data) => {
@@ -60,13 +57,15 @@ const Home = () => {
     setRefreshing(false);
   }, [refreshing]);
 
-  const handleMealTypePress = (mealType: string) => {
-    setMealTypeFocused(mealType);
-    const mealTypeFilter: IFindAllFilters = { mealType: [mealType] };
+  useEffect(() => {
+    const mealTypeFilter: IFindAllFilters = {
+      mealTypes: mealTypeFocused ? [mealTypeFocused] : [],
+    };
     getRecipes(mealTypeFilter).then((data) => {
+      console.log("mealType", data);
       setRecipeByMealType(data);
     });
-  };
+  }, [mealTypeFocused]);
 
   return (
     <ScrollView
@@ -120,7 +119,7 @@ const Home = () => {
           {cuisineStyles?.data.map((item) => (
             <TouchableOpacity
               key={item.id}
-              onPress={() => handleMealTypePress(item.name)}
+              onPress={() => setMealTypeFocused(item.name)}
             >
               <MealTypeCard name={item.name} />
             </TouchableOpacity>

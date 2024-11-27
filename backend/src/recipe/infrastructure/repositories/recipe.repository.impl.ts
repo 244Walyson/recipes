@@ -264,29 +264,22 @@ export class RecipeRepository implements IRecipeRepository {
               }
             : undefined,
 
-        cuisineStyles: filters?.cuisineStyle
-          ? {
-              some: {
-                CuisineStyle: {
-                  name: { equals: filters.cuisineStyle },
-                },
-              },
-            }
-          : undefined,
-
-        servingCount: filters?.servingSize
-          ? { equals: parseInt(filters.servingSize, 10) }
-          : undefined,
         preparationTime:
-          filters?.totalTime &&
-          !isNaN(filters.totalTime[0]) &&
-          !isNaN(filters.totalTime[1])
+          filters?.preparationTime &&
+          !isNaN(filters.preparationTime[0]) &&
+          !isNaN(filters.preparationTime[1])
             ? {
-                gte: filters.totalTime[0],
-                lte: filters.totalTime[1],
+                gte: filters.preparationTime[0],
+                lte: filters.preparationTime[1],
               }
             : undefined,
-        viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
+        costEstimate:
+          filters?.price && !isNaN(filters.price[0]) && !isNaN(filters.price[1])
+            ? {
+                gte: filters.price[0],
+                lte: filters.price[1],
+              }
+            : undefined,
         NOT: {
           allergens: filters?.allergens
             ? {
@@ -299,8 +292,22 @@ export class RecipeRepository implements IRecipeRepository {
               }
             : undefined,
         },
-
+        mealTypes:
+          filters?.mealTypes && filters.mealTypes.length > 0
+            ? {
+                some: {
+                  MealType: {
+                    name: { in: filters.mealTypes, mode: 'insensitive' },
+                  },
+                },
+              }
+            : undefined,
         deleted: false,
+      },
+      orderBy: {
+        viewCount: filters?.orderBy === 'viewCount' ? 'desc' : undefined,
+        favoriteCount:
+          filters?.orderBy === 'favoriteCount' ? 'desc' : undefined,
       },
     });
 
@@ -336,29 +343,22 @@ export class RecipeRepository implements IRecipeRepository {
               }
             : undefined,
 
-        cuisineStyles: filters?.cuisineStyle
-          ? {
-              some: {
-                CuisineStyle: {
-                  name: { equals: filters.cuisineStyle },
-                },
-              },
-            }
-          : undefined,
-
-        servingCount: filters?.servingSize
-          ? { equals: parseInt(filters.servingSize, 10) }
-          : undefined,
         preparationTime:
-          filters?.totalTime &&
-          !isNaN(filters.totalTime[0]) &&
-          !isNaN(filters.totalTime[1])
+          filters?.preparationTime &&
+          !isNaN(filters.preparationTime[0]) &&
+          !isNaN(filters.preparationTime[1])
             ? {
-                gte: filters.totalTime[0],
-                lte: filters.totalTime[1],
+                gte: filters.preparationTime[0],
+                lte: filters.preparationTime[1],
               }
             : undefined,
-        viewCount: filters?.viewCount ? { gte: filters.viewCount } : undefined,
+        costEstimate:
+          filters?.price && !isNaN(filters.price[0]) && !isNaN(filters.price[1])
+            ? {
+                gte: filters.price[0],
+                lte: filters.price[1],
+              }
+            : undefined,
         NOT: {
           allergens: filters?.allergens
             ? {
@@ -371,8 +371,22 @@ export class RecipeRepository implements IRecipeRepository {
               }
             : undefined,
         },
-
+        mealTypes:
+          filters?.mealTypes && filters.mealTypes.length > 0
+            ? {
+                some: {
+                  MealType: {
+                    name: { in: filters.mealTypes, mode: 'insensitive' },
+                  },
+                },
+              }
+            : undefined,
         deleted: false,
+      },
+      orderBy: {
+        viewCount: filters?.orderBy === 'viewCount' ? 'desc' : undefined,
+        favoriteCount:
+          filters?.orderBy === 'favouriteCount' ? 'desc' : undefined,
       },
       skip: offset,
       take: limit,

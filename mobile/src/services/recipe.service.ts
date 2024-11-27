@@ -27,8 +27,8 @@ export const getRecipes = async (
     if (params.name) queryParams.append("name", params.name);
     if (params.ingredients)
       queryParams.append("ingredients", params.ingredients.join(","));
-    if (params.mealType)
-      queryParams.append("mealTypes", params.mealType.join(","));
+    if (params.mealTypes)
+      queryParams.append("mealTypes", params.mealTypes.join(","));
     if (params.price) queryParams.append("price", params.price.join(","));
     if (params.servingCount)
       queryParams.append("servingCount", params.servingCount);

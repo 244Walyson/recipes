@@ -9,9 +9,11 @@ import { styles } from "./styles";
 import ErrorContainer from "../../shared/error-container";
 import LoadingContainer from "../../shared/loading-container";
 import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
+import { useRouter } from "expo-router";
 
 const ImageUploadForm = () => {
   const { theme } = useTheme();
+  const router = useRouter();
   const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -52,6 +54,11 @@ const ImageUploadForm = () => {
     updateRecipeRequest({ ...recipeRequest, imgUrl: "" });
   };
 
+  const handleBack = () => {
+    console.log("router", router);
+    router.back();
+  };
+
   return (
     <View>
       {!!error && <ErrorContainer error={error} />}
@@ -68,6 +75,7 @@ const ImageUploadForm = () => {
               ioniconLeftName="arrow-left"
               ioniconRightName="image-remove"
               onPressRight={() => handleRemoveImage()}
+              onPressLeft={handleBack}
               colorEmphasis={theme.foreground}
             />
           </ImageBackground>
@@ -78,6 +86,7 @@ const ImageUploadForm = () => {
               ioniconLeftName="arrow-left"
               ioniconRightName=""
               onPressRight={() => handleRemoveImage()}
+              onPressLeft={handleBack}
               colorEmphasis={theme.foreground}
             />
             <TouchableOpacity

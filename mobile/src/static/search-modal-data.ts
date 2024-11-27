@@ -4,7 +4,7 @@ export const trendingData = {
     {
       id: "1",
       name: "Mais curtidos",
-      values: "likeCount",
+      values: "favouriteCount",
     },
     {
       id: "2",

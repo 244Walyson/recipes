@@ -32,6 +32,7 @@ import {
   trendingData,
 } from "@/src/static/search-modal-data";
 import { useRouter } from "expo-router";
+import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
 
 type ModalData = {
   visible?: boolean;
@@ -43,7 +44,7 @@ type ModalData = {
 };
 
 const H_MAX_HEIGHT = 200;
-const H_MIN_HEIGHT = 60;
+const H_MIN_HEIGHT = 70;
 const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Search = () => {
@@ -85,8 +86,10 @@ const Search = () => {
         return;
       }
       setRecipes((prev) => ({
-        ...response,
         data: [...(prev?.data ?? []), ...response.data],
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
       }));
     });
     setLoading(false);
@@ -112,10 +115,17 @@ const Search = () => {
   }) => {
     if (data.key === "ingredients") {
       getIngredients().then((response) => {
+        console.log(response);
         const title = "Selecione seus ingredientes favoritos";
+
+        const uniqueData = response.data.map((item: IIngredient) => ({
+          ...item,
+          key: item.id,
+        }));
+
         setModalData({
           visible: true,
-          data: { key: data.key, title, data: response.data },
+          data: { key: data.key, title, data: uniqueData },
         });
         setBtnApplyModal(multipleSelection);
       });
@@ -162,8 +172,14 @@ const Search = () => {
   };
 
   const handleModalApply = (selected: string[] | string, key: string) => {
+    setPage(1);
     setSearchFilters({ ...searchFilters, [key]: selected });
     closeModal();
+  };
+
+  const clearFilters = () => {
+    setSearchFilters({});
+    setPage(1);
   };
 
   return (
@@ -276,7 +292,7 @@ const Search = () => {
         <View
           style={{ alignItems: "flex-end", backgroundColor: theme.background }}
         >
-          <TouchableOpacity style={{}} onPress={() => setSearchFilters({})}>
+          <TouchableOpacity style={{}} onPress={clearFilters}>
             <Text
               style={{
                 width: 120,

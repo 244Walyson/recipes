@@ -11,6 +11,8 @@ const TabLayout = () => {
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName="home"
+      backBehavior="history"
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="search" />

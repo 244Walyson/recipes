@@ -180,7 +180,28 @@ const RecipeForm = ({ recipeId }: RecipeFormProps) => {
   };
 
   const handleClean = () => {
-    console.log("clean");
+    recipeId = undefined;
+    updateRecipeRequest({
+      name: "",
+      preparationMethod: [],
+      preparationTime: 0,
+      imgUrl: "",
+      additionalTips: "",
+      macronutrients: {
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+      },
+      servingCount: undefined,
+      isPublished: false,
+      costEstimate: 0,
+      allergens: [],
+      ingredients: [],
+      mealTypes: [],
+      cuisineStyles: [],
+    });
+
+    router.push(`/(tabs)/recipes/edit/${undefined}`);
   };
 
   return (

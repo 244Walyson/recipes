@@ -58,7 +58,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (!profileId) {
+    if (!id) {
       getStoredUserID().then((userId) => {
         if (userId) {
           setProfileId(userId);
@@ -66,9 +66,11 @@ const Profile = () => {
         }
         router.replace("/register");
       });
+      return;
     }
+    setProfileId(id);
     setRefreshing(false);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (!profileId) return;
@@ -77,7 +79,7 @@ const Profile = () => {
     });
     isFocused === "grid" ? handlegridPress() : handleFavouritePress();
     setRefreshing(false);
-  }, [profileId, refreshing]);
+  }, [id, refreshing]);
 
   const logout = () => {
     removeTokens();
@@ -89,6 +91,7 @@ const Profile = () => {
     const userId = await getStoredUserID();
     return userId === profileId;
   };
+
   const getBtnText = () => {
     isProfileOwner().then((data) => {
       if (data) {
@@ -141,7 +144,7 @@ const Profile = () => {
       uploadImage(fileUri)
         .then((imgUrl) => {
           if (imgUrl && user) {
-            updateUserImg(user, imgUrl);
+            updateUserImg(user, imgUrl.url);
           }
           setRefreshing(true);
         })
@@ -189,7 +192,7 @@ const Profile = () => {
             ioniconRightName="logout"
             title="Perfil"
             colorEmphasis={theme.foreground}
-            onPressLeft={() => {}}
+            onPressLeft={() => router.back()}
             onPressRight={logout}
           />
         </View>

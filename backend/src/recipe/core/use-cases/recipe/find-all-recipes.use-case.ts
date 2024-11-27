@@ -38,11 +38,18 @@ export class FindAllRecipeUseCase {
   private parseQueryParams(filters: IFindAllFilters): IFindAllFilters {
     console.log(filters);
 
-    const timeArray = filters?.totalTime
-      ? filters?.totalTime
+    const timeArray = filters?.preparationTime
+      ? filters?.preparationTime
           .toString()
           .split(',')
           .map((time) => +time)
+      : undefined;
+
+    const priceArray = filters?.price
+      ? filters.price
+          .toString()
+          .split(',')
+          .map((price) => +price)
       : undefined;
 
     const ingredientsArray = filters?.ingredients
@@ -50,6 +57,13 @@ export class FindAllRecipeUseCase {
           .toString()
           .split(',')
           .map((ingredient) => ingredient.trim())
+      : undefined;
+
+    const mealTypesArray = filters?.mealTypes
+      ? filters?.mealTypes
+          .toString()
+          .split(',')
+          .map((mealType) => mealType.trim())
       : undefined;
 
     const allergensArray = filters?.allergens
@@ -63,7 +77,9 @@ export class FindAllRecipeUseCase {
       ...filters,
       ingredients: ingredientsArray,
       allergens: allergensArray,
-      totalTime: timeArray,
+      preparationTime: timeArray,
+      price: priceArray,
+      mealTypes: mealTypesArray,
     };
   }
 }

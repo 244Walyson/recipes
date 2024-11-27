@@ -60,7 +60,7 @@ export const getAccessTokenWithGoogleToken = async (
       idToken: idToken,
     };
     const response = await axios.post(
-      `${API_URL}/auth/oauth2/callback/google`,
+      `${API_URL}/auth/redirect/google`,
       data
     );
     const accessToken = response.data;

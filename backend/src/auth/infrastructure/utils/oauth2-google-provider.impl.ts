@@ -62,6 +62,7 @@ export class PassportGoogleStrategy extends PassportStrategy(
         name,
         imgUrl: picture,
         username: given_name,
+        authProvider: 'oauth2',
       });
 
       return user;

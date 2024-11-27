@@ -1,4 +1,4 @@
-export const API_URL = "http://192.168.100.208:3000"; //"https://api.recipes.waly.dev.br";
+export const API_URL = "https://api.recipes.waly.dev.br"; //"http://192.168.100.208:3000";
 export const GITHUB_CLIENT_ID = "Ov23liUYlBuWhFrqDKRP";
 export const GITHUB_CALLBACK_URL =
   "https://frontend.recipes.waly.dev.br/oauth-redirect";

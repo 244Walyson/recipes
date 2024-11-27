@@ -50,7 +50,7 @@ const SplashScreen = () => {
         source={require("../../assets/animations/splash.json")}
         autoPlay={true}
         loop={false}
-        style={{ height: 200, width: 300, marginEnd: -70 }}
+        style={{ height: 200, width: 300 }}
         onAnimationFinish={() => setAnimationFinished(true)}
       />
     </View>

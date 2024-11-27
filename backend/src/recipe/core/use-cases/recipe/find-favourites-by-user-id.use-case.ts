@@ -3,7 +3,7 @@ import { IRecipeRepository } from '../../interfaces/repositories/recipe.reposito
 import { IPaginatedResponse } from '../../interfaces/shared/paginated-response.interface';
 
 export class FindFavouritesByUserIdUseCase {
-  constructor(private recipeRepository: IRecipeRepository) {}
+  constructor(private readonly recipeRepository: IRecipeRepository) {}
 
   async execute({
     id,

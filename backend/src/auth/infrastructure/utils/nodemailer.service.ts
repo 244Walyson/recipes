@@ -7,7 +7,7 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class NodeMailerService implements IEmailService {
-  private transporter;
+  private readonly transporter;
 
   constructor() {
     this.transporter = nodemailer.createTransport({

@@ -17,12 +17,10 @@ export class OAuth2AuthenticationUseCase {
       return this.generateAccesToken(dto.email);
     } catch (error) {
       console.error(error);
-      console.log('##########');
       if (error instanceof UserDuplicateresourceException) {
         try {
-          return this.generateAccesToken(dto.email);
+          return await this.generateAccesToken(dto.email);
         } catch (error) {
-          console.error('errrrrooooorrrr');
           console.log(error);
           throw new AuthUnauthorizedException('Error generating access token');
         }

@@ -4,7 +4,7 @@ import { IRecipeProjection } from '../../interfaces/recipes/recipe-response-proj
 import { IRecipeRepository } from '../../interfaces/repositories/recipe.repository';
 
 export class FindAllRecipeUseCase {
-  constructor(private recipeRepository: IRecipeRepository) {}
+  constructor(private readonly recipeRepository: IRecipeRepository) {}
 
   async execute(
     {

@@ -119,8 +119,9 @@ jobs:
         run: |
           cd ./backend
           image_tag="${{ github.sha }}"
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${image_tag} .
           echo "backend_image_tag=${image_tag}" >> $GITHUB_ENV
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${image_tag} .
+          echo "backend_image_tag=${image_tag}"
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -146,6 +147,7 @@ jobs:
           image_tag="${{ github.sha }}"
           docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
           echo "frontend_image_tag=${image_tag}" >> $GITHUB_ENV
+          echo "frontend_image_tag=${image_tag}"
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -198,6 +200,7 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          echo "backend_image_tag=${{ env.backend_image_tag }}"
           cd helm-charts/backend/
           helm upgrade --install recipes-api . -f values.yaml \
             --namespace api --create-namespace \
@@ -231,6 +234,7 @@ jobs:
 
       - name: Deploy with Helm
         run: |
+          echo "frontend_image_tag=${{ env.frontend_image_tag }}"
           cd helm-charts/frontend/
           helm upgrade --install recipes-frontend . -f values.yaml \
             --namespace frontend --create-namespace \

@@ -162,6 +162,9 @@ Essa abordagem facilita a expansão e manutenção do projeto, permitindo a intr
 ### **Infraestrutura**
 ![k8s-arch.png](etc/k8s-arch.png)
 
+### **CI/CD**
+![ci-cd.png](etc/ci-cd.png)
+
 ### **Aplicação**
 ![app-arch.svg](etc/app-arch.svg)
 
@@ -178,7 +181,7 @@ Essa abordagem facilita a expansão e manutenção do projeto, permitindo a intr
 ### **Passos para rodar localmente**
 1. Clone o repositório:
  ```bash
- git clone https://github.com/seuusuario/recipes-app.git
+ git clone https://github.com/244walyson/recipes.git
  cd recipes-app
 ```
 ### com docker 

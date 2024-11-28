@@ -160,6 +160,11 @@ jobs:
         run: |
           echo "frontend_image_tag=${{ steps.set-output.outputs.frontend_image_tag }}"
 
+      - name: Set .env
+        run: |
+          touch ./frontend/.env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.API_URL }}" > ./frontend/.env
+
       - name: Build Docker image
         run: |
           cd ./frontend

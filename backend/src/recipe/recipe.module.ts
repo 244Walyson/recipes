@@ -31,6 +31,7 @@ import { FavouriteRecipeUseCase } from './core/use-cases/recipe/favourite-recipe
 import { UnfavouriteRecipeUseCase } from './core/use-cases/recipe/unfavourite-recipe.use-case';
 import { ViewCountAddUseCase } from './core/use-cases/recipe/view-count-add.use-case';
 import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favourites-by-user-id.use-case';
+import { RecipeValidator } from './core/validators/recipe.validator';
 
 @Module({
   imports: [],
@@ -140,25 +141,15 @@ import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favo
       useFactory: (
         recipeRepository: IRecipeRepository,
         findRecipeByIdUseCase: FindRecipeByIdUseCase,
-        findMealTypeByidUseCase: FindMealTypeByIdUseCase,
-        findIngredientByIdUseCase: FindIngredientByIdUseCase,
-        findCuisineStyleByIdUseCase: FindCuisineStyleByIdUseCase,
+        recipeValidator: RecipeValidator,
       ) => {
         return new UpdateRecipeUseCase(
           recipeRepository,
           findRecipeByIdUseCase,
-          findMealTypeByidUseCase,
-          findCuisineStyleByIdUseCase,
-          findIngredientByIdUseCase,
+          recipeValidator,
         );
       },
-      inject: [
-        'IRecipeRepository',
-        FindRecipeByIdUseCase,
-        FindMealTypeByIdUseCase,
-        FindIngredientByIdUseCase,
-        FindCuisineStyleByIdUseCase,
-      ],
+      inject: ['IRecipeRepository', FindRecipeByIdUseCase, RecipeValidator],
     },
     {
       provide: DeleteRecipeUseCase,
@@ -178,23 +169,11 @@ import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favo
       provide: CreateRecipeUseCase,
       useFactory: (
         recipeRepository: IRecipeRepository,
-        findMealTypeByidUseCase: FindMealTypeByIdUseCase,
-        findIngredientByIdUseCase: FindIngredientByIdUseCase,
-        findCuisineStyleByIdUseCase: FindCuisineStyleByIdUseCase,
+        recipeValidator: RecipeValidator,
       ) => {
-        return new CreateRecipeUseCase(
-          recipeRepository,
-          findMealTypeByidUseCase,
-          findCuisineStyleByIdUseCase,
-          findIngredientByIdUseCase,
-        );
+        return new CreateRecipeUseCase(recipeRepository, recipeValidator);
       },
-      inject: [
-        'IRecipeRepository',
-        FindMealTypeByIdUseCase,
-        FindIngredientByIdUseCase,
-        FindCuisineStyleByIdUseCase,
-      ],
+      inject: ['IRecipeRepository', RecipeValidator],
     },
     {
       provide: FavouriteRecipeUseCase,
@@ -238,6 +217,25 @@ import { FindFavouritesByUserIdUseCase } from './core/use-cases/recipe/find-favo
         return new FindFavouritesByUserIdUseCase(recipeRepository);
       },
       inject: ['IRecipeRepository'],
+    },
+    {
+      provide: RecipeValidator,
+      useFactory: (
+        findMealTypeByIdUseCase: FindMealTypeByIdUseCase,
+        findCuisineStyleByIdUseCase: FindCuisineStyleByIdUseCase,
+        findIngredientByIdUseCase: FindIngredientByIdUseCase,
+      ) => {
+        return new RecipeValidator(
+          findMealTypeByIdUseCase,
+          findCuisineStyleByIdUseCase,
+          findIngredientByIdUseCase,
+        );
+      },
+      inject: [
+        FindMealTypeByIdUseCase,
+        FindCuisineStyleByIdUseCase,
+        FindIngredientByIdUseCase,
+      ],
     },
   ],
   exports: [],

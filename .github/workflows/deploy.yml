@@ -248,8 +248,9 @@ jobs:
 
       - name: Create Kubernetes secrets
         run: |
-          kubectl create secret generic recipes-secrets -n api \
-            --from-literal=api-url="${{ secrets.API_URL }}"
+          kubectl create secret generic recipes-secrets -n frontend \
+            --from-literal=api-url="${{ secrets.API_URL }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Set up Helm
         uses: azure/setup-helm@v3

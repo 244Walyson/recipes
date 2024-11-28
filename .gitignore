@@ -5,5 +5,7 @@
 /frontend/.next
 /frontend/yarn.lock
 /backend/yarn.lock
+.idea
+.vscode
 
 /backend/prisma/dev.db

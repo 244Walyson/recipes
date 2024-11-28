@@ -41,7 +41,7 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-           - name: API_URL
+           - name: NEXT_PUBLIC_API_URL
              valueFrom:
                secretKeyRef:
                  name: recipes-secrets

@@ -7,8 +7,6 @@ export const styles = (theme: any) =>
     },
     formContainer: {
       paddingBottom: 60,
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
       backgroundColor: theme.backgroundSecondary,
       overflow: "hidden",
     },

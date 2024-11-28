@@ -11,6 +11,7 @@ import { darkTheme, lightTheme } from "../styles/theme";
 type ThemeContextType = {
   theme: typeof lightTheme;
   setTheme: React.Dispatch<React.SetStateAction<typeof lightTheme>>;
+  toggleTheme: () => void;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -29,12 +30,16 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTheme(scheme === "dark" ? darkTheme : lightTheme);
   }, [scheme]);
 
-  const value = React.useMemo(() => ({ theme, setTheme }), [theme, setTheme]);
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === darkTheme ? lightTheme : darkTheme));
+  };
+  const value = React.useMemo(
+    () => ({ theme, setTheme, toggleTheme }),
+    [theme]
+  );
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };
 

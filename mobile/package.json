@@ -21,7 +21,7 @@
     "@expo-google-fonts/playfair-display": "^0.2.3",
     "@expo-google-fonts/raleway": "^0.2.3",
     "@expo/vector-icons": "^14.0.2",
-    "@react-native-picker/picker": "^2.9.0",
+    "@react-native-picker/picker": "2.9.0",
     "@react-navigation/native": "^7.0.0",
     "axios": "^1.7.7",
     "expo": "^52.0.0",

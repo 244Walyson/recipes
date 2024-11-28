@@ -4,7 +4,7 @@ import colors from "./colors";
 export const lightTheme = {
   background: colors.white, // Fundo principal claro
   foreground: colors.black,
-  backgroundSecondary: colors.denary,
+  backgroundSecondary: colors.septenary,
   cardBackground: colors.tertiary, // Fundo dos cartões ou seções
   text: colors.black, // Texto principal em preto
   primary: colors.primary, // Cores de destaque principal (botões, links)

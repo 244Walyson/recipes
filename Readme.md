@@ -4,6 +4,15 @@
 ## 📚 **Documentação da Aplicação**
 
 ---
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=bugs)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+
 
 ### API
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://god.gw.postman.com/run-collection/27306189-713dd47d-27ac-4b55-b8ee-7eca8519f601?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D27306189-713dd47d-27ac-4b55-b8ee-7eca8519f601%26entityType%3Dcollection%26workspaceId%3De4ebd9f6-d6ee-4a8d-9f04-709c9d79265f)  

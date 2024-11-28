@@ -17,7 +17,7 @@ const ResetPasswordContent = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleResetPassword = async () => {
     if (!token) {
@@ -31,10 +31,11 @@ const ResetPasswordContent = () => {
 
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
     try {
       await resetPassword(email, token, password);
-      setSuccess(true);
+      setSuccess("Password reset successfully.");
     } catch (err) {
       console.error(err);
       setError("Failed to reset password.");

@@ -164,7 +164,9 @@ jobs:
         run: |
           cd ./frontend
           image_tag=${{ steps.set-output.outputs.frontend_image_tag }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
+          docker build \
+                    --build-arg NEXT_PUBLIC_API_URL=${{ secrets.API_URL }} \
+                    -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
 
       - name: Push Docker image to Docker Hub
         run: |
@@ -245,12 +247,6 @@ jobs:
         run: |
           mkdir -p ~/.kube
           echo "$KUBE_CONFIG_DATA" > ~/.kube/config
-
-      - name: Create Kubernetes secrets
-        run: |
-          kubectl create secret generic recipes-secrets -n frontend \
-            --from-literal=api-url="${{ secrets.API_URL }}" \
-            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Set up Helm
         uses: azure/setup-helm@v3

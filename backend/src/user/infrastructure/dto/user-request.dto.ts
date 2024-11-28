@@ -6,6 +6,7 @@ export class UserRequestDto implements IUserRequest {
   password: string;
   imgUrl: string;
   username: string;
+  authProvider?: string;
 
   constructor(partial: Partial<UserRequestDto>) {
     Object.assign(this, partial);

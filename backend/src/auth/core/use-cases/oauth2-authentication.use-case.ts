@@ -16,9 +16,10 @@ export class OAuth2AuthenticationUseCase {
       await this.createUserUseCase.execute(dto);
       return this.generateAccesToken(dto.email);
     } catch (error) {
+      console.error(error);
       if (error instanceof UserDuplicateresourceException) {
         try {
-          return this.generateAccesToken(dto.email);
+          return await this.generateAccesToken(dto.email);
         } catch (error) {
           console.log(error);
           throw new AuthUnauthorizedException('Error generating access token');
@@ -29,9 +30,9 @@ export class OAuth2AuthenticationUseCase {
   }
 
   private async generateAccesToken(email: string): Promise<IAccessToken> {
-    return this.createAccessTokenUseCase.execute(
-      { email, password: undefined },
-      false,
-    );
+    return this.createAccessTokenUseCase.execute({
+      email,
+      password: undefined,
+    });
   }
 }

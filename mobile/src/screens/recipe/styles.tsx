@@ -5,15 +5,16 @@ export const styles = (theme: any) =>
     container: {
       flex: 1,
       backgroundColor: theme.background,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
     },
     btnWrapper: {
       width: "100%",
       flexDirection: "row",
       alignItems: "center",
-      padding: 10,
       gap: 10,
-      justifyContent: "space-around",
-      paddingTop: 20,
+      justifyContent: "space-between",
+      paddingVertical: 20,
     },
     recipeContainer: {
       flex: 1,
@@ -59,5 +60,13 @@ export const styles = (theme: any) =>
       width: "100%",
       flexDirection: "row",
       justifyContent: "space-between",
+    },
+    delete: {
+      position: "absolute",
+      borderRadius: 20,
+      right: 20,
+      bottom: 80,
+      padding: 5,
+      backgroundColor: theme.error,
     },
   });

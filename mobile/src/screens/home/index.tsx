@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import Header from "@/src/components/shared/header-primary";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
 import TrendinCard from "@/src/components/home/trending-card";
-import { getCuisineStyles } from "@/src/services/cuisine-style.service";
 import { ICuisineStyle } from "@/src/interfaces/cuisine-style/cousine-styles.interface";
 import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
-import {
-  getRecipesByCuisineStyle,
-  getTrendingecipes,
-} from "@/src/services/recipe.service";
+import { getRecipes } from "@/src/services/recipe.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
-import CuisineStyleCard from "@/src/components/home/cuisine-style-card";
+import CuisineStyleCard from "@/src/components/home/meal-type-card";
+import { getStoredUserID, getUser } from "@/src/services/user.service";
+import { IUserResponse } from "@/src/interfaces/user/user-response.interface";
+import MealTypeCard from "@/src/components/recipe/meal-type-card";
+import { IFindAllFilters } from "@/src/interfaces/recipe/find-all-filters.interface";
+import { getMealTypes } from "@/src/services/meal-type.service";
 
 const Home = () => {
   const { theme } = useTheme();
@@ -21,37 +28,44 @@ const Home = () => {
     useState<IPaginatedResponse<ICuisineStyle>>();
   const [trending, setTrending] =
     useState<IPaginatedResponse<IRecipeResponse>>();
-  const [recipeByCuisineStyle, setRecipeByCuisineStyle] =
+  const [recipeByMealType, setRecipeByMealType] =
     useState<IPaginatedResponse<IRecipeResponse>>();
-  const [cuisineStyleFocused, setCuisineStyleFocused] = useState("");
+  const [mealTypeFocused, setMealTypeFocused] = useState<string | undefined>(
+    undefined
+  );
   const [refreshing, setRefreshing] = useState(false);
+  const [user, setUser] = useState<IUserResponse>();
 
   const router = useRouter();
 
-  const handleInputFocus = () => {
-    console.log("Input focused");
-    router.push("/search");
-  };
-
   useEffect(() => {
-    getCuisineStyles().then((data) => {
+    getMealTypes("").then((data) => {
       setCuisineStyles(data);
     });
-    getTrendingecipes().then((data) => {
+    const trendingFilter: IFindAllFilters = { orderBy: "favouriteCount" };
+    getRecipes(trendingFilter).then((data) => {
       setTrending(data);
     });
-    getRecipesByCuisineStyle(cuisineStyleFocused).then((data) => {
-      setRecipeByCuisineStyle(data);
+    setMealTypeFocused(undefined);
+    getStoredUserID().then((userId) => {
+      if (userId) {
+        getUser(userId).then((data) => {
+          setUser(data);
+        });
+      }
     });
     setRefreshing(false);
   }, [refreshing]);
 
-  const handleCuisineStylePress = (cuisineStyle: string) => {
-    setCuisineStyleFocused(cuisineStyle);
-    getRecipesByCuisineStyle(cuisineStyle).then((data) => {
-      setRecipeByCuisineStyle(data);
+  useEffect(() => {
+    const mealTypeFilter: IFindAllFilters = {
+      mealTypes: mealTypeFocused ? [mealTypeFocused] : [],
+    };
+    getRecipes(mealTypeFilter).then((data) => {
+      console.log("mealType", data);
+      setRecipeByMealType(data);
     });
-  };
+  }, [mealTypeFocused]);
 
   return (
     <ScrollView
@@ -66,7 +80,7 @@ const Home = () => {
         />
       }
     >
-      <Header onFocus={handleInputFocus} />
+      <Header smallText="ola," bigText={user?.name} imgUrl={user?.imgUrl} />
 
       <View style={styles(theme).trendingContainer}>
         <View style={styles(theme).textTrendWrapper}>
@@ -83,7 +97,8 @@ const Home = () => {
               key={recipe.id}
               imgUrl={recipe.imgUrl}
               title={recipe.name}
-              time={recipe.totalTime?.toString()}
+              views={recipe.viewCount}
+              difficultyLevel={recipe.difficultyLevel}
               onLikePress={() => console.log("Like")}
               onPress={() => router.push(`/recipes/${recipe.id}`)}
             />
@@ -91,10 +106,9 @@ const Home = () => {
         </ScrollView>
       </View>
 
-      {/* Categorias Populares */}
       <View style={styles(theme).trendingContainer}>
         <View style={styles(theme).textTrendWrapper}>
-          <Text style={styles(theme).trendingText}>Categorias Populares</Text>
+          <Text style={styles(theme).trendingText}>Tipos de Refeição</Text>
           <Text style={styles(theme).textColored}>Ver Todas</Text>
         </View>
         <ScrollView
@@ -103,18 +117,12 @@ const Home = () => {
           contentContainerStyle={styles(theme).scrollContainer}
         >
           {cuisineStyles?.data.map((item) => (
-            <Text
+            <TouchableOpacity
               key={item.id}
-              style={[
-                styles(theme).categoryText,
-                cuisineStyleFocused === item.name
-                  ? { color: theme.foreground }
-                  : {},
-              ]}
-              onPress={() => handleCuisineStylePress(item.name)}
+              onPress={() => setMealTypeFocused(item.name)}
             >
-              {item.name}
-            </Text>
+              <MealTypeCard name={item.name} />
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -125,13 +133,11 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles(theme).categoryContainerwrapper}
         >
-          {recipeByCuisineStyle?.data.map((item, index) => (
+          {recipeByMealType?.data.map((item, index) => (
             <CuisineStyleCard
               key={item.id}
               imgUrl={item.imgUrl}
               name={item.name}
-              time={item.totalTime?.toString()}
-              onLikePress={() => console.log("Like")}
               onPress={() => router.push(`/recipes/${item.id}`)}
               author={item.user.name}
             />

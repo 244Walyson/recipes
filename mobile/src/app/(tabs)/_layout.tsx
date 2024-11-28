@@ -11,11 +11,49 @@ const TabLayout = () => {
       screenOptions={{
         headerShown: false,
       }}
+      initialRouteName="home"
+      backBehavior="history"
     >
       <Tabs.Screen name="home" />
       <Tabs.Screen name="search" />
       <Tabs.Screen name="new-recipe" />
       <Tabs.Screen name="profile" />
+      <Tabs.Screen
+        name="profiles/[id]"
+        options={{
+          tabBarStyle: { display: "none" },
+          href: {
+            pathname: "/profiles/[id]",
+            params: {
+              id: "",
+            },
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="recipes/edit/[id]"
+        options={{
+          tabBarStyle: { display: "none" },
+          href: {
+            pathname: "/recipes/edit/[id]",
+            params: {
+              id: "",
+            },
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="recipes/[id]"
+        options={{
+          tabBarStyle: { display: "none" },
+          href: {
+            pathname: "/recipes/[id]",
+            params: {
+              id: "",
+            },
+          },
+        }}
+      />
     </Tabs>
   );
 };

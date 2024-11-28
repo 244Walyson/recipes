@@ -1,11 +1,10 @@
 export interface IFindAllFilters {
   name?: string;
-  cuisineStyles?: string[];
+  mealTypes?: string[];
   ingredients?: string[];
   servingCount?: string;
-  price?: string;
+  price?: [number, number];
   allergens?: string[];
-  totalTime?: number[];
-  viewCount?: number;
-  likeCount?: number;
+  preparationTime?: number[];
+  orderBy?: string;
 }

@@ -1,33 +1,68 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import {
+  favouriteRecipe,
+  unfavouriteRecipe,
+} from "@/src/services/recipe.service";
+import MealTypeCard from "../meal-type-card";
 
 interface DescriptionContainerProps {
   title: string;
-  likes: number;
   mealType?: string;
   time?: string;
-  liked?: boolean;
+  recipeId: string;
+  favourite: boolean;
+  favouriteCount: number;
 }
 
 const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
   title,
-  likes,
   mealType,
   time,
-  liked,
+  recipeId,
+  favourite,
+  favouriteCount,
 }) => {
   const { theme } = useTheme();
-  const [favourite, setFavourite] = useState(liked);
+  const [favourited, setFavourited] = useState(favourite);
+  const [favourites, setFavourites] = useState(favouriteCount);
+
+  useEffect(() => {
+    console.log(favourite, favouriteCount);
+    setFavourited(favourite);
+    setFavourites(favouriteCount);
+  }, [favourite, favouriteCount]);
 
   const handleFavourite = () => {
-    console.log(favourite);
-    setFavourite(!favourite);
+    const newFavourited = !favourited;
+    const newFavourites = newFavourited ? favourites + 1 : favourites - 1;
+
+    setFavourited(newFavourited);
+    setFavourites(newFavourites);
+
+    // Faz a requisição para favoritar ou desfavoritar
+    if (newFavourited) {
+      favouriteRecipe(recipeId).then(() => {
+        // Sucesso em favoritar, nenhuma atualização adicional necessária
+      });
+    } else {
+      unfavouriteRecipe(recipeId).then(() => {
+        // Sucesso em desfavoritar, nenhuma atualização adicional necessária
+      });
+    }
   };
 
-  console.log(favourite);
+  const getPreparationTime = () => {
+    if (Number(time) < 60) {
+      return `${time} minutos`;
+    }
+    const hours = Math.floor(Number(time) / 60);
+    const minutes = Number(time) % 60;
+    return `${hours}h ${minutes}min`;
+  };
 
   return (
     <View style={styles(theme).container}>
@@ -44,15 +79,15 @@ const DescriptionContainer: React.FC<DescriptionContainerProps> = ({
               <AntDesign
                 name="heart"
                 size={24}
-                color={!favourite ? theme.tertiary : theme.error}
+                color={favourited ? theme.error : theme.tertiary}
               />
             </TouchableOpacity>
-            <Text style={styles(theme).textLight}>{likes}</Text>
+            <Text style={styles(theme).textLight}>{favourites}</Text>
           </View>
         </View>
         <View style={styles(theme).textWrapper}>
-          <Text style={styles(theme).textLight}>{mealType}</Text>
-          <Text style={styles(theme).textLight}>{time}</Text>
+          <Text style={styles(theme).textLight}>{getPreparationTime()}</Text>
+          {mealType && <MealTypeCard name={mealType} />}
         </View>
       </View>
     </View>

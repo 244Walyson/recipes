@@ -1,27 +1,22 @@
-import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity } from "react-native";
 import PrimaryButton from "../../shared/primary-button";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
-import CustomInput from "../../shared/custom-input";
 import {
-  hasAnyInvalid,
-  toDirtyAll,
-  updateAndValidate,
-  validateAll,
-} from "@/src/utils/forms";
-import { createRecipe } from "@/src/services/recipe.service";
-import { FormField, genericInputs } from "@/src/static/register-form-inputs";
-import { IIngredient } from "@/src/interfaces/ingredient/ingredient.interface";
+  createRecipe,
+  getRecipeById,
+  updateRecipe,
+} from "@/src/services/recipe.service";
 import { getStoredUserID } from "@/src/services/user.service";
 import IngredisAddForm from "../ingredients-add-form";
 import DirectionsForm from "../directions-form";
-import { IDirections } from "@/src/interfaces/recipe/directions.interface";
 import MacronutrientsForm from "../macronutrients-form";
 import MealTypeForm from "../meal-type-form";
-import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
-import ErrorContainer from "../../shared/error-container";
 import { IReciperequest } from "@/src/interfaces/recipe/recipe-request.interface";
+import { IRecipeResponse } from "@/src/interfaces/recipe/recipe-response.interface";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
+import GenericRecipeForm from "../generic-form";
 import { useRouter } from "expo-router";
 
 type Macronnutrients = {
@@ -31,62 +26,88 @@ type Macronnutrients = {
 };
 
 type RecipeFormProps = {
-  imgUrl?: string;
+  recipeId?: string;
 };
 
-const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
+const RecipeForm = ({ recipeId }: RecipeFormProps) => {
   const { theme } = useTheme();
   const router = useRouter();
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [loading, setLoading] = useState(false);
-  const [ingredients, setIngredients] = useState<IIngredient[]>([]);
-  const [directions, setDirections] = useState<IDirections[]>([]);
-  const [macronutrients, setMacronutrients] = useState<Macronnutrients>();
-  const [mealTypes, setMealTypes] = useState<IMealType[]>([]);
-  const [error, setError] = useState(false);
-  const [genericFormData, setGenericFormData] =
-    useState<Record<string, FormField>>(genericInputs);
-
-  const handleGenericInputChange = (value: string, fieldName: string) => {
-    setGenericFormData(updateAndValidate(genericFormData, fieldName, value));
-  };
 
   const handleSaveRecipe = async () => {
-    const dirtyGeneric = toDirtyAll(genericFormData);
-    const validatedGeneric = validateAll(dirtyGeneric);
+    console.log("recipeRequest", recipeRequest);
+    const data = await getRecipeDataFormated();
+    console.log("data", data);
+    if (!data) return;
+    if (recipeId) {
+      updateExistingRecipe(recipeId, data);
+      return;
+    }
+    createNewRecipe(data);
+  };
 
-    const hasError = hasAnyInvalid(validatedGeneric);
-    console.log(hasError);
-
-    if (hasError) return setError(true);
-
-    setGenericFormData(validatedGeneric);
-
-    const genericdata = {
-      name: genericFormData.name.value,
-      preparationTime: Number(genericFormData.preparationTime?.value) || 0,
-      servingCount: Number(genericFormData.servingCount.value),
-      adictionalTips: genericFormData.adictionalTips.value,
-      allergens: Array.isArray(genericFormData.allergens?.value)
-        ? genericFormData.allergens.value
-        : [genericFormData.allergens?.value],
-      costEstimate: Number(genericFormData.costEstimate.value),
-    };
-
+  const getRecipeDataFormated = async () => {
     const userId = await getStoredUserID();
+    if (!userId) {
+      router.replace("/register");
+      return;
+    }
 
-    if (!userId) return;
+    const getFormatedAllergens = () => {
+      if (!recipeRequest.allergens) return [];
+      return Array.isArray(recipeRequest.allergens)
+        ? recipeRequest.allergens
+        : [recipeRequest.allergens];
+    };
 
     const data: IReciperequest = {
-      imgUrl: imgUrl,
-      ...genericdata,
-      ingredients: ingredients,
-      preparationMethod: directions,
-      macronutrients: macronutrients,
-      isPublished: true,
-      mealTypes: mealTypes,
-      cuisineStyles: [],
+      ...recipeRequest,
+      macronutrients: {
+        carbs: Number(recipeRequest.macronutrients?.carbs),
+        protein: Number(recipeRequest.macronutrients?.protein),
+        fat: Number(recipeRequest.macronutrients?.fat),
+      },
+      ingredients: recipeRequest.ingredients.map((ingredient) => {
+        return {
+          id: ingredient.id,
+          name: ingredient.name,
+          quantity: +(ingredient.quantity ?? 0),
+          unit: ingredient.unit,
+        };
+      }),
+      mealTypes: recipeRequest.mealTypes,
+      preparationTime: +recipeRequest.preparationTime,
+      servingCount: recipeRequest.servingCount
+        ? +recipeRequest.servingCount
+        : undefined,
+      costEstimate: +recipeRequest.costEstimate,
+      allergens: getFormatedAllergens(),
       userId: userId,
     };
+
+    console.log("data to req", data);
+
+    return data;
+  };
+
+  const updateExistingRecipe = async (
+    recipeId: string,
+    data: IReciperequest
+  ) => {
+    updateRecipe(recipeId, data)
+      .then((response) => {
+        console.log(response);
+        router.push(`/recipes/${response.id}`);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+      });
+  };
+
+  const createNewRecipe = async (data: IReciperequest) => {
     createRecipe(data)
       .then((response) => {
         console.log(response);
@@ -99,53 +120,85 @@ const RecipeForm = ({ imgUrl }: RecipeFormProps) => {
       });
   };
 
+  useEffect(() => {
+    console.log("recipeId", recipeId);
+    if (recipeId) {
+      getRecipeById(recipeId)
+        .then((response: IRecipeResponse) => {
+          updateRecipeRequestFromResponse(response);
+        })
+        .catch((error) => {
+          console.log("Error:", error);
+        });
+    }
+  }, [recipeId]);
+
+  const updateRecipeRequestFromResponse = (response: IRecipeResponse) => {
+    const macronutrients: Macronnutrients = {
+      carbs: response.macronutrients?.carbs ?? 0,
+      protein: response.macronutrients?.protein ?? 0,
+      fat: response.macronutrients?.fat ?? 0,
+    };
+
+    console.log("responsemarconutrients", macronutrients);
+    const updatedRecipeRequest = {
+      name: response.name,
+      preparationMethod: response.preparationMethod,
+      preparationTime: response.preparationTime,
+      imgUrl: response.imgUrl,
+      additionalTips: response.additionalTips,
+      macronutrients: macronutrients,
+      servingCount: response.servingCount ?? undefined,
+      isPublished: response.isPublished,
+      costEstimate: response.costEstimate,
+      allergens: response.allergens,
+      ingredients: response.recipeIngredients,
+      mealTypes: response.mealTypes,
+      cuisineStyles: response.cuisineStyles,
+    };
+
+    updateRecipeRequest(updatedRecipeRequest);
+  };
+
+  const handleClean = () => {
+    recipeId = undefined;
+    updateRecipeRequest({
+      name: "",
+      preparationMethod: [],
+      preparationTime: 0,
+      imgUrl: "",
+      additionalTips: "",
+      macronutrients: {
+        carbs: 0,
+        protein: 0,
+        fat: 0,
+      },
+      servingCount: undefined,
+      isPublished: false,
+      costEstimate: 0,
+      allergens: [],
+      ingredients: [],
+      mealTypes: [],
+      cuisineStyles: [],
+    });
+
+    router.push(`/(tabs)/recipes/edit/${undefined}`);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles(theme).formContainer}>
-      {Object.entries(genericFormData).map(([key, field]) => (
-        <CustomInput
-          key={field.name}
-          label={field.placeholder}
-          placeholder={field.placeholder}
-          keyboardType={field.type}
-          invalid={field.invalid === "true" && field.dirty === "true"}
-          value={field.value}
-          onChangeText={(text) => handleGenericInputChange(text, field.name)}
-        />
-      ))}
+      <TouchableOpacity onPress={handleClean}>
+        <Text style={styles(theme).clear}>Limpar formulario</Text>
+      </TouchableOpacity>
+      <GenericRecipeForm />
 
-      <MealTypeForm
-        onAddMealType={(mealTypes: IMealType[]) => setMealTypes(mealTypes)}
-      />
+      <MealTypeForm />
 
-      <MacronutrientsForm
-        onMacronutrientsAdd={(macronutrients: Macronnutrients) =>
-          setMacronutrients(macronutrients)
-        }
-      />
+      <MacronutrientsForm />
 
-      <IngredisAddForm
-        onAddIngredient={(ingredients) => setIngredients(ingredients)}
-      />
+      <IngredisAddForm />
 
-      <DirectionsForm
-        onDirectionsAdd={(directions: IDirections[]) =>
-          setDirections(directions)
-        }
-      />
-
-      {error && (
-        <View style={styles(theme).errorContainer}>
-          {ingredients.length === 0 && (
-            <ErrorContainer error="Adicione ingredientes" />
-          )}
-          {mealTypes.length === 0 && (
-            <ErrorContainer error="Adicione um tipo de refeição" />
-          )}
-          {directions.length === 0 && (
-            <ErrorContainer error="Adicione o modo de preparo" />
-          )}
-        </View>
-      )}
+      <DirectionsForm />
 
       <PrimaryButton
         text="Salvar Receita"

@@ -8,6 +8,7 @@ export class FindRecipeByIdUseCase {
   async execute(recipeId: string, userId?: string): Promise<IRecipeResponse> {
     try {
       const recipe = await this.recipeRepository.findbyId(recipeId, userId);
+      console.log(recipe);
       return recipe;
     } catch {
       throw new RecipeResourceNotFoundException('Recipe not found');

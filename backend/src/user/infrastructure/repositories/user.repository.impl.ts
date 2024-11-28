@@ -51,7 +51,6 @@ export class UserRepository implements IUserRepository {
         id: user.id,
         name: user.name,
         email: user.email,
-        password: user.password,
         imgUrl: user.imgUrl,
         username: user.username,
         createdAt: user.createdAt,

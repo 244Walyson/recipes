@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StatusBar } from "react-native";
 import SvgTopWaves from "@/src/assets/waves/wave_top";
 import SvgBottomWaves from "@/src/assets/waves/wave_botton";
 import SvgGoggleIcon from "@/src/assets/icons/google_icon";
@@ -12,10 +12,10 @@ import {
   getAccessToken,
   getRecoverPasswordToken,
 } from "@/src/services/auth.service";
-import { createUser, storeUserID } from "@/src/services/user.service";
+import { createUser } from "@/src/services/user.service";
 import { useRouter, useNavigation } from "expo-router";
-import { CommonActions } from "@react-navigation/native";
 import { loginInputs } from "@/src/static/login-ipunts.";
+import { CommonActions } from "@react-navigation/native";
 
 const Register = () => {
   const { theme } = useTheme();
@@ -75,7 +75,6 @@ const Register = () => {
     })
       .then((user) => {
         getToken();
-        storeUserID(user.id);
         console.log(user);
       })
       .catch((error) => {
@@ -138,6 +137,7 @@ const Register = () => {
 
   return (
     <View style={styles(theme).container}>
+      <StatusBar translucent backgroundColor="transparent" />
       <SvgTopWaves style={[styles(theme).svg, styles(theme).svgTop]} />
       <SvgBottomWaves style={[styles(theme).svg, styles(theme).svgBottom]} />
       <View style={styles(theme).loginContainer}>

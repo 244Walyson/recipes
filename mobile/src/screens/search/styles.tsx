@@ -5,7 +5,10 @@ export const styles = (theme: any) =>
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      paddingHorizontal: 10,
+      padding: 20,
+    },
+    header: {
+      padding: 20,
     },
     filterWrapper: {
       flexDirection: "row",
@@ -26,6 +29,7 @@ export const styles = (theme: any) =>
     filtersText: {
       fontSize: 20,
       color: theme.tertiary,
+      fontFamily: "ABeeZee_400Regular",
     },
     iconWrapper: {
       flexDirection: "row",
@@ -34,10 +38,6 @@ export const styles = (theme: any) =>
     cardsContainer: {
       paddingTop: 10,
       paddingBottom: 80,
-    },
-    categoryText: {
-      fontSize: 20,
-      color: theme.tertiary,
     },
     suggestion: {
       padding: 10,

@@ -8,14 +8,13 @@ import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import ErrorContainer from "../../shared/error-container";
 import LoadingContainer from "../../shared/loading-container";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
+import { useRouter } from "expo-router";
 
-type ImageUploadFormProps = {
-  onImageUpladed: (imgUrl: string) => void;
-};
-
-const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
+const ImageUploadForm = () => {
   const { theme } = useTheme();
-  const [imageUrl, setImageUrl] = useState<string>();
+  const router = useRouter();
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -33,8 +32,7 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
         .then((imgUrl) => {
           if (imgUrl) {
             const { url } = imgUrl;
-            onImageUpladed(url);
-            setImageUrl(url);
+            updateRecipeRequest({ ...recipeRequest, imgUrl: url });
           }
           setLoading(false);
         })
@@ -46,10 +44,20 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setError("");
-    }, 3000);
+    if (error) {
+      const timer = setTimeout(() => setError(""), 3000);
+      return () => clearTimeout(timer);
+    }
   }, [error]);
+
+  const handleRemoveImage = () => {
+    updateRecipeRequest({ ...recipeRequest, imgUrl: "" });
+  };
+
+  const handleBack = () => {
+    console.log("router", router);
+    router.back();
+  };
 
   return (
     <View>
@@ -57,13 +65,17 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
       {loading && <LoadingContainer />}
 
       <View style={styles(theme).imageContainer}>
-        {imageUrl ? (
-          <ImageBackground style={{ flex: 1 }} source={{ uri: imageUrl }}>
+        {recipeRequest.imgUrl ? (
+          <ImageBackground
+            style={{ flex: 1 }}
+            source={{ uri: recipeRequest.imgUrl }}
+          >
             <HeaderSecondary
               title="Nova receita"
               ioniconLeftName="arrow-left"
               ioniconRightName="image-remove"
-              onPressRight={() => setImageUrl("")}
+              onPressRight={() => handleRemoveImage()}
+              onPressLeft={handleBack}
               colorEmphasis={theme.foreground}
             />
           </ImageBackground>
@@ -73,7 +85,8 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
               title="Nova receita"
               ioniconLeftName="arrow-left"
               ioniconRightName=""
-              onPressRight={() => setImageUrl("")}
+              onPressRight={() => handleRemoveImage()}
+              onPressLeft={handleBack}
               colorEmphasis={theme.foreground}
             />
             <TouchableOpacity
@@ -81,7 +94,7 @@ const ImageUploadForm = ({ onImageUpladed }: ImageUploadFormProps) => {
               style={{ alignItems: "center", marginTop: 30 }}
             >
               <View style={{ width: 150, height: 150 }}>
-                <SvgImageAdd />
+                <SvgImageAdd fill={theme.foreground} />
               </View>
             </TouchableOpacity>
           </>

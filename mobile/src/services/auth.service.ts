@@ -1,27 +1,25 @@
 import axios from "axios";
 import { ICreadentials } from "../interfaces/auth/access-token/credentials.interface";
 import { API_URL } from "../utils/system";
-import * as SecureStore from "expo-secure-store";
 import { IAccessToken } from "../interfaces/auth/access-token/acces-token.interface";
 import { jwtDecode } from "jwt-decode";
+import { storeUserID } from "./user.service";
+import { storeToken } from "./token.service";
 
 export const getAccessToken = async (credentials: ICreadentials) => {
   try {
     const response = await axios.post(`${API_URL}/auth/token`, credentials);
     const accessToken = response.data;
-    storeTokenAndExpiration(accessToken);
+    await storeToken(accessToken);
+    const decoded = await decodeAccessToken(accessToken.access_token);
+    if (decoded) {
+      await storeUserID(decoded.sub);
+    }
     return accessToken;
   } catch (error) {
     console.log("Error:", error);
     throw error;
   }
-};
-
-const storeTokenAndExpiration = async (accessToken: IAccessToken) => {
-  await storeAccessToken(accessToken.access_token);
-  await storeRefreshToken(accessToken.refresh_token);
-  const decoded = decodeAccessToken(accessToken.access_token);
-  await storeTokenExpiration(decoded?.exp ?? 0);
 };
 
 export const refreshToken = async (refreshToken: string) => {
@@ -30,7 +28,11 @@ export const refreshToken = async (refreshToken: string) => {
       refresh_token: refreshToken,
     });
     const accessToken = response.data;
-    storeTokenAndExpiration(accessToken);
+    await storeToken(accessToken);
+    const decoded = await decodeAccessToken(accessToken.access_token);
+    if (decoded) {
+      await storeUserID(decoded.sub);
+    }
     return accessToken;
   } catch (error) {
     console.log("Error:", error);
@@ -50,16 +52,6 @@ export const getRecoverPasswordToken = async (email: string) => {
   }
 };
 
-export const oauthLogin = async (provider: string) => {
-  try {
-    const response = await axios.post(`${API_URL}/auth/oauth2/${provider}`);
-    return response.data;
-  } catch (error) {
-    console.log("Error:", error);
-    throw error;
-  }
-};
-
 export const getAccessTokenWithGoogleToken = async (
   idToken: string
 ): Promise<IAccessToken> => {
@@ -68,14 +60,17 @@ export const getAccessTokenWithGoogleToken = async (
       idToken: idToken,
     };
     const response = await axios.post(
-      `${API_URL}/auth/oauth2/callback/google`,
+      `${API_URL}/auth/redirect/google`,
       data
     );
     const accessToken = response.data;
-    storeTokenAndExpiration(accessToken);
+    await storeToken(accessToken);
+    const decoded = await decodeAccessToken(accessToken.access_token);
+    if (decoded) {
+      await storeUserID(decoded.sub);
+    }
     return accessToken;
   } catch (error) {
-    // Trata o erro, se houver
     console.error("Erro ao enviar tokens para o backend:", error);
     throw error;
   }
@@ -89,60 +84,17 @@ export const getAccessTokenWithGithubCode = async (
       code,
     });
     const accessToken = response.data;
-    storeTokenAndExpiration(accessToken);
+    await storeToken(accessToken);
+    const decoded = await decodeAccessToken(accessToken.access_token);
+    if (decoded) {
+      await storeUserID(decoded.sub);
+    }
     return accessToken;
   } catch (error) {
     console.error("Error getting access token:", error);
     throw new Error("Failed to get access token. Please try again later.");
   }
 };
-
-export async function storeAllTokens(accessToken: IAccessToken) {
-  await SecureStore.setItemAsync("accessToken", accessToken.access_token);
-  await SecureStore.setItemAsync("refreshToken", accessToken.refresh_token);
-}
-
-export const storeTokenExpiration = async (expiresIn: number) => {
-  await SecureStore.setItemAsync("expiresIn", expiresIn.toString());
-};
-
-export async function storeAccessToken(token: string) {
-  await SecureStore.setItemAsync("accessToken", token);
-}
-
-export async function storeRefreshToken(token: string) {
-  await SecureStore.setItemAsync("refreshToken", token);
-}
-
-export async function getStoredAccessToken() {
-  return await SecureStore.getItemAsync("accessToken");
-}
-
-export async function getStoredRefreshToken() {
-  return await SecureStore.getItemAsync("refreshToken");
-}
-
-export async function getStoredExpiresIn() {
-  return await SecureStore.getItemAsync("expiresIn");
-}
-
-export async function removeAccessToken() {
-  await SecureStore.deleteItemAsync("accessToken");
-}
-
-export async function removeRefreshToken() {
-  await SecureStore.deleteItemAsync("refreshToken");
-}
-
-export async function removeExpiresIn() {
-  await SecureStore.deleteItemAsync("expiresIn");
-}
-
-export async function removeAllTokens() {
-  await removeAccessToken();
-  await removeRefreshToken();
-  await removeExpiresIn();
-}
 
 interface JwtPayload {
   sub: string;

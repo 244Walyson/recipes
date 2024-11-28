@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
+import { View, Image, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
@@ -25,10 +25,7 @@ const SearchCard = ({
 
   return (
     <TouchableOpacity style={styles(theme).container} onPress={onPress}>
-      <Image
-        source={imgUrl ? { uri: imgUrl } : require("../../../assets/food.png")}
-        style={styles(theme).image}
-      />
+      <Image source={{ uri: imgUrl }} style={styles(theme).image} />
       <View style={styles(theme).descriptionContainer}>
         <View style={styles(theme).textWrapper}>
           <Text style={styles(theme).textTitle}>{title}</Text>

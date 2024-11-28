@@ -1,0 +1,302 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (backend)
+        run: |
+          cd ./backend
+          npm install
+
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: ./frontend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Install dependencies (frontend)
+        run: |
+          cd ./frontend
+          npm install
+
+  tests_backend:
+    runs-on: ubuntu-latest
+    needs: build_backend
+    env:
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      GOOGLE_CALLBACK_URL: ${{ secrets.GOOGLE_CALLBACK_URL }}
+      GITHUB_CLIENT_ID: ${{ secrets.CLIENT_ID_GITHUB }}
+      GITHUB_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET_GITHUB }}
+      GITHUB_CALLBACK_URL: ${{ secrets.CALLBACK_URL_GITHUB }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      APP_URL: ${{ secrets.APP_URL }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
+      GOOGLE_CLIENT_ID_ANDROID: ${{ secrets.GOOGLE_CLIENT_ID_ANDROID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Restore dependencies from cache
+        uses: actions/cache@v3
+        with:
+          path: ./backend/node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Run unit tests (NestJS)
+        run: cd ./backend && npm run test
+
+      - name: Run e2e tests (NestJS)
+        run: cd ./backend && npm run test:e2e
+
+  build_and_push_backend_docker_image:
+    runs-on: ubuntu-latest
+    needs: tests_backend
+    outputs:
+      backend_image_tag: ${{ steps.set-output.outputs.backend_image_tag }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN }}
+
+      - name: Set output
+        id: set-output
+        run: |
+          echo "backend_image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Access output
+        run: |
+          echo "backend_image_tag=${{ steps.set-output.outputs.backend_image_tag }}"
+
+      - name: Build Docker image
+        run: |
+          cd ./backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ steps.set-output.outputs.backend_image_tag }} .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/recipes-backend:${{ steps.set-output.outputs.backend_image_tag }}
+
+  build_and_push_frontend_docker_image:
+    runs-on: ubuntu-latest
+    needs: build_frontend
+    outputs:
+      frontend_image_tag: ${{ steps.set-output.outputs.frontend_image_tag }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_LOGIN }}
+
+      - name: Set output
+        id: set-output
+        run: |
+          echo "frontend_image_tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Access output
+        run: |
+          echo "frontend_image_tag=${{ steps.set-output.outputs.frontend_image_tag }}"
+
+      - name: Build Docker image
+        run: |
+          cd ./frontend
+          image_tag=${{ steps.set-output.outputs.frontend_image_tag }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${image_tag} .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          echo ${{ secrets.DOCKER_LOGIN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/recipes-frontend:${{ steps.set-output.outputs.frontend_image_tag }}
+
+  deploy_backend:
+    runs-on: ubuntu-latest
+    needs: build_and_push_backend_docker_image
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "latest"
+
+      - name: Authenticate with Kubernetes
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_DATA" > ~/.kube/config
+
+      - name: Create Kubernetes secrets
+        run: |
+          kubectl create secret generic recipes-secrets -n api \
+            --from-literal=google-client-id="${{ secrets.GOOGLE_CLIENT_ID }}" \
+            --from-literal=google-client-secret="${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+            --from-literal=google-callback-url="${{ secrets.GOOGLE_CALLBACK_URL }}" \
+            --from-literal=github-client-id="${{ secrets.CLIENT_ID_GITHUB }}" \
+            --from-literal=github-client-secret="${{ secrets.CLIENT_SECRET_GITHUB }}" \
+            --from-literal=database-url="${{ secrets.DATABASE_URL }}" \
+            --from-literal=email-user="${{ secrets.EMAIL_USER }}" \
+            --from-literal=email-pass="${{ secrets.EMAIL_PASS }}" \
+            --from-literal=app-url="${{ secrets.APP_URL }}" \
+            --from-literal=frontend-url="${{ secrets.FRONTEND_URL }}" \
+            --from-literal=aws-region="${{ secrets.AWS_REGION }}" \
+            --from-literal=aws-access-key-id="${{ secrets.AWS_ACCESS_KEY_ID }}" \
+            --from-literal=aws-secret-access-key="${{ secrets.AWS_SECRET_ACCESS_KEY }}" \
+            --from-literal=aws-s3-bucket="${{ secrets.AWS_S3_BUCKET }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "latest"
+
+      - name: Deploy with Helm
+        run: |
+          echo "backend_image_tag=${{ needs.build_and_push_backend_docker_image.outputs.backend_image_tag }}"
+          cd helm-charts/backend/
+          helm upgrade --install recipes-api . -f values.yaml \
+            --namespace api --create-namespace \
+            --set image.repository=walymb/recipes-backend \
+            --set image.tag=${{ needs.build_and_push_backend_docker_image.outputs.backend_image_tag }}
+
+  deploy_frontend:
+    runs-on: ubuntu-latest
+    needs: build_and_push_frontend_docker_image
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "latest"
+
+      - name: Authenticate with Kubernetes
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG_DATA" > ~/.kube/config
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "latest"
+
+      - name: Deploy with Helm
+        run: |
+          echo "frontend_image_tag=${{ needs.build_and_push_frontend_docker_image.outputs.frontend_image_tag }}"
+          echo "frontend_image_tag=${image_tag}"
+          cd helm-charts/frontend/
+          helm upgrade --install recipes-frontend . -f values.yaml \
+            --namespace frontend --create-namespace \
+            --set image.repository=walymb/recipes-frontend \
+            --set image.tag=${{ needs.build_and_push_frontend_docker_image.outputs.frontend_image_tag  }}
+
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          build-tools: 33.0.2
+
+      - name: Install dependencies
+        run: |
+          cd mobile
+      #     npm install
+      #     npm install -g eas-cli
+
+      # - name: Expo Login
+      #   run: eas login --token ${{ secrets.EAS_TOKEN }}
+
+      # - name: Build APK with EAS
+      #   run: eas build --platform android --profile release --non-interactive
+      #   working-directory: mobile
+
+      # - name: Upload APK to GitHub Release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: mobile/android/app/build/outputs/apk/release/app-release.apk
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ github.ref_name }}
+      #     name: "APK Release - ${{ github.ref_name }}"
+      #     body: "Build automático do APK."

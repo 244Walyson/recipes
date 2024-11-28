@@ -2,13 +2,15 @@ import React from "react";
 import Avatar from "../../shared/avatar";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 interface AuthorCardProps {
   name: string;
   recipeCount?: number;
   jobTitle?: string;
   avatarUrl?: string;
+  userId: string;
 }
 
 const AuthorCard: React.FC<AuthorCardProps> = ({
@@ -16,11 +18,18 @@ const AuthorCard: React.FC<AuthorCardProps> = ({
   recipeCount,
   jobTitle,
   avatarUrl,
+  userId,
 }) => {
   const { theme } = useTheme();
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push(`/profiles/${userId}`);
+    console.log("author card pressed");
+  };
 
   return (
-    <View style={styles(theme).container}>
+    <TouchableOpacity onPress={handlePress} style={styles(theme).container}>
       <Avatar imgUrl={avatarUrl} />
       <View style={{ flex: 1, gap: 10 }}>
         <View style={styles(theme).textWrapper}>
@@ -29,7 +38,7 @@ const AuthorCard: React.FC<AuthorCardProps> = ({
         </View>
         <Text style={styles(theme).textLight}>{jobTitle}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

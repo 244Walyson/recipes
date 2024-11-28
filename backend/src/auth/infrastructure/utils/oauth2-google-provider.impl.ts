@@ -30,6 +30,7 @@ export class PassportGoogleStrategy extends PassportStrategy(
       name: profile.displayName,
       imgUrl: profile.photos[0]?.value,
       username: profile.name.givenName,
+      authProvider: 'oauth2',
     });
 
     return user;
@@ -61,6 +62,7 @@ export class PassportGoogleStrategy extends PassportStrategy(
         name,
         imgUrl: picture,
         username: given_name,
+        authProvider: 'oauth2',
       });
 
       return user;

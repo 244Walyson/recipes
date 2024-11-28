@@ -4,17 +4,16 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { WebView } from "react-native-webview";
 import {
   GOOGLE_CLIENT_ID_ANDROID,
-  GITHUB_CLIENT_ID,
   GITHUB_CALLBACK_URL,
   GOOGLE_CLIENT_ID_IOS,
   GOOGLE_CLIENT_ID_WEB,
+  GITHUB_OAUTH_URL,
 } from "@/src/utils/system";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import {
   getAccessTokenWithGithubCode,
   getAccessTokenWithGoogleToken,
-  storeAllTokens,
 } from "@/src/services/auth.service";
 import { CommonActions } from "@react-navigation/native";
 
@@ -34,11 +33,14 @@ const SocialAuth = () => {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest(config);
 
   const handleTokenResponse = async () => {
-    console.log(response);
+    console.log("response", response?.type);
+    if (response?.type === "dismiss") {
+      navigation.goBack();
+    }
     if (response?.type === "success") {
+      console.log("response", response);
       const { id_token } = response.params;
-      getAccessTokenWithGoogleToken(id_token).then((data) => {
-        storeAllTokens(data);
+      getAccessTokenWithGoogleToken(id_token).then((_) => {
         navigation.dispatch(
           CommonActions.reset({
             routes: [{ key: "(tabs)", name: "(tabs)" }],
@@ -46,7 +48,6 @@ const SocialAuth = () => {
         );
       });
     }
-    console.log("response", response);
   };
 
   useEffect(() => {
@@ -55,7 +56,6 @@ const SocialAuth = () => {
   }, [response]);
 
   useEffect(() => {
-    console.log("key", key);
     if (key === "google") {
       console.log("Login com Google");
       if (request) {
@@ -67,8 +67,10 @@ const SocialAuth = () => {
             setLoading(false);
           });
       }
-    } else if (key === "github") {
-      const githubUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email`;
+      return;
+    }
+    if (key === "github") {
+      const githubUrl = GITHUB_OAUTH_URL;
       setOauthUrl(githubUrl);
     }
   }, [key, request]);
@@ -79,8 +81,7 @@ const SocialAuth = () => {
     if (url.includes(GITHUB_CALLBACK_URL)) {
       const code = extractCodeFromUrl(url);
       if (!code) return;
-      getAccessTokenWithGithubCode(code).then((data) => {
-        storeAllTokens(data);
+      getAccessTokenWithGithubCode(code).then((_) => {
         navigation.dispatch(
           CommonActions.reset({
             routes: [{ key: "(tabs)", name: "(tabs)" }],

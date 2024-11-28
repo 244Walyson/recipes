@@ -4,7 +4,7 @@ import CustomInput from "../../shared/custom-input";
 import { useTheme } from "@/src/context/theme-context";
 import { IMealType } from "@/src/interfaces/meal-type/meal-type.interface";
 import { FormField, mealTypesInputs } from "@/src/static/register-form-inputs";
-import { updateAndValidate } from "@/src/utils/forms";
+import { toValues, updateAndValidate } from "@/src/utils/forms";
 import { createMealType, getMealTypes } from "@/src/services/meal-type.service";
 import ErrorContainer from "../../shared/error-container";
 import Feather from "react-native-vector-icons/Feather";
@@ -12,14 +12,14 @@ import { styles } from "./styles";
 import CustomModal from "../../shared/modal";
 import MealTypeCard from "../meal-type-card";
 import SuggestionItem from "../suggestion-item";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
 
-type MealTypeFormProps = {
-  onAddMealType: (mealTypes: IMealType[]) => void;
-};
-
-const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
+const MealTypeForm = () => {
   const { theme } = useTheme();
-  const [mealTypes, setMealTypes] = useState<IMealType[]>([]);
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
+  const [mealTypes, setMealTypes] = useState<IMealType[]>(
+    recipeRequest.mealTypes
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,19 +40,15 @@ const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
       setModalVisible(true);
       return;
     }
-    setMealTypes((prevMealTypes) => [
-      ...prevMealTypes,
-      {
-        id: id.value,
-        name: name.value,
-      },
-    ]);
+    updateRecipeRequest({
+      ...recipeRequest,
+      mealTypes: [...mealTypes, toValues(mealTypesFormData)],
+    });
     setMealTypesFormData({
       ...mealTypesFormData,
       id: { ...id, value: "" },
       name: { ...name, value: "" },
     });
-    onAddMealType(mealTypes);
     setMealTypeSuggestions([]);
   };
 
@@ -112,10 +108,8 @@ const MealTypeForm = ({ onAddMealType }: MealTypeFormProps) => {
   };
 
   useEffect(() => {
-    if (mealTypesFormData.id.value) {
-      addMealType();
-    }
-  }, [mealTypesFormData.id.value]);
+    setMealTypes(recipeRequest.mealTypes);
+  }, [recipeRequest]);
 
   return (
     <View>

@@ -46,10 +46,10 @@ export class UserController {
 
   @Put(':id')
   async update(
-    @Param() id: string,
+    @Param() id: { id: string },
     @Body() userDto: UserRequestDto,
   ): Promise<UserResponseDto> {
-    return await this.updateUserUseCase.execute(id, userDto);
+    return await this.updateUserUseCase.execute(id.id, userDto);
   }
 
   @Get()
@@ -61,7 +61,7 @@ export class UserController {
     return await this.findAllUseCase.execute({ name, page, limit });
   }
 
-  @Post('follow/:followeeId')
+  @Post('follows/:followeeId')
   @HttpCode(200)
   async follow(
     @Param() { followeeId }: { followeeId: string },
@@ -74,7 +74,7 @@ export class UserController {
     });
   }
 
-  @Delete('unfollow/:followeeId')
+  @Delete('follows/:followeeId')
   @HttpCode(204)
   async unfollow(
     @Param() { followeeId }: { followeeId: string },
@@ -87,7 +87,7 @@ export class UserController {
     });
   }
 
-  @Get('following/:id')
+  @Get('follows/:id')
   async findFollowingUsers(
     @Param() id: { id: string },
     @Query('page') page: number = 1,

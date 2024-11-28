@@ -50,24 +50,18 @@ export class AuthController {
     return await this.refreshTokenUseCase.execute(refreshTokenDto);
   }
 
+  @Public()
   @Post('recover-password/token/:email')
   async recoverPasswordToken(@Param() email: string) {
     return this.createRecoverPasswordTokenUseCase.execute({ email });
   }
 
+  @Public()
   @Post('reset-password')
   @HttpCode(200)
   async updatePassword(@Body() dto: RecovrePassordRequestDto) {
     return await this.updatePasswordUseCase.execute(dto);
   }
-
-  @Post('oauth2/google')
-  @UseGuards(AuthGuard('google'))
-  async googleLogin() {}
-
-  @Get('oauth2/github')
-  @UseGuards(AuthGuard('github'))
-  async githubLogin() {}
 
   @Get('oauth2/callback/google')
   @UseGuards(AuthGuard('google'))
@@ -75,6 +69,7 @@ export class AuthController {
     return this.oAuth2AuthenticationUseCase.execute(req.user);
   }
 
+  @Public()
   @Post('/redirect/github')
   async githubLoginCallback(@Body() { code }: { code: string }) {
     const { user } =
@@ -83,7 +78,8 @@ export class AuthController {
     return this.oAuth2AuthenticationUseCase.execute(user);
   }
 
-  @Post('oauth2/callback/google')
+  @Public()
+  @Post('/redirect/google')
   async googleCallback(@Body() { idToken }: { idToken: string }) {
     const user = await this.passportGoogleStrategy.validateTokenWithGoogle({
       idToken,

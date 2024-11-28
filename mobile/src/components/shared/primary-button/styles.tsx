@@ -16,6 +16,7 @@ export const styles = (theme: any, isActive: boolean) =>
     btnText: {
       color: isActive ? theme.background : theme.primary,
       fontSize: 18,
+      fontFamily: "ABeeZee_400Regular",
     },
     loadingContainer: {
       zIndex: 2,

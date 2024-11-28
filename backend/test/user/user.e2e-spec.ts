@@ -100,6 +100,8 @@ describe('UserController (e2e)', () => {
     expect(response.body).toHaveProperty('name');
     expect(response.body).toHaveProperty('email');
     expect(response.body).toHaveProperty('username');
+    expect(response.body).not.toHaveProperty('password');
+    expect(response.body).not.toHaveProperty('authProvider');
   });
 
   // it('/users/:id (PUT)', async () => {
@@ -133,19 +135,21 @@ describe('UserController (e2e)', () => {
     expect(response.body).toHaveProperty('data');
     expect(response.body.data).toBeInstanceOf(Array);
     expect(response.body.data.length).toBeGreaterThan(0);
+    expect(response.body.data[0]).not.toHaveProperty('password');
+    expect(response.body.data[0]).not.toHaveProperty('authProvider');
   });
 
-  it('/users/follow/:followeeId (POST)', async () => {
+  it('/users/follows/:followeeId (POST)', async () => {
     const followeeId = 'anotherUserId';
     const response = await request(app.getHttpServer())
-      .post(`/users/follow/${followeeId}`)
+      .post(`/users/follows/${followeeId}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     console.log(response.body);
     expect(response.status).toBe(200);
   });
 
-  it('/users/unfollow/:followeeId (DELETE)', async () => {
+  it('/users/follows/:followeeId (DELETE)', async () => {
     const followeeId = 'followeeUserId';
     await prismaClient.follow.create({
       data: {
@@ -155,16 +159,16 @@ describe('UserController (e2e)', () => {
       },
     });
     const response = await request(app.getHttpServer())
-      .delete(`/users/unfollow/${followeeId}`)
+      .delete(`/users/follows/${followeeId}`)
       .set('Authorization', `Bearer ${accessToken}`);
 
     expect(response.status).toBe(204);
   });
 
-  it('/users/following/:id (GET)', async () => {
+  it('/users/follows/:id (GET)', async () => {
     const userId = 'someUserId';
     const response = await request(app.getHttpServer())
-      .get(`/users/following/${userId}`)
+      .get(`/users/follows/${userId}`)
       .set('Authorization', `Bearer ${accessToken}`)
       .query({
         page: 1,

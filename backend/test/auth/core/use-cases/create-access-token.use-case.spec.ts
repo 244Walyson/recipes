@@ -128,7 +128,7 @@ describe('CreateAccessTokenUseCase', () => {
       refresh_token: 'refreshToken',
     });
 
-    const result = await createAccessTokenUseCase.execute(credentials, false);
+    const result = await createAccessTokenUseCase.execute(credentials);
 
     expect(result.access_token).toBe('accessToken');
     expect(result.refresh_token).toBe('refreshToken');

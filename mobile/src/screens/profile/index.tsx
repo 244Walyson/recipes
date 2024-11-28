@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   StatusBar,
   Image,
@@ -12,7 +11,7 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import HeaderSecondary from "@/src/components/shared/header-secondary";
 import { styles } from "./styles";
 import { useTheme } from "@/src/context/theme-context";
@@ -21,13 +20,19 @@ import {
   getStoredUserID,
   getUser,
   removeStoredUserID,
+  updateUser,
 } from "@/src/services/user.service";
 import { IPaginatedResponse } from "@/src/interfaces/paginated-response.interface";
 import { IRecipeProjection } from "@/src/interfaces/recipe/recipe-response-projection.interface";
-import { getRecipesByUserId } from "@/src/services/recipe.service";
-import { removeAllTokens } from "@/src/services/auth.service";
-import PrimaryButton from "@/src/components/shared/primary-button";
+import {
+  getRecipesByUserId,
+  getRecipesFavouritedByUserId,
+} from "@/src/services/recipe.service";
 import PrimaryButtonSlim from "@/src/components/shared/primary-button-slim";
+import * as ImagePicker from "expo-image-picker";
+import { uploadImage } from "@/src/services/image-upload.service";
+import { removeTokens } from "@/src/services/token.service";
+import { IUserRequest } from "@/src/interfaces/user/user-request.interface";
 
 const H_MAX_HEIGHT = 320;
 const H_MIN_HEIGHT = 60;
@@ -35,10 +40,12 @@ const H_SCROLL_DISTANCE = H_MAX_HEIGHT - H_MIN_HEIGHT;
 
 const Profile = () => {
   const { theme } = useTheme();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [user, setUser] = useState<IUserResponse>();
   const [isFocused, setIsFocused] = useState("grid");
   const [following, setFollowing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [profileId, setProfileId] = useState<string>(id);
   const [recipes, setRecipes] =
     useState<IPaginatedResponse<IRecipeProjection>>();
 
@@ -51,41 +58,51 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    getStoredUserID().then((userId) => {
-      if (!userId) {
-        router.push("/register");
-        return;
-      }
-      getUser(userId).then((data) => {
-        setUser(data);
+    if (!id) {
+      getStoredUserID().then((userId) => {
+        if (userId) {
+          setProfileId(userId);
+          return;
+        }
+        router.replace("/register");
       });
-      getRecipesByUserId(userId).then((data) => {
-        console.log(data);
-        setRecipes(data);
-      });
-      setRefreshing(false);
+      return;
+    }
+    setProfileId(id);
+    setRefreshing(false);
+  }, [id]);
+
+  useEffect(() => {
+    if (!profileId) return;
+    getUser(profileId).then((data) => {
+      setUser(data);
     });
-  }, [refreshing]);
+    isFocused === "grid" ? handlegridPress() : handleFavouritePress();
+    setRefreshing(false);
+  }, [id, refreshing]);
 
   const logout = () => {
-    removeAllTokens();
+    removeTokens();
     removeStoredUserID();
     router.replace("/register");
   };
 
-  const isProfileOwner = () => {
-    return true;
+  const isProfileOwner = async () => {
+    const userId = await getStoredUserID();
+    return userId === profileId;
   };
 
   const getBtnText = () => {
-    if (isProfileOwner()) {
-      return "Editar";
-    }
+    isProfileOwner().then((data) => {
+      if (data) {
+        return "Editar";
+      }
+    });
     return following ? "Seguindo" : "Seguir";
   };
 
-  const handleBtnPress = () => {
-    if (!isProfileOwner()) {
+  const handleBtnPress = async () => {
+    if (!(await isProfileOwner())) {
       setFollowing((prevState) => !prevState);
       return;
     }
@@ -98,6 +115,58 @@ const Profile = () => {
 
   const handleRecipePress = (id: string) => {
     router.push(`/recipes/${id}`);
+  };
+
+  const handleFavouritePress = () => {
+    getRecipesFavouritedByUserId(profileId).then((data) => {
+      setRecipes(data);
+      handleFocusChange("heart");
+    });
+  };
+
+  const handlegridPress = () => {
+    getRecipesByUserId(profileId).then((data) => {
+      setRecipes(data);
+      handleFocusChange("grid");
+    });
+  };
+
+  const openGallery = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 0.3,
+    });
+
+    if (!result.canceled) {
+      setRefreshing(true);
+      const fileUri = result.assets[0].uri;
+      uploadImage(fileUri)
+        .then((imgUrl) => {
+          if (imgUrl && user) {
+            updateUserImg(user, imgUrl.url);
+          }
+          setRefreshing(true);
+        })
+        .catch((error) => {
+          console.log("Error uploading image", error);
+        });
+    }
+  };
+
+  const updateUserImg = (data: IUserResponse, imgUrl: string) => {
+    const userRequest: IUserRequest = {
+      name: data.name,
+      username: data.username,
+      imgUrl: imgUrl,
+      email: data.email,
+      password: "",
+    };
+
+    updateUser(profileId, userRequest).then((data) => {
+      console.log(data);
+      setUser(data);
+    });
   };
 
   return (
@@ -123,16 +192,18 @@ const Profile = () => {
             ioniconRightName="logout"
             title="Perfil"
             colorEmphasis={theme.foreground}
-            onPressLeft={() => {}}
+            onPressLeft={() => router.back()}
             onPressRight={logout}
           />
         </View>
         <View style={styles(theme).middleContainer}>
           <View style={styles(theme).profileInfo}>
-            <Image
-              source={{ uri: user?.imgUrl }}
-              style={styles(theme).imageAvatar}
-            />
+            <TouchableOpacity onPress={openGallery}>
+              <Image
+                source={{ uri: user?.imgUrl }}
+                style={styles(theme).imageAvatar}
+              />
+            </TouchableOpacity>
             <Text style={styles(theme).textInfo}>{user?.name}</Text>
             <Text style={styles(theme).textInfoLight}>{user?.username}</Text>
             <View style={styles(theme).btnWrapper}>
@@ -149,7 +220,7 @@ const Profile = () => {
                 styles(theme).btnNav,
                 isFocused === "grid" && styles(theme).btnNavFocused,
               ]}
-              onPress={() => handleFocusChange("grid")}
+              onPress={() => handlegridPress()}
             >
               <MaterialCommunityIcons
                 name="grid"
@@ -162,7 +233,7 @@ const Profile = () => {
                 styles(theme).btnNav,
                 isFocused === "heart" && styles(theme).btnNavFocused,
               ]}
-              onPress={() => handleFocusChange("heart")}
+              onPress={() => handleFavouritePress()}
             >
               <Ionicons
                 name="heart-outline"

@@ -11,7 +11,8 @@ export interface IReciperequest {
   }[];
   preparationTime: number;
   imgUrl?: string;
-  macronutrients?: { protein: number; carbs: number; fat: number };
+  additionalTips?: string;
+  macronutrients?: { protein?: number; carbs?: number; fat?: number };
   servingCount?: number;
   isPublished: boolean;
   costEstimate: number;

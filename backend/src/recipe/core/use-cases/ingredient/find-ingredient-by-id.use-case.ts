@@ -13,7 +13,7 @@ export class FindIngredientByIdUseCase {
         name: ingredient.name,
       };
     } catch {
-      throw new RecipeResourceNotFoundException('Ingredient found');
+      throw new RecipeResourceNotFoundException('Ingredient not found');
     }
   }
 }

@@ -1,12 +1,11 @@
-import axios from "axios";
 import { API_URL } from "../utils/system";
-import { IRecipeResponse } from "../interfaces/recipe/recipe-response.interface";
 import { IReciperequest } from "../interfaces/recipe/recipe-request.interface";
 import { IFindAllFilters } from "../interfaces/recipe/find-all-filters.interface";
+import axiosIntance from "./interceptors";
 
 export const getRecipeById = async (id: string) => {
   try {
-    const response = await axios.get(`${API_URL}/recipes/${id}`);
+    const response = await axiosIntance.get(`${API_URL}/recipes/${id}`);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -14,27 +13,34 @@ export const getRecipeById = async (id: string) => {
   }
 };
 
-export const getRecipes = async (params: IFindAllFilters) => {
+export const getRecipes = async (
+  params: IFindAllFilters,
+  page?: number,
+  limit?: number
+) => {
   try {
     const queryParams = new URLSearchParams();
+
+    if (page) queryParams.append("page", page.toString());
+    if (limit) queryParams.append("limit", limit.toString());
 
     if (params.name) queryParams.append("name", params.name);
     if (params.ingredients)
       queryParams.append("ingredients", params.ingredients.join(","));
-    if (params.cuisineStyles)
-      queryParams.append("cuisineStyles", params.cuisineStyles.join(","));
+    if (params.mealTypes)
+      queryParams.append("mealTypes", params.mealTypes.join(","));
+    if (params.price) queryParams.append("price", params.price.join(","));
     if (params.servingCount)
       queryParams.append("servingCount", params.servingCount);
     if (params.allergens)
       queryParams.append("allergens", params.allergens.join(","));
-    if (params.totalTime)
-      queryParams.append("totalTime", params.totalTime.toString());
-    if (params.viewCount)
-      queryParams.append("viewCount", params.viewCount.toString());
-    if (params.likeCount)
-      queryParams.append("likeCount", params.likeCount.toString());
+    if (params.preparationTime)
+      queryParams.append("preparationTime", params.preparationTime.toString());
+    if (params.orderBy) queryParams.append("orderBy", params.orderBy);
 
-    const response = await axios.get(
+    console.log("queryParams", queryParams.toString());
+
+    const response = await axiosIntance.get(
       `${API_URL}/recipes?${queryParams.toString()}`
     );
     return response.data;
@@ -46,7 +52,9 @@ export const getRecipes = async (params: IFindAllFilters) => {
 
 export const getRecipesByUserId = async (userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/recipes/user/${userId}`);
+    const response = await axiosIntance.get(
+      `${API_URL}/recipes/user/${userId}`
+    );
     return response.data;
   } catch (error) {
     console.log(error);
@@ -56,17 +64,7 @@ export const getRecipesByUserId = async (userId: string) => {
 
 export const getTrendingecipes = async () => {
   try {
-    const response = await axios.get(`${API_URL}/recipes`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-export const getRecipesByCuisineStyle = async (cuisineStyles: string) => {
-  try {
-    const response = await axios.get(`${API_URL}/recipes`);
+    const response = await axiosIntance.get(`${API_URL}/recipes`);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -76,7 +74,7 @@ export const getRecipesByCuisineStyle = async (cuisineStyles: string) => {
 
 export const createRecipe = async (recipe: IReciperequest) => {
   try {
-    const response = await axios.post(`${API_URL}/recipes`, recipe);
+    const response = await axiosIntance.post(`${API_URL}/recipes`, recipe);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -84,22 +82,14 @@ export const createRecipe = async (recipe: IReciperequest) => {
   }
 };
 
-export const favouriteRecipe = async (recipeId: string) => {
+export const updateRecipe = async (
+  recipeId: string,
+  recipe: IReciperequest
+) => {
   try {
-    const response = await axios.put(
-      `${API_URL}/recipes/favourite/${recipeId}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const unfavouriteRecipe = async (recipeId: string) => {
-  try {
-    const response = await axios.put(
-      `${API_URL}/recipes/unfavourite/${recipeId}`
+    const response = await axiosIntance.put(
+      `${API_URL}/recipes/${recipeId}`,
+      recipe
     );
     return response.data;
   } catch (error) {
@@ -110,7 +100,57 @@ export const unfavouriteRecipe = async (recipeId: string) => {
 
 export const viewRecipe = async (recipeId: string) => {
   try {
-    const response = await axios.put(`${API_URL}/recipes/view/${recipeId}`);
+    const response = await axiosIntance.post(
+      `${API_URL}/recipes/views/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const favouriteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axiosIntance.post(
+      `${API_URL}/recipes/favourites/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const unfavouriteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axiosIntance.delete(
+      `${API_URL}/recipes/favourites/${recipeId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getRecipesFavouritedByUserId = async (userId: string) => {
+  try {
+    const response = await axiosIntance.get(
+      `${API_URL}/recipes/favourites/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const deleteRecipe = async (recipeId: string) => {
+  try {
+    const response = await axiosIntance.delete(
+      `${API_URL}/recipes/${recipeId}`
+    );
     return response.data;
   } catch (error) {
     console.error(error);

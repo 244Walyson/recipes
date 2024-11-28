@@ -7,6 +7,8 @@ import RecipeInstructions from "../recipe-instructions";
 import { styles } from "./styles";
 import { directionsInputs, FormField } from "@/src/static/register-form-inputs";
 import { updateAndValidate } from "@/src/utils/forms";
+import { useRecipeRequestContext } from "@/src/context/recipe-request-context";
+import useFormFieldsFromContext from "@/src/hooks/use-recipe-form-field";
 
 type Directions = {
   step: number;
@@ -14,15 +16,15 @@ type Directions = {
   description: string;
 };
 
-type DirectionsFormProps = {
-  onDirectionsAdd: (directions: Directions[]) => void;
-};
-
-const DirectionsForm = ({ onDirectionsAdd }: DirectionsFormProps) => {
+const DirectionsForm = () => {
   const { theme } = useTheme();
-  const [partialDirections, setPartialDirections] = useState<Directions[]>([]);
+  const { recipeRequest, updateRecipeRequest } = useRecipeRequestContext();
+  const [partialDirections, setPartialDirections] = useState<Directions[]>(
+    recipeRequest.preparationMethod
+  );
+  const formFields = useFormFieldsFromContext(directionsInputs);
   const [directionsFormData, setDirectionsFormData] =
-    useState<Record<string, FormField>>(directionsInputs);
+    useState<Record<string, FormField>>(formFields);
 
   const handleDirectionsInputChange = (value: string, fieldName: string) => {
     setDirectionsFormData(
@@ -55,13 +57,16 @@ const DirectionsForm = ({ onDirectionsAdd }: DirectionsFormProps) => {
           description: directionsFormData.description.value,
         },
       ]);
-      onDirectionsAdd(partialDirections);
     }
   };
 
   useEffect(() => {
-    onDirectionsAdd(partialDirections);
+    updateRecipeRequest({ preparationMethod: partialDirections });
   }, [partialDirections]);
+
+  useEffect(() => {
+    setPartialDirections(recipeRequest.preparationMethod);
+  }, [recipeRequest]);
 
   return (
     <View style={styles(theme).directionsContainer}>

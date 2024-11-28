@@ -2,15 +2,14 @@ import { StyleSheet } from "react-native";
 
 export const styles = (theme: any) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-    },
     formContainer: {
+      flex: 1,
       padding: 20,
       paddingBottom: 80,
+      backgroundColor: theme.background,
       borderTopLeftRadius: 30,
       borderTopRightRadius: 30,
+      zIndex: 1000,
     },
     label: {
       fontSize: 18,
@@ -106,5 +105,10 @@ export const styles = (theme: any) =>
       padding: 10,
       borderRadius: 8,
       marginBottom: 10,
+    },
+    clear: {
+      width: "100%",
+      textAlign: "right",
+      color: theme.tertiary,
     },
   });

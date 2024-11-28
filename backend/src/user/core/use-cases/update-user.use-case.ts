@@ -12,11 +12,13 @@ export class UpdateUserUseCase {
   ) {}
 
   async execute(id: string, dto: IUserRequest): Promise<IUserResponse> {
-    const oldUser = await this.findUserByIdUseCase.execute(id);
+    await this.findUserByIdUseCase.execute(id);
     try {
-      dto.password = oldUser.password;
+      dto.password = 'oldUser.password';
       const user = UserMapper.toEntity(dto);
       delete user.id;
+      delete user.password;
+      delete user.createdAt;
       return await this.userRepository.update(id, user);
     } catch (error) {
       console.log(error);

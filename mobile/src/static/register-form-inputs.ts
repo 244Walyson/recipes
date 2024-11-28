@@ -56,10 +56,10 @@ export const genericInputs = {
     validation: (value: string) => true,
     message: "",
   },
-  adictionalTips: {
+  additionalTips: {
     value: "",
-    id: "adictionalTips",
-    name: "adictionalTips",
+    id: "additionalTips",
+    name: "additionalTips",
     type: "default",
     placeholder: "Dicas Adicionais",
     validation: (value: string) => true,
@@ -137,10 +137,10 @@ export const ingredientsInputs = {
     validation: (value: string) => value.length > 0,
     message: "O id não pode ser vazio",
   },
-  ingredient: {
+  name: {
     value: "",
-    id: "ingredient",
-    name: "ingredient",
+    id: "name",
+    name: "name",
     type: "default",
     placeholder: "Ingrediente",
     validation: (value: string) => value.length > 0,
@@ -186,3 +186,38 @@ export const mealTypesInputs = {
     message: "O tipo deve ter no mínimo 3 caracteres",
   },
 } as Record<string, FormField>;
+
+export const unitInputs = [
+  "ml", // mililitros
+  "litros", // litros
+  "xícaras", // xícaras
+  "colheres de sopa", // colheres de sopa
+  "colheres de chá", // colheres de chá
+  "g", // gramas
+  "kg", // quilos
+  "unidades", // unidades (ex: ovos, frutas)
+  "fatias", // fatias (pão, queijo, etc.)
+  "calorias", // calorias
+  "onças", // onças (menos comum, mas usado em algumas receitas)
+  "libras", // libras (menos comum, mas usado em algumas receitas)
+  "pedaços", // pedaços (ex: pedaços de frango, carne)
+  "porções", // porções (quantidade individual)
+  "pacote", // pacotes (ex: pacotes de farinha)
+  "conchas", // conchas (ex: concha de arroz)
+  "caixas", // caixas (ex: caixas de leite)
+  "fios", // fios (ex: fios de espaguete)
+  "copos", // copos (medida para líquidos)
+  "m³", // metros cúbicos (menos comum, mas usado para volume maior)
+  "grãos", // grãos (ex: grãos de arroz, feijão)
+  "unidade de medida", // unidade de medida (geral, como unidade de ingredientes)
+  "fatias finas", // fatias finas (ex: fatias finas de queijo)
+  "barras", // barras (ex: barras de cereal)
+  "caixinha", // caixinha (muito usada em alimentos como leite ou creme de leite)
+  "tacinhas", // tacinhas (ex: tacinhas de sobremesa)
+  "pitada", // pitada (ex: uma pitada de sal)
+  "ramos", // ramos (ex: ramos de salsinha)
+  "fatias grossas", // fatias grossas (ex: fatias grossas de pão)
+  "pitada", // pitada (ex: uma pitada de sal ou pimenta)
+  "xícara de chá", // xícara de chá (para medir tanto líquidos quanto ingredientes secos)
+  "xícara de café", // xícara de café
+];

@@ -23,6 +23,10 @@ export class FindAllUseCase {
       offset,
       limit: pageSize,
     });
+    users.forEach((user: any) => {
+      delete user.password;
+      delete user.authProvider;
+    });
     return {
       data: users,
       total,

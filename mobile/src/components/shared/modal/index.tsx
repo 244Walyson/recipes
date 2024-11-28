@@ -12,6 +12,7 @@ import PrimaryButton from "../primary-button";
 type ModalItems = {
   id: string;
   name: string;
+  values?: any;
 };
 
 type CustomModalProps = {
@@ -21,6 +22,7 @@ type CustomModalProps = {
   title: string;
   btnApplyText?: string;
   btnApplyAction?: (selectedItems: string[] | string) => void;
+  btnApplyAwaysActive?: boolean;
   btnApplyActive?: boolean;
   selectItemsOnOpen?: boolean;
   loading?: boolean;
@@ -36,6 +38,7 @@ const CustomModal = ({
   btnApplyActive,
   selectItemsOnOpen,
   loading,
+  btnApplyAwaysActive,
 }: CustomModalProps) => {
   const [selected, setSelected] = React.useState<string[]>([]);
 
@@ -53,7 +56,7 @@ const CustomModal = ({
   };
 
   const handleApply = () => {
-    if (btnApplyAction && selected.length > 0) {
+    if (btnApplyAction && (selected.length > 0 || btnApplyAwaysActive)) {
       btnApplyAction(selected);
       setSelected([]);
     }
@@ -87,7 +90,9 @@ const CustomModal = ({
                   selected.includes(item.name) && styles.selectedOption,
                 ]}
                 key={item.id}
-                onPress={() => handleSelect(item.name)}
+                onPress={() =>
+                  handleSelect(item.values ? item.values : item.name)
+                }
               >
                 <Text style={styles.btnOptText}>{item.name}</Text>
               </TouchableOpacity>
@@ -99,7 +104,7 @@ const CustomModal = ({
             {btnApplyActive &&
               btnApplyText &&
               btnApplyAction &&
-              selected.length > 0 && (
+              (selected.length > 0 || btnApplyAwaysActive) && (
                 <PrimaryButton
                   text={btnApplyText}
                   onPress={handleApply}

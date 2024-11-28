@@ -8,6 +8,8 @@ export class FindUserByIdlUserUseCase {
   async execute(id: string): Promise<IUserResponse> {
     const user = await this.userRepository.findById(id);
     if (!user) throw new UserResourceNotFoundException(`User not found: ${id}`);
+    delete user.password;
+    delete user.authProvider;
     return user;
   }
 }

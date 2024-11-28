@@ -1,6 +1,6 @@
 import { useTheme } from "@/src/context/theme-context";
 import React from "react";
-import { TextInput, View, StyleSheet, TextInputProps } from "react-native";
+import { TextInput, View, TextInputProps } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { styles } from "./styles";
 

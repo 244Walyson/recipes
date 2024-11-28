@@ -3,7 +3,7 @@ import { IMealTypeRepository } from '../../interfaces/repositories/meal-type.rep
 import { IPaginatedResponse } from '../../interfaces/shared/paginated-response.interface';
 
 export class FindAllMealTypeUseCase {
-  constructor(private mealTypeRepository: IMealTypeRepository) {}
+  constructor(private readonly mealTypeRepository: IMealTypeRepository) {}
 
   async execute({
     name,

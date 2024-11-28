@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -13,11 +13,11 @@ const ResetPasswordContent = () => {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const email = searchParams.get("email");
-  const router = useRouter();
 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleResetPassword = async () => {
     if (!token) {
@@ -34,8 +34,7 @@ const ResetPasswordContent = () => {
 
     try {
       await resetPassword(email, token, password);
-      alert("Password reset successfully!");
-      router.push("/login");
+      setSuccess(true);
     } catch (err) {
       console.error(err);
       setError("Failed to reset password.");
@@ -56,6 +55,7 @@ const ResetPasswordContent = () => {
           className="border-primary placeholder:text-primary"
         />
         {error && <p className="text-red-500 pt-2">{error}</p>}
+        {success && <p className="text-green-500 pt-2">{success}</p>}
         <div className="flex w-full justify-end pt-3">
           <Button onClick={handleResetPassword} disabled={loading}>
             {loading ? "Resetando..." : "Resetar"}

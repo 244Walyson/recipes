@@ -17,7 +17,6 @@ import { CreateRecoverPasswordTokenUseCase } from './core/use-cases/create-recov
 import { IRecoveryPasswordRepository } from './core/interfaces/repositories/recovery-password.repository';
 import { IEmailService } from './core/interfaces/recover-password/email-service.interface';
 import { UpdatePasswordUseCase } from './core/use-cases/update-password.use-case';
-import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
 import { NodeMailerService } from './infrastructure/utils/nodemailer.service';
 import { RecoveryPasswordRepository } from './infrastructure/repositories/recovery-password.repository.impl';
 import { PassportGoogleStrategy } from './infrastructure/utils/oauth2-google-provider.impl';
@@ -26,6 +25,7 @@ import { OAuth2AuthenticationUseCase } from './core/use-cases/oauth2-authenticat
 import { CreateUserUseCase } from '@/src/user/core/use-cases/create-user.use-case';
 import { AuthGuard } from './infrastructure/utils/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { UpdateUserPasswordUseCase } from '../user/core/use-cases/update-user-password.use-case';
 
 @Module({
   imports: [
@@ -113,21 +113,18 @@ import { APP_GUARD } from '@nestjs/core';
       useFactory: (
         recoverPasswordRepository: IRecoveryPasswordRepository,
         findByEmailUseCase: FindUserByEmailUseCase,
-        passwordEncoder: PasswordEncoder,
-        updateUserUseCase: UpdateUserUseCase,
+        updateUserPasswordUseCase: UpdateUserPasswordUseCase,
       ) => {
         return new UpdatePasswordUseCase(
           recoverPasswordRepository,
           findByEmailUseCase,
-          passwordEncoder,
-          updateUserUseCase,
+          updateUserPasswordUseCase,
         );
       },
       inject: [
         'IRecoveryPasswordRepository',
         FindUserByEmailUseCase,
-        'IPasswordEncoder',
-        UpdateUserUseCase,
+        UpdateUserPasswordUseCase,
       ],
     },
     {

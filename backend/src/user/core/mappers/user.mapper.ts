@@ -9,10 +9,10 @@ export class UserMapper {
     const user = new User({
       name: dto.name,
       email: dto.email,
+      authProvider: dto.authProvider ?? 'local',
       password: dto.password,
       username: dto.username,
       imgUrl: dto.imgUrl,
-      authProvider: dto.authProvider ?? 'local',
     });
     return user;
   }

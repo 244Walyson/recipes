@@ -13,6 +13,7 @@ import { AuthModule } from '@/src/auth/auth.module';
 import { FollowUserByIdUseCase } from './core/use-cases/follow-user-by-id.use-case';
 import { UnfollowUserByIdUseCase } from './core/use-cases/unfollow-user-by-id.use-case';
 import { FindFollowingUsersUseCase } from './core/use-cases/find-following-users.use-case';
+import { UpdateUserPasswordUseCase } from './core/use-cases/update-user-password.use-case';
 
 @Module({
   imports: [forwardRef(() => AuthModule)],
@@ -101,7 +102,22 @@ import { FindFollowingUsersUseCase } from './core/use-cases/find-following-users
       },
       inject: ['IUserRepository'],
     },
+    {
+      provide: UpdateUserPasswordUseCase,
+      useFactory: (
+        userRepository: IUserRepository,
+        passwordEncoder: IPasswordEncoder,
+      ) => {
+        return new UpdateUserPasswordUseCase(userRepository, passwordEncoder);
+      },
+      inject: ['IUserRepository', 'IPasswordEncoder'],
+    },
   ],
-  exports: [CreateUserUseCase, FindUserByEmailUseCase, UpdateUserUseCase],
+  exports: [
+    CreateUserUseCase,
+    FindUserByEmailUseCase,
+    UpdateUserUseCase,
+    UpdateUserPasswordUseCase,
+  ],
 })
 export class UserModule {}

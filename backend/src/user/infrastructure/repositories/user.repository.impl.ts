@@ -45,17 +45,23 @@ export class UserRepository implements IUserRepository {
   }
 
   async update(id: string, user: User): Promise<IUserResponse> {
+    const data: any = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      imgUrl: user.imgUrl,
+      username: user.username,
+      createdAt: user.createdAt,
+      authProvider: user.authProvider,
+    };
+
+    if (user.password) {
+      data.password = user.password;
+    }
+
     return await this.prismaService.user.update({
       where: { id },
-      data: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        imgUrl: user.imgUrl,
-        username: user.username,
-        createdAt: user.createdAt,
-        authProvider: user.authProvider,
-      },
+      data,
     });
   }
   async addFollower(data: IFollow): Promise<void> {

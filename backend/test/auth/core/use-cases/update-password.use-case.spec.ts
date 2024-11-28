@@ -1,17 +1,15 @@
 import { RecoverPassword } from '@/src/auth/core/entities/recover-password.entity';
 import { IRecoveryPasswordRepository } from '@/src/auth/core/interfaces/repositories/recovery-password.repository';
 import { UpdatePasswordUseCase } from '@/src/auth/core/use-cases/update-password.use-case';
-import { PasswordEncoder } from '@/src/auth/infrastructure/utils/password-encoder.service';
 import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
-import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
+import { UpdateUserPasswordUseCase } from '@/src/user/core/use-cases/update-user-password.use-case';
 import { UnauthorizedException } from '@nestjs/common';
 import { User } from '@prisma/client';
 
 describe('UpdatePasswordUseCase', () => {
   let useCase: UpdatePasswordUseCase;
   let recoverPasswordRepository: jest.Mocked<IRecoveryPasswordRepository>;
-  let passwordEncoder: jest.Mocked<PasswordEncoder>;
-  let updateUserUseCase: jest.Mocked<UpdateUserUseCase>;
+  let updateUserPasswordUseCase: jest.Mocked<UpdateUserPasswordUseCase>;
   let findUserByEmailUseCase: jest.Mocked<FindUserByEmailUseCase>;
 
   beforeEach(() => {
@@ -19,12 +17,9 @@ describe('UpdatePasswordUseCase', () => {
       findOne: jest.fn(),
       revoke: jest.fn(),
     } as unknown as jest.Mocked<IRecoveryPasswordRepository>;
-    passwordEncoder = {
-      encode: jest.fn(),
-    } as unknown as jest.Mocked<PasswordEncoder>;
-    updateUserUseCase = {
+    updateUserPasswordUseCase = {
       execute: jest.fn(),
-    } as unknown as jest.Mocked<UpdateUserUseCase>;
+    } as unknown as jest.Mocked<UpdateUserPasswordUseCase>;
     findUserByEmailUseCase = {
       execute: jest.fn(),
     } as unknown as jest.Mocked<FindUserByEmailUseCase>;
@@ -32,8 +27,7 @@ describe('UpdatePasswordUseCase', () => {
     useCase = new UpdatePasswordUseCase(
       recoverPasswordRepository,
       findUserByEmailUseCase,
-      passwordEncoder,
-      updateUserUseCase,
+      updateUserPasswordUseCase,
     );
   });
 
@@ -55,8 +49,6 @@ describe('UpdatePasswordUseCase', () => {
       password: 'oldPassword',
     } as User);
 
-    passwordEncoder.encode.mockResolvedValue('newEncodedPassword');
-
     await useCase.execute({
       email: 'email@example.com',
       userId: 'userId',
@@ -64,10 +56,10 @@ describe('UpdatePasswordUseCase', () => {
       token: 'validToken',
     });
 
-    expect(updateUserUseCase.execute).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ password: 'newEncodedPassword' }),
-    );
+    expect(updateUserPasswordUseCase.execute).toHaveBeenCalledWith({
+      userId: 'userId',
+      password: 'newPassword',
+    });
   });
 
   it('should throw UnauthorizedException if the token is revoked', async () => {

@@ -1,18 +1,15 @@
 import { FindUserByEmailUseCase } from '@/src/user/core/use-cases/find-user-by-email.use-case';
 import { IRecoverPasswordRequest } from '../interfaces/recover-password/recover-password-request.interface';
-import { PasswordEncoder } from '@/src/auth/infrastructure/utils/password-encoder.service';
-import { UpdateUserUseCase } from '@/src/user/core/use-cases/update-user.use-case';
 import { IRecoveryPasswordRepository } from '../interfaces/repositories/recovery-password.repository';
 import { RecoverPassword } from '../entities/recover-password.entity';
 import { AuthUnauthorizedException } from '../exceptions/unauthorized.exceptions';
-import { User } from '@/src/user/core/entities/user.entity';
+import { UpdateUserPasswordUseCase } from '@/src/user/core/use-cases/update-user-password.use-case';
 
 export class UpdatePasswordUseCase {
   constructor(
     private readonly recoverPasswordRepository: IRecoveryPasswordRepository,
     private readonly findByEmailUseCase: FindUserByEmailUseCase,
-    private readonly passwordEncoder: PasswordEncoder,
-    private readonly updateUserUseCase: UpdateUserUseCase,
+    private readonly updateUserPasswordUseCase: UpdateUserPasswordUseCase,
   ) {}
 
   async execute(dto: IRecoverPasswordRequest): Promise<void> {
@@ -20,14 +17,12 @@ export class UpdatePasswordUseCase {
     this.validateRecoverToken(recoverToken);
 
     const existingUser = await this.findByEmailUseCase.execute(dto.email);
-    existingUser.password = await this.passwordEncoder.encode(dto.password);
 
-    const user = new User({
-      ...existingUser,
-      id: existingUser.id,
+    this.updateUserPasswordUseCase.execute({
+      userId: existingUser.id,
+      password: dto.password,
     });
 
-    this.updateUserUseCase.execute(user.id, user);
     this.recoverPasswordRepository.revoke(recoverToken.id);
   }
 

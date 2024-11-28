@@ -20,7 +20,7 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
   async findOne(token: string, email: string): Promise<RecoverPassword> {
     return await this.prismaService.passwordRecovery.findFirst({
       where: {
-        OR: [{ token: token }, { email: email }],
+        AND: [{ token: token }, { email: email }],
       },
     });
   }

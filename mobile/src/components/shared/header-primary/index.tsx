@@ -1,8 +1,7 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Image } from "react-native";
 import { useTheme } from "@/src/context/theme-context";
 import { styles } from "./styles";
-import Avatar from "../avatar";
 
 type CustomheaderProps = {
   smallText?: string;
@@ -33,7 +32,7 @@ const Header = ({
         </View>
         <Text style={styles(theme).recipetext}>{bigText}</Text>
       </View>
-      {imgUrl && <Avatar imgUrl={imgUrl} />}
+      {imgUrl && <Image source={{ uri: imgUrl }} style={styles(theme).image} />}
     </View>
   );
 };

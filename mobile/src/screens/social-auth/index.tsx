@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet, Text } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useRouter, useLocalSearchParams, useNavigation } from "expo-router";
 import { WebView } from "react-native-webview";
 import {
   GOOGLE_CLIENT_ID_ANDROID,
@@ -27,6 +27,7 @@ const config = {
 
 const SocialAuth = () => {
   const navigation = useNavigation();
+  const router = useRouter();
   const { key } = useLocalSearchParams<{ key: string }>();
   const [oauthUrl, setOauthUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,13 +41,17 @@ const SocialAuth = () => {
     if (response?.type === "success") {
       console.log("response", response);
       const { id_token } = response.params;
-      getAccessTokenWithGoogleToken(id_token).then((_) => {
-        navigation.dispatch(
-          CommonActions.reset({
-            routes: [{ key: "(tabs)", name: "(tabs)" }],
-          })
-        );
-      });
+      getAccessTokenWithGoogleToken(id_token)
+        .then((_) => {
+          navigation.dispatch(
+            CommonActions.reset({
+              routes: [{ key: "(tabs)", name: "(tabs)" }],
+            })
+          );
+        })
+        .catch((error) => {
+          router.replace("/register");
+        });
     }
   };
 

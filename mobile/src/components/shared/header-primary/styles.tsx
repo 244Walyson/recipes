@@ -10,7 +10,7 @@ export const styles = (theme: any) =>
       flexDirection: "row",
       marginTop: statusBarHeight,
       width: "100%",
-      alignItems: "center",
+      alignItems: "flex-end",
     },
     textContainer: {
       flex: 1,
@@ -35,5 +35,10 @@ export const styles = (theme: any) =>
     },
     textColored: {
       color: theme.primary,
+    },
+    image: {
+      width: 50,
+      height: 50,
+      borderRadius: 50,
     },
   });

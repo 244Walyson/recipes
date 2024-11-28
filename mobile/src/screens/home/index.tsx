@@ -21,9 +21,11 @@ import { IUserResponse } from "@/src/interfaces/user/user-response.interface";
 import MealTypeCard from "@/src/components/recipe/meal-type-card";
 import { IFindAllFilters } from "@/src/interfaces/recipe/find-all-filters.interface";
 import { getMealTypes } from "@/src/services/meal-type.service";
+import Feather from "react-native-vector-icons/Feather";
+
 
 const Home = () => {
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [cuisineStyles, setCuisineStyles] =
     useState<IPaginatedResponse<ICuisineStyle>>();
   const [trending, setTrending] =
@@ -80,6 +82,10 @@ const Home = () => {
         />
       }
     >
+      <TouchableOpacity style={styles(theme).themeBtn} onPress={toggleTheme}>
+        <Feather name="sun" size={30} color={theme.foreground} />
+      </TouchableOpacity>
+
       <Header smallText="ola," bigText={user?.name} imgUrl={user?.imgUrl} />
 
       <View style={styles(theme).trendingContainer}>

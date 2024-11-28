@@ -40,6 +40,13 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+           - name: API_URL
+             valueFrom:
+               secretKeyRef:
+                 name: recipes-secrets
+                 key: api-url
+
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

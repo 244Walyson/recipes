@@ -79,7 +79,7 @@ const Profile = () => {
     });
     isFocused === "grid" ? handlegridPress() : handleFavouritePress();
     setRefreshing(false);
-  }, [id, refreshing]);
+  }, [id, profileId, refreshing]);
 
   const logout = () => {
     removeTokens();

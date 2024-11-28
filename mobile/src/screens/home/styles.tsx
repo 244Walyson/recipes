@@ -47,4 +47,11 @@ export const styles = (theme: any) =>
     trendingContainer: {
       width: "100%",
     },
+    themeBtn: {
+      position: "absolute",
+      top: 10,
+      right: 20,
+      borderRadius: 50,
+      elevation: 5,
+    },
   });

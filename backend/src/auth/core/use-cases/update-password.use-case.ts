@@ -36,7 +36,6 @@ export class UpdatePasswordUseCase {
       token,
       email,
     );
-
     if (!recoverToken) {
       throw new AuthUnauthorizedException('Invalid Reccover token');
     }
@@ -48,7 +47,8 @@ export class UpdatePasswordUseCase {
     if (recoveryToken.revoked) {
       throw new AuthUnauthorizedException('Recover token revoked');
     }
-    const isExpired = recoveryToken.expiresAt < BigInt(new Date().getTime());
+    const isExpired =
+      BigInt(recoveryToken.expiresAt) < BigInt(new Date().getTime());
     if (isExpired) {
       throw new AuthUnauthorizedException('Recover token expired');
     }

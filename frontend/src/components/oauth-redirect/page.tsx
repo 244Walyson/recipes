@@ -41,7 +41,7 @@ const OauthRedirect = () => {
     <div className="dark w-full bg-background">
       <div className="flex flex-col items-center h-screen">
         <div className="items-center justify-center w-ful h-40">
-          <div className="items-center">
+          <div className="items-center pt-11">
             <Image
               src={mixer}
               alt="Logo"

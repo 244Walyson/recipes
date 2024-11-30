@@ -52,11 +52,16 @@ export class Recipe {
         ModoDePreparo: 'O Modo de preparo deve ser informado',
       });
     }
-    if (!this.preparationTime || this.preparationTime.toString.length < 1) {
+    if (
+      !this.preparationTime ||
+      isNaN(Number(this.preparationTime)) ||
+      Number(this.preparationTime) <= 0
+    ) {
       errorMessages.push({
-        tempoDePreparo: 'O tempo de preparo deve ser informado',
+        tempoDePreparo: 'O tempo de preparo deve ser informado corretamente',
       });
     }
+
     if (!this.userId) {
       errorMessages.push({ idDoUsuario: 'O id do usuario deve ser informado' });
     }

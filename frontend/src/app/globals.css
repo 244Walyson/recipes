@@ -8,6 +8,7 @@ body {
 
 @layer base {
   :root {
+    --tertiary: hsl(39 100% 50%);
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -35,6 +36,7 @@ body {
     --radius: 0.5rem;
   }
   .dark {
+    --tertiary: hsl(39 100% 50%);
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -60,6 +62,25 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
+}
+
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: hsl(0 0% 9%);
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  border-radius: 10px;
 }
 
 @layer base {

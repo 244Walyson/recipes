@@ -1,4 +1,3 @@
-// src/core/mappers/user.mapper.ts
 import { IUserRequest } from '../interfaces/user/user-request.interface';
 import { User } from '../entities/user.entity';
 import { IUserResponse } from '../interfaces/user/user-response.interface';

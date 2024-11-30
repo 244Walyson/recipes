@@ -5,6 +5,7 @@
 
 ---
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=bugs)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)

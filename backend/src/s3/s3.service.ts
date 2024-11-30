@@ -4,8 +4,8 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3Service {
-  private s3Client: S3Client;
-  private bucketName: string;
+  private readonly s3Client: S3Client;
+  private readonly bucketName: string;
   private readonly bucketRegion: string;
 
   constructor(private readonly configService: ConfigService) {

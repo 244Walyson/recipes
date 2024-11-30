@@ -29,19 +29,16 @@ const SelectFilter = ({ data, placeholder, onChange }: SelectFilterProps) => {
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {data &&
-          data.map((item) => (
-            <SelectItem
-              key={item.label}
-              value={
-                typeof item.value === "string"
-                  ? item.value
-                  : item.value.join(",")
-              }
-            >
-              {item.label}
-            </SelectItem>
-          ))}
+        {data?.map((item) => (
+          <SelectItem
+            key={item.label}
+            value={
+              typeof item.value === "string" ? item.value : item.value.join(",")
+            }
+          >
+            {item.label}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

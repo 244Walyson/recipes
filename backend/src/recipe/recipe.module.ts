@@ -179,27 +179,21 @@ import { RecipeValidator } from './core/validators/recipe.validator';
       provide: FavouriteRecipeUseCase,
       useFactory: (
         recipeRepository: IRecipeRepository,
-        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+        recipeValidator: RecipeValidator,
       ) => {
-        return new FavouriteRecipeUseCase(
-          recipeRepository,
-          findRecipeByIdUseCase,
-        );
+        return new FavouriteRecipeUseCase(recipeRepository, recipeValidator);
       },
-      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+      inject: ['IRecipeRepository', RecipeValidator],
     },
     {
       provide: UnfavouriteRecipeUseCase,
       useFactory: (
         recipeRepository: IRecipeRepository,
-        findRecipeByIdUseCase: FindRecipeByIdUseCase,
+        recipeValidator: RecipeValidator,
       ) => {
-        return new UnfavouriteRecipeUseCase(
-          recipeRepository,
-          findRecipeByIdUseCase,
-        );
+        return new UnfavouriteRecipeUseCase(recipeRepository, recipeValidator);
       },
-      inject: ['IRecipeRepository', FindRecipeByIdUseCase],
+      inject: ['IRecipeRepository', RecipeValidator],
     },
     {
       provide: ViewCountAddUseCase,

@@ -116,7 +116,10 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
 
           {showAllergens && (
             <div>
-              <label className="text-sm font-medium text-gray-700">
+              <label
+                htmlFor="allergen-options"
+                className="text-sm font-medium text-gray-700"
+              >
                 Quais alergias você possui?
               </label>
               <div className="grid grid-cols-2 gap-4 mt-2">

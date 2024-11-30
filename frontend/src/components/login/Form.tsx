@@ -87,6 +87,19 @@ const FormLogin = () => {
     handleLogin();
   };
 
+  const buttonText = () => {
+    if (loading) {
+      return "Carregando...";
+    }
+    if (isRegistering) {
+      return "Cadastrar";
+    }
+    if (isRecoveringPassword) {
+      return "Enviar Email de Recuperação";
+    }
+    return "Entrar";
+  };
+
   return (
     <div className="flex flex-col w-[400px] py-12">
       {isRegistering && (
@@ -143,23 +156,17 @@ const FormLogin = () => {
 
       {!isRegistering && (
         <div className="pt-6 w-full text-end">
-          <p
+          <button
             onClick={() => setIsRecoveringPassword(!isRecoveringPassword)}
-            className="w-full text-base"
+            className="text-base"
           >
             {isRecoveringPassword ? "Voltar para login" : "Esqueci minha senha"}
-          </p>
+          </button>
         </div>
       )}
 
       <Button className="mt-6" onClick={handleSubmit} disabled={loading}>
-        {loading
-          ? "Carregando..."
-          : isRegistering
-          ? "Cadastrar"
-          : isRecoveringPassword
-          ? "Enviar Email de Recuperação"
-          : "Entrar"}
+        {buttonText()}
       </Button>
 
       <div className="pt-6 text-center">

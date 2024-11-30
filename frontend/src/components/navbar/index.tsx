@@ -84,52 +84,51 @@ const Navbar = ({
           <ul
             className={`w-full space-y-11 mt-12 transition-opacity duration-300`}
           >
-            {navbar_items &&
-              navbar_items.map((item) => (
-                <li
-                  key={item.id}
-                  className={`w-full my-2 cursor-pointer rounded-2xl flex items-center hover:bg-dark-shade ${
-                    pathName === item.path ? "bg-dark-shade" : ""
-                  }`}
-                >
-                  {item.path === "/logout" ? (
-                    <Dialog
-                      title="Terminar sessão?"
-                      description="Você terá de fazer login novamente"
-                      btnOpen={
-                        <NavbarItems
-                          path={item.path}
-                          icon={item.icon}
-                          text={item.text}
-                          filled={item.filled}
-                        />
-                      }
-                      confirm="Confirmar"
-                      cancel="Cancelar"
-                      onCancel={() => setOpen(false)}
-                      onConfirm={handleLogout}
-                    />
-                  ) : (
-                    <Link href={item.path}>
+            {navbar_items?.map((item) => (
+              <li
+                key={item.id}
+                className={`w-full my-2 cursor-pointer rounded-2xl flex items-center hover:bg-dark-shade ${
+                  pathName === item.path ? "bg-dark-shade" : ""
+                }`}
+              >
+                {item.path === "/logout" ? (
+                  <Dialog
+                    title="Terminar sessão?"
+                    description="Você terá de fazer login novamente"
+                    btnOpen={
                       <NavbarItems
                         path={item.path}
                         icon={item.icon}
                         text={item.text}
                         filled={item.filled}
                       />
-                    </Link>
-                  )}
+                    }
+                    confirm="Confirmar"
+                    cancel="Cancelar"
+                    onCancel={() => setOpen(false)}
+                    onConfirm={handleLogout}
+                  />
+                ) : (
+                  <Link href={item.path}>
+                    <NavbarItems
+                      path={item.path}
+                      icon={item.icon}
+                      text={item.text}
+                      filled={item.filled}
+                    />
+                  </Link>
+                )}
 
-                  {open &&
-                    (item.path !== "/logout" ? (
-                      <Link href={item.path}>
-                        <span className="ml-4">{item.text}</span>
-                      </Link>
-                    ) : (
+                {open &&
+                  (item.path !== "/logout" ? (
+                    <Link href={item.path}>
                       <span className="ml-4">{item.text}</span>
-                    ))}
-                </li>
-              ))}
+                    </Link>
+                  ) : (
+                    <span className="ml-4">{item.text}</span>
+                  ))}
+              </li>
+            ))}
           </ul>
         </div>
 

@@ -21,7 +21,7 @@ const TrendingCard = ({ data, onClick }: TrendingCardProps) => {
   } = data;
 
   return (
-    <div
+    <button
       onClick={() => onClick(id)}
       className="w-96 h-auto border border-border shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-300"
     >
@@ -73,7 +73,7 @@ const TrendingCard = ({ data, onClick }: TrendingCardProps) => {
           <span className="font-semibold">Favorites: {favoriteCount}</span>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

@@ -59,10 +59,7 @@ export const getAccessTokenWithGoogleToken = async (
     const data = {
       idToken: idToken,
     };
-    const response = await axios.post(
-      `${API_URL}/auth/redirect/google`,
-      data
-    );
+    const response = await axios.post(`${API_URL}/auth/redirect/google`, data);
     const accessToken = response.data;
     await storeToken(accessToken);
     const decoded = await decodeAccessToken(accessToken.access_token);

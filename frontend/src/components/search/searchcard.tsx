@@ -13,8 +13,8 @@ const Card = ({ recipe, onClick }: CardProps) => {
     recipe;
 
   return (
-    <div
-      className="flex flex-col border p-6 min-w-[600px] rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+    <button
+      className="flex  flex-col border p-6 min-w-[600px] rounded-xl shadow-lg hover:shadow-xl transition-shadow"
       onClick={onClick}
     >
       <div className="relative w-full h-40">
@@ -32,7 +32,7 @@ const Card = ({ recipe, onClick }: CardProps) => {
           <h1 className="text-2xl font-semibold">{name}</h1>
         </div>
 
-        <div className="mt-2">
+        <div className="mt-2 flex flex-col items-start">
           <p className="text-gray-600 text-sm">
             Tempo de preparo: <strong>{preparationTime} minutos</strong>
           </p>
@@ -52,12 +52,12 @@ const Card = ({ recipe, onClick }: CardProps) => {
         <div className="flex items-center mt-4">
           <Avatar>
             <AvatarImage src={user?.imgUrl} />
-            <AvatarFallback>AU</AvatarFallback>
+            <AvatarFallback>{user?.name[0]}</AvatarFallback>
           </Avatar>
           <p className="ml-3 text-lg font-medium">{user?.name}</p>
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

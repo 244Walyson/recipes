@@ -1,4 +1,5 @@
 import { RecipeDomainException } from '../exceptions/domain.exception';
+import { RecipeInvalidFieldValueException } from '../exceptions/invalid-field-value.exception';
 import { ICuisineStyle } from '../interfaces/cuisine-style/cousine-styles.interface';
 import { IIngredient } from '../interfaces/ingredient/ingredient.interface';
 import { IMealType } from '../interfaces/meal-type/meal-type.interface';
@@ -55,6 +56,19 @@ export class RecipeValidator {
         console.error('Error validating ingredients:', error);
         throw new RecipeDomainException('One or more ingredients not found');
       }
+    }
+  }
+
+  async validate(dto: { recipeId: string; userId: string }): Promise<void> {
+    const errorMessages: Record<string, string>[] = [];
+    if (!dto.recipeId) {
+      errorMessages.push({ recipeId: 'recipeId não pode ser vazio' });
+    }
+    if (!dto.userId) {
+      errorMessages.push({ userId: 'userId não pode ser vazio' });
+    }
+    if (errorMessages.length) {
+      throw new RecipeInvalidFieldValueException(errorMessages);
     }
   }
 }

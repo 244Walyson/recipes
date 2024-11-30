@@ -9,8 +9,8 @@ const LoginContainer = () => {
         <h1 className="text-4xl flex pb-7">Bem vindo de volta!</h1>
 
         <p className="text-sm max-w-[400px]">
-          Today is a new day. It's your day. You shape it. Sign in to start
-          managing your projects.
+          Hoje é um novo dia, e ele começa na sua cozinha. Faça suas receitas
+          com amor. Entre e comece a criar!
         </p>
         <FormLogin />
       </div>

@@ -31,14 +31,14 @@ export const updateUser = async (id: string, user: IUserRequest) => {
   }
 };
 
-export const storeUserID = async (id: string) => {
+export const storeUserID = (id: string) => {
   localStorage.setItem("userID", id);
 };
 
-export const getStoredUserID = async () => {
+export const getStoredUserID = () => {
   return localStorage.getItem("userID");
 };
 
-export const removeStoredUserID = async () => {
+export const removeStoredUserID = () => {
   localStorage.removeItem("userID");
 };

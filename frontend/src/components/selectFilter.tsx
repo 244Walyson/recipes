@@ -7,9 +7,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const SelectFilter = ({ data, placeholder, onChange }) => {
-  const handleChange = (value) => {
-    onChange(value); // Chama a função onChange passada como prop com o valor selecionado
+interface SelectOption {
+  value: string | [number, number];
+  label: string;
+}
+
+interface SelectFilterProps {
+  data: SelectOption[];
+  placeholder: string;
+  onChange: (value: string | [number, number]) => void;
+}
+
+const SelectFilter = ({ data, placeholder, onChange }: SelectFilterProps) => {
+  const handleChange = (value: string) => {
+    onChange(value);
   };
 
   return (
@@ -20,7 +31,14 @@ const SelectFilter = ({ data, placeholder, onChange }) => {
       <SelectContent>
         {data &&
           data.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
+            <SelectItem
+              key={item.label}
+              value={
+                typeof item.value === "string"
+                  ? item.value
+                  : item.value.join(",")
+              }
+            >
               {item.label}
             </SelectItem>
           ))}

@@ -13,13 +13,18 @@ import {
 } from "@/static/search_filters";
 import { Checkbox } from "../ui/checkbox";
 
+interface SelectOption {
+  value: string | [number, number];
+  label: string;
+}
+
 type SearchFilterProps = {
   onFilterChange: (filters: IFindAllFilters) => void;
 };
 
 const mapSelectOptions = (
-  data: { id: string; name: string; values?: any }[]
-) => {
+  data: { id: string; name: string; values?: string | [number, number] }[]
+): SelectOption[] => {
   return data.map((item) => ({
     value: item.values ? item.values : item.id,
     label: item.name,
@@ -30,13 +35,30 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
   const [filters, setFilters] = useState<IFindAllFilters | undefined>({});
   const [showAllergens, setShowAllergens] = useState(false);
 
-  const handleFilters = ({ key, value }: { key: string; value: any }) => {
+  const handleFilters = ({
+    key,
+    value,
+  }: {
+    key: string;
+    value: string | [number, number];
+  }) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
       [key]: value,
     }));
     onFilterChange({ ...filters, [key]: value });
-    console.log("Filtros selecionados:", filters);
+  };
+
+  const handleAllergenChange = (checked: boolean, allergenName: string) => {
+    const newAllergens = checked
+      ? [...(filters?.allergens || []), allergenName]
+      : (filters?.allergens || []).filter((name) => name !== allergenName);
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      allergens: newAllergens,
+    }));
+    onFilterChange({ ...filters, allergens: newAllergens });
   };
 
   return (
@@ -53,13 +75,15 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
         <SelectFilter
           data={mapSelectOptions(trendingData.data)}
           placeholder="O que você prefere?"
-          onChange={(value) => handleFilters({ key: "trending", value })}
+          onChange={(value: string | [number, number]) =>
+            handleFilters({ key: "trending", value })
+          }
         />
 
         <SelectFilter
           data={mapSelectOptions(timeData.data)}
           placeholder="Quanto tempo você tem?"
-          onChange={(value) => {
+          onChange={(value: string | [number, number]) => {
             handleFilters({ key: "time", value: value });
           }}
         />
@@ -67,7 +91,7 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
         <SelectFilter
           data={mapSelectOptions(priceData.data)}
           placeholder="Qual o seu orçamento?"
-          onChange={(value) => {
+          onChange={(value: string | [number, number]) => {
             handleFilters({ key: "price", value: value });
           }}
         />
@@ -91,17 +115,8 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
                     <Checkbox
                       id={item.id}
                       checked={filters?.allergens?.includes(item.name)}
-                      onCheckedChange={(checked) => {
-                        const newAllergens = checked
-                          ? [...(filters?.allergens || []), item.name]
-                          : (filters?.allergens || []).filter(
-                              (name) => name !== item.name
-                            );
-
-                        setFilters((prevFilters) => ({
-                          ...prevFilters,
-                          allergens: newAllergens,
-                        }));
+                      onCheckedChange={(checked: boolean) => {
+                        handleAllergenChange(checked, item.name);
                       }}
                     />
                     <label htmlFor={item.id} className="ml-2 text-sm">

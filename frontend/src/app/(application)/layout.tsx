@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${abeezee.className} dark:bg-background text-primary w-screen h-screen`}
+        className={`${abeezee.className} dark:bg-background text-primary w-screen h-screen overflow-hidden`}
         suppressHydrationWarning
       >
         <Theme>

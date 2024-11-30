@@ -4,11 +4,18 @@ import { NavbarItems } from "@/components/navbar/navbarItems";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { navbar_items } from "@/static/navbar_items";
 import { ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Link from "next/link";
 import Dialog from "../alertDialog";
+import {
+  getStoredUserID,
+  getUser,
+  removeStoredUserID,
+} from "@/services/user.service";
+import { removeTokens } from "@/services/token.service";
+import { IUserResponse } from "@/interfaces/user/user-response.interface";
 
 const Navbar = ({
   children,
@@ -18,14 +25,28 @@ const Navbar = ({
   const pathName = usePathname();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const [user, setUser] = useState<IUserResponse>();
 
   const handleOpen = () => {
     setOpen(!open);
   };
 
   const handleLogout = () => {
+    removeStoredUserID();
+    removeTokens();
     router.push("/login");
   };
+
+  useEffect(() => {
+    const getAvatarUrl = async () => {
+      const userId = await getStoredUserID();
+      if (userId) {
+        const user = await getUser(userId);
+        setUser(user);
+      }
+    };
+    getAvatarUrl();
+  }, []);
 
   return (
     <div className="flex w-full h-full">
@@ -38,14 +59,14 @@ const Navbar = ({
           <div className="flex items-center justify-center p-4 h-24">
             <div className="flex w-full">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user?.imgUrl} />
+                <AvatarFallback>{user?.name[0]}</AvatarFallback>
               </Avatar>
 
               {open && (
                 <div className="ml-4 text-navbar-foreground h-full w-full flex flex-col">
-                  <span className="text-lg">Vercel</span>
-                  <span className="text-xs">vercel.com</span>
+                  <span className="text-lg">{user?.name}</span>
+                  <span className="text-xs">{user?.username}</span>
                 </div>
               )}
             </div>
@@ -85,8 +106,8 @@ const Navbar = ({
                       }
                       confirm="Confirmar"
                       cancel="Cancelar"
-                      onCancel={() => setOpen(false)} // Fecha o diálogo
-                      onConfirm={handleLogout} // Chama handleLogout na confirmação
+                      onCancel={() => setOpen(false)}
+                      onConfirm={handleLogout}
                     />
                   ) : (
                     <Link href={item.path}>
@@ -99,7 +120,14 @@ const Navbar = ({
                     </Link>
                   )}
 
-                  {open && <span className="ml-4">{item.text}</span>}
+                  {open &&
+                    (item.path !== "/logout" ? (
+                      <Link href={item.path}>
+                        <span className="ml-4">{item.text}</span>
+                      </Link>
+                    ) : (
+                      <span className="ml-4">{item.text}</span>
+                    ))}
                 </li>
               ))}
           </ul>

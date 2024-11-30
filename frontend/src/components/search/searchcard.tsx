@@ -1,8 +1,7 @@
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import Image from "next/image";
-import { IRecipeResponse } from "@/interfaces/recipe/recipe-response.interface"; // Importe a interface correta
-import { Heart } from "lucide-react";
+import { IRecipeResponse } from "@/interfaces/recipe/recipe-response.interface";
 
 type CardProps = {
   recipe: IRecipeResponse;
@@ -31,10 +30,6 @@ const Card = ({ recipe, onClick }: CardProps) => {
       <div className="mt-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold">{name}</h1>
-          <Heart
-            fill="#FF0000"
-            className="w-6 h-6 cursor-pointer hover:scale-110 transition-transform"
-          />
         </div>
 
         <div className="mt-2">

@@ -64,6 +64,25 @@ body {
   }
 }
 
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: hsl(0 0% 9%);
+  border-radius: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
 @layer base {
   * {
     @apply border-border;

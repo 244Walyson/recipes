@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandEmpty,
-  CommandSeparator,
-} from "@/components/ui/command";
+import { Command, CommandInput, CommandList } from "@/components/ui/command";
 
 type SearchBarProps = {
   handleSearch: (search: string) => void;

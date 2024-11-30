@@ -2,7 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import mixer from "@/assets/mixer.svg";
 
 const OauthRedirect = () => {
   // const [loading, setLoading] = useState(true);
@@ -43,7 +42,7 @@ const OauthRedirect = () => {
         <div className="items-center justify-center w-ful h-40">
           <div className="items-center pt-11">
             <Image
-              src={mixer}
+              src={"/mixer.svg"}
               alt="Logo"
               width={150}
               height={150}

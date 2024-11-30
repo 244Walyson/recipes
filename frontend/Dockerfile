@@ -6,7 +6,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY . .
 RUN npm run build
@@ -17,13 +17,11 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_SHARP_PATH "/app/node_modules/sharp"
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=deps /app/public ./public
 
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
+RUN mkdir .next && chown nextjs:nodejs .next
 
 COPY --from=deps /app/next.config.ts ./
 COPY --from=deps --chown=nextjs:nodejs /app/.next/standalone ./

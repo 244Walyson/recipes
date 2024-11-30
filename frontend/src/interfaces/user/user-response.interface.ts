@@ -4,4 +4,5 @@ export interface IUserResponse {
   email: string;
   imgUrl: string;
   username: string;
+  createdAt: string;
 }

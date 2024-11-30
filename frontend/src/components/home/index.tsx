@@ -2,13 +2,17 @@
 
 import React, { useEffect, useState } from "react";
 import Grettings from "./Grettings";
-import StatsCard from "./StatsCard";
 import TrendingCard from "./TrendingCard";
-import { getRecipes } from "@/services/recipe.service";
+import { getRecipeById, getRecipes } from "@/services/recipe.service";
 import { IRecipeResponse } from "@/interfaces/recipe/recipe-response.interface";
+import RecipeModal from "../RecipeModal";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState<IRecipeResponse[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<
+    IRecipeResponse | undefined
+  >();
 
   const loadRecipes = async () => {
     const params = { orderBy: "favouriteCount" };
@@ -25,49 +29,45 @@ const HomePage = () => {
     loadRecipes();
   }, []);
 
+  const handlerecipeClick = async (recipeId: string) => {
+    try {
+      const recipe = await getRecipeById(recipeId);
+      setSelectedRecipe(recipe);
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Erro ao abrir a receita:", error);
+    }
+  };
   return (
     <div className="flex ">
       <div className="w-4/5">
         <Grettings />
         <div className="mt-10" />
-        <h1 className="text-xl">Mais populares</h1>
+        <h1 className="text-xl mb-6">Mais populares</h1>
 
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap gap-6">
           {recipes.length > 0 ? (
             recipes.map((recipe: IRecipeResponse) => (
-              <TrendingCard key={recipe.id} data={recipe} />
+              <TrendingCard
+                key={recipe.id}
+                data={recipe}
+                onClick={(recipeId: string) => handlerecipeClick(recipeId)}
+              />
             ))
           ) : (
             <p>Nenhuma receita encontrada</p>
           )}
         </div>
       </div>
-      <div className="flex flex-col justify-start items-center w-1/5 gap-y-6">
-        <StatsCard
-          title="Publico medio por rede"
-          network1="Instagram"
-          network2="X"
-          value1={100}
-          value2={300}
-          gradient="from-pink-500 to-blue-400"
+      <div className="flex flex-col justify-start items-center w-1/5 gap-y-6"></div>
+
+      {selectedRecipe && (
+        <RecipeModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          recipe={selectedRecipe}
         />
-        <StatsCard
-          title="Sentimento do publico do X"
-          network1="Positivo"
-          network2="Negativo"
-          value1={100}
-          value2={300}
-          gradient="from-blue-500 to-blue-400"
-        />
-        <StatsCard
-          title="Sentimento do publico do instagram"
-          network1="Positivo"
-          network2="Negativo"
-          value1={100}
-          value2={300}
-          gradient="from-pink-500 to-orange-500"
-        />
-      </div>
+      )}
     </div>
   );
 };

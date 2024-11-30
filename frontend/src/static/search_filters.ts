@@ -1,7 +1,7 @@
 interface DataItem {
   id: string;
   name: string;
-  values?: any;
+  values?: string | [number, number];
 }
 
 interface DataObject {

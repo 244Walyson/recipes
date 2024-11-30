@@ -10,15 +10,25 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+type DialogProps = {
+  title: string;
+  description: string;
+  btnOpen: React.ReactNode;
+  confirm: string;
+  cancel: string;
+  onConfirm?: () => void;
+  onCancel?: () => void;
+};
+
 const Dialog = ({
   title,
   description,
   btnOpen,
   confirm,
   cancel,
-  onConfirm, // Função para chamar ao confirmar
-  onCancel, // Função para chamar ao cancelar
-}) => {
+  onConfirm,
+  onCancel,
+}: DialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openDialog = () => setIsOpen(true);

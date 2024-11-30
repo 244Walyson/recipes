@@ -9,13 +9,13 @@ export interface IReciperequest {
     title: string;
     description: string;
   }[];
-  preparationTime: number;
+  preparationTime?: number;
   imgUrl?: string;
   additionalTips?: string;
   macronutrients?: { protein?: number; carbs?: number; fat?: number };
   servingCount?: number;
   isPublished: boolean;
-  costEstimate: number;
+  costEstimate?: number;
   allergens?: string[];
   ingredients: IIngredient[];
   mealTypes: IMealType[];

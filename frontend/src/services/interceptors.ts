@@ -1,5 +1,6 @@
 import axios from "axios";
 import { removeTokens, storeToken } from "./token.service";
+import { navigate } from "@/app/actions";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -34,7 +35,6 @@ axiosInstance.interceptors.response.use(
           });
 
           const accessToken = response.data;
-
           storeToken(accessToken);
 
           error.config.headers[
@@ -44,9 +44,18 @@ axiosInstance.interceptors.response.use(
           return axios(error.config);
         } catch (refreshError) {
           console.error("Erro ao tentar atualizar o token:", refreshError);
+          removeTokens();
+          navigate("/login");
+          return Promise.reject(new Error("Falha ao atualizar o token"));
         }
       }
+
       removeTokens();
+      console.error(
+        "Usuário não autenticado. Redirecionando para a página de login."
+      );
+      navigate("/login");
+      return Promise.reject(new Error("Usuário não autenticado"));
     }
 
     return Promise.reject(new Error(error.message));

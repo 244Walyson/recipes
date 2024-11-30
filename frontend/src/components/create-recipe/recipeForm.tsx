@@ -5,7 +5,8 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import { useDropzone } from "react-dropzone"; // Importando o hook de dropzone para drag-and-drop
+import { useDropzone } from "react-dropzone";
+import Image from "next/image";
 import { createRecipe } from "@/services/recipe.service";
 import {
   Command,
@@ -23,7 +24,6 @@ import {
   getIngredients,
 } from "@/services/ingredient.service";
 import { IReciperequest } from "@/interfaces/recipe/recipe-request.interface";
-import { IDirections } from "@/interfaces/recipe/directions.interface";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,8 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { getStoredUserID } from "@/services/user.service";
+import { IDirections } from "@/interfaces/recipe/directions.interface";
+import { uploadImage } from "@/services/image-upload.service";
 
 const RecipeForm = () => {
   const [ingredientsSuggestions, setIngredientsSuggestions] = useState<
@@ -44,19 +46,21 @@ const RecipeForm = () => {
   const [recipe, setRecipe] = useState<IReciperequest>({
     name: "",
     preparationMethod: [{ step: 1, title: "", description: "" }],
-    preparationTime: 0,
+    preparationTime: undefined,
     imgUrl: "",
     additionalTips: "",
-    ingredients: [{ id: "", name: "", quantity: 0, unit: "" }],
+    ingredients: [{ id: "", name: "", quantity: undefined, unit: "" }],
     mealTypes: [{ id: "", name: "" }],
     allergens: [],
     userId: "",
-    costEstimate: 0,
+    costEstimate: undefined,
     cuisineStyles: [],
     isPublished: true,
     macronutrients: {},
     servingCount: undefined,
   });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -80,10 +84,11 @@ const RecipeForm = () => {
     "ingredient"
   );
   const [newItemName, setNewItemName] = useState("");
-  const handlePreparationStepChange = (
+
+  const handlePreparationStepChange = <T extends keyof IDirections>(
     index: number,
-    field: string,
-    value: string
+    field: T,
+    value: IDirections[T]
   ) => {
     const updatedSteps = [...recipe.preparationMethod];
     updatedSteps[index][field] = value;
@@ -110,7 +115,7 @@ const RecipeForm = () => {
       ...prev,
       ingredients: [
         ...prev.ingredients,
-        { id: "", name: "", quantity: 0, unit: "" },
+        { id: "", name: "", quantity: undefined, unit: "" },
       ],
     }));
   };
@@ -131,10 +136,6 @@ const RecipeForm = () => {
     }));
 
     setIngredientsSuggestions([]);
-
-    console.log("Ingrediente selecionado:", ingredient);
-    console.log("Index do ingrediente:", updatedIngredients);
-    console.log("Ingredientes atualizados:", recipe.ingredients);
   };
 
   const handleSubmit = async () => {
@@ -149,8 +150,15 @@ const RecipeForm = () => {
         ...recipe,
         userId,
       };
-      const response = await createRecipe(recipeData);
-      console.log("Receita criada com sucesso:", response);
+      createRecipe(recipeData)
+        .then((response) => {
+          console.log("Receita criada com sucesso:", response);
+          setSuccess("Receita criada com sucesso!");
+        })
+        .catch((error) => {
+          console.error("Erro ao criar receita:", error);
+          setError("Erro ao criar receita. Tente novamente.");
+        });
     } catch (error) {
       console.error("Erro ao criar receita:", error);
     }
@@ -175,21 +183,31 @@ const RecipeForm = () => {
     setNewItemName("");
   };
 
-  const onDrop = (acceptedFiles: File[]) => {
-    setRecipe((prev) => ({
-      ...prev,
-      imgUrl: URL.createObjectURL(acceptedFiles[0]),
-    }));
+  const onDrop = async (acceptedFiles: File[]) => {
+    for (const file of acceptedFiles) {
+      try {
+        const result = await uploadImage(file);
+        setRecipe((prev) => ({
+          ...prev,
+          imgUrl: result.url,
+        }));
+        console.log("Resultado do upload:", result);
+      } catch (error) {
+        console.error("Erro ao fazer upload:", error);
+      }
+    }
   };
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
-    accept: "image/*",
+    accept: {
+      "image/*": [".jpg", ".jpeg", ".png"],
+    },
   });
 
-  const handleMealTypeChange = (
+  const handleMealTypeChange = <T extends keyof IMealType>(
     index: number,
-    field: string,
+    field: T,
     value: string
   ) => {
     const updatedMealTypes = [...recipe.mealTypes];
@@ -236,12 +254,13 @@ const RecipeForm = () => {
     console.log("Tipos de refeição atualizados:", recipe.mealTypes);
   };
 
-  const handleIngredientsChange = (
+  const handleIngredientsChange = <T extends keyof IIngredient>(
     index: number,
-    field: string,
+    field: T,
     value: string
   ) => {
-    const updatedIngredients = [...recipe.ingredients];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updatedIngredients = [...recipe.ingredients] as any;
     updatedIngredients[index][field] = value;
     setRecipe((prev) => ({
       ...prev,
@@ -285,9 +304,11 @@ const RecipeForm = () => {
         >
           <input {...getInputProps()} />
           {recipe.imgUrl ? (
-            <img
+            <Image
               src={recipe.imgUrl}
               alt="Imagem da Receita"
+              width={100}
+              height={100}
               className="w-full h-64 object-cover"
             />
           ) : (
@@ -371,7 +392,7 @@ const RecipeForm = () => {
             <Command>
               <CommandInput
                 placeholder="Digite ou selecione um ingrediente..."
-                onInput={(e) =>
+                onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
                   handleIngredientsChange(index, "name", e.target.value)
                 }
                 value={ingredient.name}
@@ -433,7 +454,7 @@ const RecipeForm = () => {
           <Command key={index}>
             <CommandInput
               placeholder="Digite ou selecione um tipo de refeição..."
-              onInput={(e) =>
+              onInput={(e: React.ChangeEvent<HTMLInputElement>) =>
                 handleMealTypeChange(index, "name", e.target.value)
               }
               value={mealType.name}
@@ -514,6 +535,9 @@ const RecipeForm = () => {
       </div>
 
       <Button onClick={handleSubmit}>Criar Receita</Button>
+
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {success && <p className="text-green-500 mb-4">{success}</p>}
     </div>
   );
 };

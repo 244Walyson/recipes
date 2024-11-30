@@ -1,15 +1,16 @@
 import React from "react";
 import Image from "next/image";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
-import { Heart } from "lucide-react";
 import { IRecipeResponse } from "@/interfaces/recipe/recipe-response.interface";
 
 type TrendingCardProps = {
   data: IRecipeResponse;
+  onClick: (recipeId: string) => void;
 };
 
-const TrendingCard = ({ data }: TrendingCardProps) => {
+const TrendingCard = ({ data, onClick }: TrendingCardProps) => {
   const {
+    id,
     name,
     imgUrl,
     preparationTime,
@@ -20,9 +21,12 @@ const TrendingCard = ({ data }: TrendingCardProps) => {
   } = data;
 
   return (
-    <div className="w-96 h-auto border border-border shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-300">
+    <div
+      onClick={() => onClick(id)}
+      className="w-96 h-auto border border-border shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-300"
+    >
       <Image
-        className="rounded-lg object-cover"
+        className="rounded-lg object-cover max-h-60"
         src={imgUrl ?? "/cookImage.png"}
         alt={name}
         width={100}
@@ -33,10 +37,6 @@ const TrendingCard = ({ data }: TrendingCardProps) => {
       <div className="pt-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-semibold text-primary">{name}</h1>
-          <Heart
-            fill={favoriteCount > 0 ? "#FF0000" : "#D3D3D3"}
-            className="w-6 h-6 cursor-pointer text-red-500"
-          />
         </div>
 
         <div className="w-full flex gap-3 pt-4 items-center">

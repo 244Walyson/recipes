@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { resetPassword } from "@/services/authService";
+import { resetPassword } from "@/services/auth.service";
 
 const ResetPasswordContent = () => {
   const searchParams = useSearchParams();
@@ -44,7 +44,7 @@ const ResetPasswordContent = () => {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-background justify-center py-12">
-      <div className="w-[400px] p-6 md:bg-white rounded-lg shadow-md z-50">
+      <div className="w-[400px] p-6 md:bg-background rounded-lg shadow-md z-50">
         <h1 className="text-3xl font-semibold text-foreground pb-6">
           Resetar senha
         </h1>

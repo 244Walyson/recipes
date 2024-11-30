@@ -42,11 +42,21 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
     key: string;
     value: string | [number, number];
   }) => {
+    let transformedValue = value;
+
+    if (key === "price" || key === "preparationTime") {
+      const [min, max] = value.toString().split(",").map(Number);
+      transformedValue = [min, max];
+    }
+
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [key]: value,
+      [key]: transformedValue,
     }));
-    onFilterChange({ ...filters, [key]: value });
+    onFilterChange({
+      ...filters,
+      [key]: transformedValue,
+    });
   };
 
   const handleAllergenChange = (checked: boolean, allergenName: string) => {
@@ -76,7 +86,7 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
           data={mapSelectOptions(trendingData.data)}
           placeholder="O que você prefere?"
           onChange={(value: string | [number, number]) =>
-            handleFilters({ key: "trending", value })
+            handleFilters({ key: "orderBy", value })
           }
         />
 
@@ -84,7 +94,7 @@ const SearchFilter = ({ onFilterChange }: SearchFilterProps) => {
           data={mapSelectOptions(timeData.data)}
           placeholder="Quanto tempo você tem?"
           onChange={(value: string | [number, number]) => {
-            handleFilters({ key: "time", value: value });
+            handleFilters({ key: "preparationTime", value: value });
           }}
         />
 

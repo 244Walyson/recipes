@@ -79,14 +79,13 @@ const SearchContainer = () => {
       ) : (
         <div className="flex flex-col">
           <div className="grid grid-flow-row gap-4">
-            {recipes &&
-              recipes.map((recipe: IRecipeResponse, index: number) => (
-                <Card
-                  key={index}
-                  recipe={recipe}
-                  onClick={() => openModal(recipe.id)}
-                />
-              ))}
+            {recipes?.map((recipe: IRecipeResponse) => (
+              <Card
+                key={recipe.id}
+                recipe={recipe}
+                onClick={() => openModal(recipe.id)}
+              />
+            ))}
           </div>
 
           {selectedRecipe && (

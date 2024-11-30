@@ -4,7 +4,7 @@
 ## 📚 **Documentação da Aplicação**
 
 ---
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
+
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=bugs)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=244Walyson_recipes&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=244Walyson_recipes)
@@ -154,19 +154,16 @@ Essa estrutura modular facilita:
 - Reutilização de componentes e lógica.
 - Escalabilidade do projeto.
 - Clareza e organização no desenvolvimento.
-### **Design System**
-Atualmente, o projeto não utiliza um Design System formalizado. As decisões de design foram tomadas com base em boas práticas de usabilidade e estilo consistente para atender aos requisitos do projeto.
+## Design System
 
-#### **Decisões de Estilo**
-- **Paleta de Cores**: Cores foram definidas manualmente, priorizando contraste e acessibilidade para garantir uma boa experiência de usuário.
-- **Componentes Reutilizáveis**: Componentes compartilhados (ex.: botões, inputs, modais) foram desenvolvidos para manter consistência visual em diferentes telas.
+Atualmente, o projeto utiliza o **ShadCN UI** para o desenvolvimento da interface no frontend web, mas não foi adotado nenhum Design System específico para o mobile até o momento.
 
-#### **Possibilidade de Evolução**
-Apesar de ainda não possuir um Design System completo, o projeto está preparado para evoluir nesse sentido, permitindo:
-- Integração futura de bibliotecas especializadas, como **React Native Paper** ou **Chakra UI for React Native**.
-- Definição de um Design System próprio, consolidando a identidade visual e melhorando a experiência do usuário.
+### Decisões de Estilo
+- **Paleta de Cores**: As cores foram definidas manualmente (mobile), priorizando contraste e acessibilidade para garantir uma boa experiência de usuário.
+- **Componentes Reutilizáveis**: Foram criados componentes compartilhados, como botões, inputs e modais, utilizando o **ShadCN UI** no frontend web, garantindo consistência visual em diferentes telas.
+- **ShadCN UI**: Para o frontend web, foi adotado o **ShadCN UI**, uma biblioteca de componentes focada em proporcionar uma construção de interfaces com boa usabilidade, responsividade e coesão visual.
 
-Essa abordagem facilita a expansão e manutenção do projeto, permitindo a introdução de novas diretrizes visuais de forma incremental.
+Essa abordagem garante que, mesmo sem um Design System formalizado, a interface web seja visualmente coesa e funcional, e abre possibilidades para adoção de um Design System mais completo no futuro.
 
 ### **Infraestrutura**
 ![k8s-arch.png](etc/k8s-arch.png)

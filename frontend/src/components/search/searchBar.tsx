@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from "react";
 import { Command, CommandInput, CommandList } from "@/components/ui/command";
 
-type SearchBarProps = {
+type SearchBarProps = Readonly<{
   handleSearch: (search: string) => void;
-};
+}>;
 
 export function SearchBar({ handleSearch }: SearchBarProps) {
   const [open, setOpen] = useState(false);

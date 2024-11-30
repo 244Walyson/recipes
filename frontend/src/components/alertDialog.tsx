@@ -36,26 +36,24 @@ const Dialog = ({
 
   const handleConfirm = () => {
     if (onConfirm) {
-      onConfirm(); // Chama a função de confirmação se fornecida
+      onConfirm();
     }
-    closeDialog(); // Fecha o diálogo
+    closeDialog();
   };
 
   const handleCancel = () => {
     if (onCancel) {
-      onCancel(); // Chama a função de cancelamento se fornecida
+      onCancel();
     }
-    closeDialog(); // Fecha o diálogo
+    closeDialog();
   };
 
   return (
     <>
-      {/* Renderizar o botão de abertura sem AlertDialogTrigger */}
-      <div onClick={openDialog} className="cursor-pointer">
+      <button onClick={openDialog} className="cursor-pointer">
         {btnOpen}
-      </div>
+      </button>
 
-      {/* Controlar a visibilidade do diálogo com o estado */}
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

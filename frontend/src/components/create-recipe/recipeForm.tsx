@@ -356,7 +356,7 @@ const RecipeForm = () => {
       <div className="mb-4">
         <Label htmlFor="preparationMethod">Modo de Preparo</Label>
         {recipe.preparationMethod.map((step, index) => (
-          <div key={index} className="mb-4">
+          <div key={step.step} className="mb-4">
             <Input
               type="text"
               placeholder="Título da Etapa"
@@ -451,7 +451,7 @@ const RecipeForm = () => {
       <div className="mb-4">
         <Label>Tipos de Refeição</Label>
         {recipe.mealTypes.map((mealType, index) => (
-          <Command key={index}>
+          <Command key={mealType.id}>
             <CommandInput
               placeholder="Digite ou selecione um tipo de refeição..."
               onInput={(e: React.ChangeEvent<HTMLInputElement>) =>

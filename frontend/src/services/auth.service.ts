@@ -32,7 +32,7 @@ export const getAccessToken = async (credentials: ICreadentials) => {
     storeToken(accessToken);
     const decoded = await decodeAccessToken(accessToken.access_token);
     if (decoded) {
-      await storeUserID(decoded.sub);
+      storeUserID(decoded.sub);
     }
     return accessToken;
   } catch (error) {
@@ -50,7 +50,7 @@ export const refreshToken = async (refreshToken: string) => {
     storeToken(accessToken);
     const decoded = await decodeAccessToken(accessToken.access_token);
     if (decoded) {
-      await storeUserID(decoded.sub);
+      storeUserID(decoded.sub);
     }
     return accessToken;
   } catch (error) {
@@ -83,7 +83,7 @@ export const getAccessTokenWithGoogleToken = async (
     storeToken(accessToken);
     const decoded = await decodeAccessToken(accessToken.access_token);
     if (decoded) {
-      await storeUserID(decoded.sub);
+      storeUserID(decoded.sub);
     }
     return accessToken;
   } catch (error) {
@@ -103,7 +103,7 @@ export const getAccessTokenWithGithubCode = async (
     storeToken(accessToken);
     const decoded = await decodeAccessToken(accessToken.access_token);
     if (decoded) {
-      await storeUserID(decoded.sub);
+      storeUserID(decoded.sub);
     }
     return accessToken;
   } catch (error) {

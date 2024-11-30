@@ -72,6 +72,7 @@ const ProfileContainer = () => {
   const handleDeleteRecipe = async (recipeId: string) => {
     try {
       await deleteRecipe(recipeId);
+      fetchUserRecipes(user?.id ?? "");
       setIsModalOpen(true);
       setSuccess("Recipe deleted successfully");
     } catch {
@@ -106,9 +107,9 @@ const ProfileContainer = () => {
 
         <div className="flex gap-4 mt-4 flex-wrap items-center justify-center">
           {recipes && recipes.data?.length > 0 ? (
-            recipes.data?.map((recipe: IRecipeResponse, index: number) => (
+            recipes.data?.map((recipe: IRecipeResponse) => (
               <RecipeCardProfile
-                key={index}
+                key={recipe.id}
                 recipe={recipe}
                 onClick={(recipeId) => handleSelectedRecipe(recipeId)}
                 onDelete={(recipeId) => handleDeleteRecipe(recipeId)}

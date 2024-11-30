@@ -37,8 +37,6 @@ export const getRecipes = async (
       queryParams.append("preparationTime", params.preparationTime.toString());
     if (params.orderBy) queryParams.append("orderBy", params.orderBy);
 
-    console.log("queryParams", queryParams.toString());
-
     const response = await axiosIntance.get(
       `/recipes?${queryParams.toString()}`
     );
